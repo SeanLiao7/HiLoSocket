@@ -1,6 +1,6 @@
 ﻿namespace HiLoSocket.CommandFormatter
 {
-    internal interface ICommandFormatter
+    public interface ICommandFormatter
     {
         T Deserialize<T>( byte[ ] bytes ) where T : class;
 

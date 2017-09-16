@@ -29,26 +29,35 @@
         private void InitializeComponent( )
         {
             this.rtbLog = new System.Windows.Forms.RichTextBox();
-            this.btnSend = new System.Windows.Forms.Button();
+            this.metroUserControl1 = new MetroFramework.Controls.MetroUserControl();
+            this.btnSend = new MetroFramework.Controls.MetroButton();
             this.SuspendLayout();
             // 
             // rtbLog
             // 
-            this.rtbLog.Location = new System.Drawing.Point(34, 37);
+            this.rtbLog.Location = new System.Drawing.Point(34, 74);
             this.rtbLog.Name = "rtbLog";
-            this.rtbLog.Size = new System.Drawing.Size(367, 444);
+            this.rtbLog.Size = new System.Drawing.Size(396, 429);
             this.rtbLog.TabIndex = 0;
             this.rtbLog.Text = "";
             // 
+            // metroUserControl1
+            // 
+            this.metroUserControl1.Location = new System.Drawing.Point(613, 335);
+            this.metroUserControl1.Name = "metroUserControl1";
+            this.metroUserControl1.Size = new System.Drawing.Size(8, 8);
+            this.metroUserControl1.TabIndex = 2;
+            this.metroUserControl1.UseSelectable = true;
+            // 
             // btnSend
             // 
-            this.btnSend.Font = new System.Drawing.Font("Microsoft JhengHei", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnSend.Location = new System.Drawing.Point(458, 56);
+            this.btnSend.FontSize = MetroFramework.MetroButtonSize.Tall;
+            this.btnSend.Location = new System.Drawing.Point(524, 401);
             this.btnSend.Name = "btnSend";
-            this.btnSend.Size = new System.Drawing.Size(203, 150);
-            this.btnSend.TabIndex = 1;
+            this.btnSend.Size = new System.Drawing.Size(172, 102);
+            this.btnSend.TabIndex = 3;
             this.btnSend.Text = "Send";
-            this.btnSend.UseVisualStyleBackColor = true;
+            this.btnSend.UseSelectable = true;
             this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
             // ClientForm
@@ -57,9 +66,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(772, 547);
             this.Controls.Add(this.btnSend);
+            this.Controls.Add(this.metroUserControl1);
             this.Controls.Add(this.rtbLog);
             this.Name = "ClientForm";
-            this.Text = "Form1";
+            this.Text = "Client 1";
             this.ResumeLayout(false);
 
         }
@@ -67,7 +77,8 @@
         #endregion
 
         private System.Windows.Forms.RichTextBox rtbLog;
-        private System.Windows.Forms.Button btnSend;
+        private MetroFramework.Controls.MetroUserControl metroUserControl1;
+        private MetroFramework.Controls.MetroButton btnSend;
     }
 }
 

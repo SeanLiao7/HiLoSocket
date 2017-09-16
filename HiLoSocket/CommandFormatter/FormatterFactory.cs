@@ -1,20 +1,25 @@
-﻿namespace HiLoSocket.CommandFormatter
+﻿using System;
+using System.Collections.Generic;
+
+namespace HiLoSocket.CommandFormatter
 {
-    internal static class FormatterFactory
+    public static class FormatterFactory
     {
-        internal static ICommandFormatter CreateFormatter( FormatterType formatterType )
+        private static readonly Dictionary<FormatterType, ICommandFormatter> _formatterTable =
+            new Dictionary<FormatterType, ICommandFormatter>( );
+
+        public static ICommandFormatter CreateFormatter( FormatterType formatterType )
         {
-            switch ( formatterType )
-            {
-                case FormatterType.JSonFormatter:
-                    return new JsonCommandFormatter( );
+            if ( _formatterTable.TryGetValue( formatterType, out var formatter ) )
+                return formatter;
 
-                case FormatterType.BinaryFormmater:
-                    return new BinaryCommandFormmater( );
+            var type = Type.GetType( $"HiLoSocket.CommandFormatter.Implements.{formatterType.GetDescription( )}" );
+            formatter = ( ICommandFormatter ) Activator.CreateInstance(
+                type ?? throw new InvalidOperationException( nameof( formatterType ) ) );
 
-                default:
-                    return new BinaryCommandFormmater( );
-            }
+            _formatterTable.Add( formatterType, formatter );
+
+            return formatter;
         }
     }
 }

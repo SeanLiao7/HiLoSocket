@@ -1,37 +1,55 @@
 ﻿using System;
+using System.Drawing;
+using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using HiLoSocket;
-using HiLoSocket.CommandFormatter;
-using HiLoSocket.SocketCommand;
+using HiLoSocket.Model;
+using MetroFramework.Forms;
 
 namespace ServerForm
 {
-    public partial class ServerForm : Form
+    public partial class ServerForm : MetroForm
     {
-        private Server _server = new Server(
-            new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
-            new SocketHandShake( ),
-            FormatterType.BinaryFormmater );
+        private Server<SocketCommandModel> _server = new Server<SocketCommandModel>( new ServerModel
+        {
+            LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 )
+        } );
 
         public ServerForm( )
         {
             InitializeComponent( );
-            _server.OnSocketCommandRecevied += Server_OnSocketCommandRecevied;
+            _server.OnSocketCommandModelRecieved += Server_OnSocketCommandRecevied;
         }
 
-        private void button1_Click( object sender, EventArgs e )
+        private void AppendText( RichTextBox box, Color color, string text )
+        {
+            var start = box.TextLength;
+            box.AppendText( text );
+            var end = box.TextLength;
+
+            // Textbox may transform chars, so (end-start) != text.Length
+            box.Select( start, end - start );
+            box.SelectionColor = color;
+            // could set box.SelectionBackColor, box.SelectionFont too.
+            box.SelectionLength = 0; // clear
+        }
+
+        private void btnListen_Click( object sender, EventArgs e )
         {
             new Thread( _server.StartListening ).Start( );
+            lblStatus.Text = @"Listening";
         }
 
-        private void Server_OnSocketCommandRecevied( SocketCommandBase socketCommand )
+        private void Server_OnSocketCommandRecevied( SocketCommandModel model )
         {
             if ( InvokeRequired )
                 Invoke( new Action( ( ) =>
                 {
-                    rtbLog.AppendText( socketCommand.ToString( ) );
+                    AppendText( rtbLog, Color.Red, model.Id.ToString( ) );
+                    rtbLog.AppendText( "\n" );
+                    rtbLog.AppendText( model.Time.ToString( CultureInfo.InvariantCulture ) );
                     rtbLog.AppendText( "\n" );
                 } ) );
         }

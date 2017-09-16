@@ -1,25 +1,124 @@
 ﻿using System;
+using System.Net.Sockets;
 using HiLoSocket.CommandFormatter;
 
 namespace HiLoSocket
 {
-    public abstract class SocketBase
+    public abstract class SocketBase<TModel> where TModel : class
     {
-        internal ICommandFormatter CommandFormatter { get; }
+        protected ICommandFormatter CommandFormatter { get; }
 
-        protected SocketBase( FormatterType formatterType )
+        public event Action<TModel> OnSocketCommandModelRecieved;
+
+        protected SocketBase( FormatterType? formatterType )
         {
-            CommandFormatter = FormatterFactory.CreateFormatter( formatterType );
+            if ( formatterType == null )
+                formatterType = FormatterType.BinaryFormatter;
+
+            CommandFormatter = FormatterFactory.CreateFormatter( formatterType.Value );
         }
 
-        protected byte[ ] CreateBytsToSendWithSize( byte[ ] commandBytetoSend )
+        /// <summary>
+        /// Creates the size of the bytes to send with.
+        /// </summary>
+        /// <param name="commandBytestoSend">The command bytesto send.</param>
+        /// <returns>Bytes to send with size.</returns>
+        protected byte[ ] CreateBytesToSendWithSize( byte[ ] commandBytestoSend )
         {
-            var lengthConvert = BitConverter.GetBytes( commandBytetoSend.Length ); // 將此次傳輸的command 長度轉為byte陣列
-            var commandBytetoSendWithSize = new byte[ commandBytetoSend.Length + 4 ]; // 傳輸的資料包含長度包含4個代表command長度的陣列與本身
+            var lengthConvert = BitConverter.GetBytes( commandBytestoSend.Length ); // 將此次傳輸的command 長度轉為byte陣列
+            var commandBytetoSendWithSize = new byte[ commandBytestoSend.Length + 4 ]; // 傳輸的資料包含長度包含4個代表command長度的陣列與本身
             lengthConvert.CopyTo( commandBytetoSendWithSize, 0 ); // copy 長度資訊
-            commandBytetoSend.CopyTo( commandBytetoSendWithSize, 4 ); // copy command 資訊
+            commandBytestoSend.CopyTo( commandBytetoSendWithSize, 4 ); // copy command 資訊
 
             return commandBytetoSendWithSize;
+        }
+
+        /// <summary>
+        /// Reads the socket command model.
+        /// </summary>
+        /// <param name="asyncResult">The asynchronous result.</param>
+        /// <param name="model">The model.</param>
+        /// <returns>Successful or not</returns>
+        protected virtual void ReadSocketCommandModel( IAsyncResult asyncResult )
+        {
+            if ( asyncResult.AsyncState is StateObject state )
+            {
+                var handler = state.WorkSocket;
+                var bytesRead = handler.EndReceive( asyncResult );
+
+                if ( bytesRead == state.Buffer.Length )
+                {
+                    var model = CommandFormatter.Deserialize<TModel>( state.Buffer );
+                    Send( handler, model );
+                    OnSocketCommandModelRecieved?.Invoke( model );
+                }
+                else
+                {
+                    // TODO : log
+                    throw new InvalidOperationException( "資料收集不完全阿。" );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Reads the total length.
+        /// </summary>
+        /// <param name="asyncResult">The asynchronous result.</param>
+        /// <exception cref="InvalidOperationException">資料大小訊息收集失敗囉。</exception>
+        protected void ReadTotalLength( IAsyncResult asyncResult )
+        {
+            if ( asyncResult.AsyncState is StateObject state )
+            {
+                var handler = state.WorkSocket;
+                var bytesRead = handler.EndReceive( asyncResult );
+
+                if ( bytesRead == StateObject.DataInfoSize )
+                {
+                    var totalBufferSize = BitConverter.ToInt32( state.Buffer, 0 );
+                    state.Buffer = new byte[ totalBufferSize ];
+                    handler.BeginReceive( state.Buffer, 0, totalBufferSize, SocketFlags.None, ReadSocketCommandModel, state );
+                }
+                else
+                {
+                    // TODO : log
+                    throw new InvalidOperationException( "資料大小訊息收集失敗囉。" );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Sends the specified handler.
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        /// <param name="socketCommandModel">The socket command model.</param>
+        protected void Send( Socket handler, TModel socketCommandModel )
+        {
+            var bytestoSend = CommandFormatter.Serialize( socketCommandModel );
+            var bytesToSendWithSize = CreateBytesToSendWithSize( bytestoSend );
+            handler.BeginSend( bytesToSendWithSize, 0, bytesToSendWithSize.Length, 0, SendCallback, handler );
+        }
+
+        /// <summary>
+        /// Sends the callback.
+        /// </summary>
+        /// <param name="asyncResult">The asynchronous result.</param>
+        protected virtual void SendCallback( IAsyncResult asyncResult )
+        {
+            try
+            {
+                if ( asyncResult.AsyncState is Socket handler )
+                {
+                    var bytesSent = handler.EndSend( asyncResult );
+                    Console.WriteLine( $"Sent {bytesSent} bytes to client." );
+                }
+            }
+            catch ( Exception e )
+            {
+                Console.WriteLine( e.ToString( ) );
+
+                // TODO : log
+                throw;
+            }
         }
     }
 }

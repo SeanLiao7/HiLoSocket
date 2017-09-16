@@ -28,46 +28,45 @@
         /// </summary>
         private void InitializeComponent( )
         {
-            this.button1 = new System.Windows.Forms.Button();
             this.rtbLog = new System.Windows.Forms.RichTextBox();
+            this.btnSend = new MetroFramework.Controls.MetroButton();
             this.SuspendLayout();
-            // 
-            // button1
-            // 
-            this.button1.Font = new System.Drawing.Font("Microsoft JhengHei", 16.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.button1.Location = new System.Drawing.Point(421, 95);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(216, 230);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Send";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btnSend_Click);
             // 
             // rtbLog
             // 
-            this.rtbLog.Location = new System.Drawing.Point(27, 27);
+            this.rtbLog.Location = new System.Drawing.Point(27, 85);
             this.rtbLog.Name = "rtbLog";
-            this.rtbLog.Size = new System.Drawing.Size(364, 522);
+            this.rtbLog.Size = new System.Drawing.Size(396, 429);
             this.rtbLog.TabIndex = 2;
             this.rtbLog.Text = "";
+            // 
+            // btnSend
+            // 
+            this.btnSend.FontSize = MetroFramework.MetroButtonSize.Tall;
+            this.btnSend.Location = new System.Drawing.Point(520, 412);
+            this.btnSend.Name = "btnSend";
+            this.btnSend.Size = new System.Drawing.Size(172, 102);
+            this.btnSend.TabIndex = 3;
+            this.btnSend.Text = "Send";
+            this.btnSend.UseSelectable = true;
+            this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
             // ClientForm2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(697, 593);
+            this.ClientSize = new System.Drawing.Size(772, 547);
+            this.Controls.Add(this.btnSend);
             this.Controls.Add(this.rtbLog);
-            this.Controls.Add(this.button1);
             this.Name = "ClientForm2";
-            this.Text = "Form1";
+            this.Text = "Client2";
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.RichTextBox rtbLog;
+        private MetroFramework.Controls.MetroButton btnSend;
     }
 }
 
