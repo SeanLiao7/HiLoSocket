@@ -9,9 +9,9 @@ namespace HiLoSocket
 {
     public class Client<TModel> : SocketBase<TModel> where TModel : class
     {
-        private readonly ManualResetEvent _connectDone = new ManualResetEvent( false );
-        private readonly ManualResetEvent _receiveDone = new ManualResetEvent( false );
-        private readonly ManualResetEvent _sendDone = new ManualResetEvent( false );
+        private readonly ManualResetEventSlim _connectDone = new ManualResetEventSlim( );
+        private readonly ManualResetEventSlim _receiveDone = new ManualResetEventSlim( );
+        private readonly ManualResetEventSlim _sendDone = new ManualResetEventSlim( );
 
         public IPEndPoint LocalIpEndPoint { get; }
         public IPEndPoint RemoteIpEndPoint { get; }
@@ -20,10 +20,22 @@ namespace HiLoSocket
             : base( clientModel?.FormatterType )
         {
             if ( clientModel == null )
-                throw new ArgumentNullException( nameof( clientModel ), $"你沒初始化 {nameof( clientModel )} 喔。" );
+            {
+                throw new ArgumentNullException( nameof( clientModel ),
+                    $@"時間 : {DateTime.Now.GetDateTimeString( )};
+類別 : {nameof( Client<TModel> )};
+方法 : Constructor;
+內容 : 你沒初始化 {nameof( clientModel )} 喔。" );
+            }
 
             if ( clientModel.ValidateObject( out var errorMessages ) == false )
-                throw new ValidationException( string.Join( "\n", errorMessages ) );
+            {
+                throw new ValidationException(
+                    $@"時間 : {DateTime.Now.GetDateTimeString( )};
+類別 : {nameof( Client<TModel> )};
+方法 : Constructor;
+內容 : {string.Join( "\n", errorMessages )}" );
+            }
 
             LocalIpEndPoint = clientModel.LocalIpEndPoint;
             RemoteIpEndPoint = clientModel.RemoteIpEndPoint;
@@ -36,13 +48,13 @@ namespace HiLoSocket
                 var client = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
 
                 client.BeginConnect( RemoteIpEndPoint, ConnectCallback, client );
-                _connectDone.WaitOne( );
+                _connectDone.Wait( );
 
                 Send( client, model );
-                _sendDone.WaitOne( );
+                _sendDone.Wait( );
 
                 Receive( client );
-                _receiveDone.WaitOne( );
+                _receiveDone.Wait( );
             }
             catch ( Exception e )
             {
@@ -51,9 +63,9 @@ namespace HiLoSocket
             }
         }
 
-        protected override void ReadSocketCommandModel( IAsyncResult asyncResult )
+        protected override void ReadModel( IAsyncResult asyncResult )
         {
-            base.ReadSocketCommandModel( asyncResult );
+            base.ReadModel( asyncResult );
             _receiveDone.Set( );
         }
 
@@ -70,7 +82,6 @@ namespace HiLoSocket
                 if ( asyncResult.AsyncState is Socket client )
                 {
                     client.EndConnect( asyncResult );
-
                     Console.WriteLine( $"Socket connected to {client.RemoteEndPoint}" );
                 }
 

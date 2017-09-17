@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,6 +8,11 @@ namespace HiLoSocket
 {
     public static class Extensions
     {
+        public static string GetDateTimeString( this DateTime dateTime, string provider = "yyyy-MM-dd hh-mm-ss" )
+        {
+            return dateTime.ToString( provider );
+        }
+
         public static string GetDescription<T>( this T value )
         {
             var fi = value.GetType( ).GetField( value.ToString( ) );
@@ -22,7 +28,6 @@ namespace HiLoSocket
 
             var success = Validator.TryValidateObject( value, context, errors, true );
             errorMessages = errors.Select( x => x.ErrorMessage );
-
             return success;
         }
     }

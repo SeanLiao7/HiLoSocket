@@ -39,7 +39,7 @@ namespace HiLoSocket
         /// <param name="asyncResult">The asynchronous result.</param>
         /// <param name="model">The model.</param>
         /// <returns>Successful or not</returns>
-        protected virtual void ReadSocketCommandModel( IAsyncResult asyncResult )
+        protected virtual void ReadModel( IAsyncResult asyncResult )
         {
             if ( asyncResult.AsyncState is StateObject state )
             {
@@ -55,7 +55,11 @@ namespace HiLoSocket
                 else
                 {
                     // TODO : log
-                    throw new InvalidOperationException( "資料收集不完全阿。" );
+                    throw new InvalidOperationException(
+                        $@"時間 : {DateTime.Now.GetDateTimeString( )};
+類別 : {nameof( SocketBase<TModel> )};
+方法 : ReadModel;
+內容 : 資料收集不完全阿。" );
                 }
             }
         }
@@ -76,12 +80,16 @@ namespace HiLoSocket
                 {
                     var totalBufferSize = BitConverter.ToInt32( state.Buffer, 0 );
                     state.Buffer = new byte[ totalBufferSize ];
-                    handler.BeginReceive( state.Buffer, 0, totalBufferSize, SocketFlags.None, ReadSocketCommandModel, state );
+                    handler.BeginReceive( state.Buffer, 0, totalBufferSize, SocketFlags.None, ReadModel, state );
                 }
                 else
                 {
                     // TODO : log
-                    throw new InvalidOperationException( "資料大小訊息收集失敗囉。" );
+                    throw new InvalidOperationException(
+                        $@"時間 : {DateTime.Now.GetDateTimeString( )};
+類別 : {nameof( SocketBase<TModel> )};
+方法 : ReadTotalLength;
+內容 : 資料大小訊息收集失敗囉。" );
                 }
             }
         }

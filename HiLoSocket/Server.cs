@@ -10,7 +10,7 @@ namespace HiLoSocket
     public class Server<TModel> : SocketBase<TModel> where TModel : class
     {
         public const int MaxPendingConnectionLength = 4;
-        private readonly ManualResetEvent _allDone = new ManualResetEvent( false );
+        private readonly ManualResetEventSlim _allDone = new ManualResetEventSlim( );
 
         public IPEndPoint LocalIpEndPoint { get; }
 
@@ -18,10 +18,22 @@ namespace HiLoSocket
             : base( serverModel?.FormatterType )
         {
             if ( serverModel == null )
-                throw new ArgumentNullException( nameof( serverModel ), $"你沒初始化 {nameof( serverModel )} 喔。" );
+            {
+                throw new ArgumentNullException( nameof( serverModel ),
+                    $@"時間 : {DateTime.Now.GetDateTimeString( )};
+類別 : {nameof( Server<TModel> )};
+方法 : Constructor;
+內容 : 你沒初始化 {nameof( serverModel )} 喔。" );
+            }
 
             if ( serverModel.ValidateObject( out var errorMessages ) == false )
-                throw new ValidationException( string.Join( "\n", errorMessages ) );
+            {
+                throw new ValidationException(
+                    $@"時間 : {DateTime.Now.GetDateTimeString( )};
+類別 : {nameof( Server<TModel> )};
+方法 : Constructor;
+內容 : {string.Join( "\n", errorMessages )}" );
+            }
 
             LocalIpEndPoint = serverModel.LocalIpEndPoint;
         }
@@ -40,7 +52,7 @@ namespace HiLoSocket
                     _allDone.Reset( );
                     Console.WriteLine( "Waiting for a connection..." );
                     listener.BeginAccept( AcceptCallback, listener );
-                    _allDone.WaitOne( );
+                    _allDone.Wait( );
                 }
             }
             catch ( Exception e )
