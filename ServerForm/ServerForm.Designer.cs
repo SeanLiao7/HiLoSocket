@@ -31,6 +31,7 @@
             this.rtbLog = new System.Windows.Forms.RichTextBox();
             this.btnListen = new MetroFramework.Controls.MetroButton();
             this.lblStatus = new MetroFramework.Controls.MetroLabel();
+            this.btnStop = new MetroFramework.Controls.MetroButton();
             this.SuspendLayout();
             // 
             // rtbLog
@@ -62,11 +63,23 @@
             this.lblStatus.TabIndex = 2;
             this.lblStatus.Text = "Standby";
             // 
+            // btnStop
+            // 
+            this.btnStop.FontSize = MetroFramework.MetroButtonSize.Tall;
+            this.btnStop.Location = new System.Drawing.Point(521, 274);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(172, 102);
+            this.btnStop.TabIndex = 3;
+            this.btnStop.Text = "Stop";
+            this.btnStop.UseSelectable = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            // 
             // ServerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(772, 547);
+            this.Controls.Add(this.btnStop);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.btnListen);
             this.Controls.Add(this.rtbLog);
@@ -82,6 +95,7 @@
         private System.Windows.Forms.RichTextBox rtbLog;
         private MetroFramework.Controls.MetroButton btnListen;
         private MetroFramework.Controls.MetroLabel lblStatus;
+        private MetroFramework.Controls.MetroButton btnStop;
     }
 }
 

@@ -10,6 +10,9 @@ namespace HiLoSocket.CommandFormatter
 
         public static ICommandFormatter CreateFormatter( FormatterType formatterType )
         {
+            if ( formatterType == FormatterType.DefaultFormatter )
+                formatterType = FormatterType.BinaryFormatter;
+
             if ( _formatterTable.TryGetValue( formatterType, out var formatter ) )
                 return formatter;
 

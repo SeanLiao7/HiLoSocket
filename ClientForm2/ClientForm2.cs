@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using HiLoSocket;
+using HiLoSocket.Logger;
 using HiLoSocket.Model;
 using MetroFramework.Forms;
 
@@ -17,7 +19,7 @@ namespace ClientForm2
         {
             LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8082 ),
             RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 )
-        } );
+        }, new ConsoleLogger( ) );
 
         public ClientForm2( )
         {
@@ -44,15 +46,25 @@ namespace ClientForm2
             {
                 while ( true )
                 {
-                    _client.StartClient( new SocketCommandModel
+                    try
                     {
-                        CommandName = "Test2",
-                        Id = Guid.NewGuid( ),
-                        Results = new List<string> { "333", "111" },
-                        Time = DateTime.Now
-                    } );
-                    Thread.Sleep( 500 );
+                        _client.Send( new SocketCommandModel
+                        {
+                            CommandName = "Test2",
+                            Id = Guid.NewGuid( ),
+                            Results = new List<string> { "333", "111" },
+                            Time = DateTime.Now
+                        } );
+                        Thread.Sleep( 100 );
+                    }
+                    catch ( Exception ex )
+                    {
+                        Trace.WriteLine( $"Client Stop! Exception Message : {ex.Message}" );
+                        break;
+                    }
                 }
+
+                var x = 3;
             } ).Start( );
         }
 

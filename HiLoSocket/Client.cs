@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using HiLoSocket.Logger;
 using HiLoSocket.Model;
 
 namespace HiLoSocket
@@ -17,7 +18,12 @@ namespace HiLoSocket
         public IPEndPoint RemoteIpEndPoint { get; }
 
         public Client( ClientModel clientModel )
-            : base( clientModel?.FormatterType )
+            : this( clientModel, null )
+        {
+        }
+
+        public Client( ClientModel clientModel, ILogger logger )
+            : base( clientModel?.FormatterType, logger )
         {
             if ( clientModel == null )
             {
@@ -41,12 +47,12 @@ namespace HiLoSocket
             RemoteIpEndPoint = clientModel.RemoteIpEndPoint;
         }
 
-        public void StartClient( TModel model )
+        public void Send( TModel model )
         {
+            var client = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
+
             try
             {
-                var client = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
-
                 client.BeginConnect( RemoteIpEndPoint, ConnectCallback, client );
                 _connectDone.Wait( );
 
@@ -58,14 +64,47 @@ namespace HiLoSocket
             }
             catch ( Exception e )
             {
-                Console.WriteLine( e.ToString( ) );
-                throw;
+                Logger?.Log( new LogModel
+                {
+                    LogTime = DateTime.Now,
+                    LogMessage = $"客戶端資料傳送失敗啦, 傳送端 : {client.LocalEndPoint}, 接收端 : {client.RemoteEndPoint}, 例外訊息 : {e.Message}"
+                } );
+
+                throw new InvalidOperationException( "客戶端傳送訊息至伺服器失敗，詳細請參照 Inner Exception。", e );
             }
+        }
+
+        public override string ToString( )
+        {
+            return $"Client with {nameof( TModel )} model";
         }
 
         protected override void ReadModel( IAsyncResult asyncResult )
         {
             base.ReadModel( asyncResult );
+
+            if ( asyncResult.AsyncState is StateObject state )
+            {
+                var model = default( TModel );
+
+                try
+                {
+                    model = CommandFormatter.Deserialize<TModel>( state.Buffer );
+                }
+                catch ( Exception e )
+                {
+                    Logger?.Log( new LogModel
+                    {
+                        LogTime = DateTime.Now,
+                        LogMessage = $"反序列化失敗囉, 例外訊息 : {e.Message}"
+                    } );
+                }
+                finally
+                {
+                    InvokeOnSocketCommandModelRecieved( model );
+                }
+            }
+
             _receiveDone.Set( );
         }
 
@@ -77,20 +116,27 @@ namespace HiLoSocket
 
         private void ConnectCallback( IAsyncResult asyncResult )
         {
-            try
+            if ( asyncResult.AsyncState is Socket client )
             {
-                if ( asyncResult.AsyncState is Socket client )
+                try
                 {
                     client.EndConnect( asyncResult );
-                    Console.WriteLine( $"Socket connected to {client.RemoteEndPoint}" );
-                }
+                    Logger?.Log( new LogModel
+                    {
+                        LogTime = DateTime.Now,
+                        LogMessage = $"用戶端已連線至伺服器, 伺服器 : {client.RemoteEndPoint}, 用戶端 : {client.LocalEndPoint}"
+                    } );
 
-                _connectDone.Set( );
-            }
-            catch ( Exception e )
-            {
-                Console.WriteLine( e.ToString( ) );
-                throw;
+                    _connectDone.Set( );
+                }
+                catch ( Exception e )
+                {
+                    Logger?.Log( new LogModel
+                    {
+                        LogTime = DateTime.Now,
+                        LogMessage = $"客戶端連線伺服器失敗, 伺服器：{RemoteIpEndPoint}, 用戶端 : {LocalIpEndPoint}, 例外訊息 : {e.Message}"
+                    } );
+                }
             }
         }
 
@@ -107,8 +153,13 @@ namespace HiLoSocket
             }
             catch ( Exception e )
             {
-                Console.WriteLine( e.ToString( ) );
-                throw;
+                Logger?.Log( new LogModel
+                {
+                    LogTime = DateTime.Now,
+                    LogMessage = $"資料接收失敗啦, 傳送端 : {client.RemoteEndPoint}, 接收端 : {client.LocalEndPoint}, 例外訊息 : {e.Message}"
+                } );
+
+                throw new InvalidOperationException( "客戶端接收伺服器訊息失敗，詳細請參照 Inner Exception。", e );
             }
         }
     }

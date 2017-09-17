@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using HiLoSocket;
+using HiLoSocket.Logger;
 using HiLoSocket.Model;
 using MetroFramework.Forms;
 
@@ -15,7 +16,7 @@ namespace ServerForm
         private Server<SocketCommandModel> _server = new Server<SocketCommandModel>( new ServerModel
         {
             LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 )
-        } );
+        }, new ConsoleLogger( ) );
 
         public ServerForm( )
         {
@@ -38,8 +39,19 @@ namespace ServerForm
 
         private void btnListen_Click( object sender, EventArgs e )
         {
+            if ( _server == null )
+                _server = new Server<SocketCommandModel>( new ServerModel
+                {
+                    LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 )
+                }, new ConsoleLogger( ) );
+
             new Thread( _server.StartListening ).Start( );
             lblStatus.Text = @"Listening";
+        }
+
+        private void btnStop_Click( object sender, EventArgs e )
+        {
+            _server.StopListening( );
         }
 
         private void Server_OnSocketCommandRecevied( SocketCommandModel model )

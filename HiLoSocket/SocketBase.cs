@@ -1,21 +1,33 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Sockets;
 using HiLoSocket.CommandFormatter;
+using HiLoSocket.Logger;
+using HiLoSocket.Model;
 
 namespace HiLoSocket
 {
-    public abstract class SocketBase<TModel> where TModel : class
+    public abstract class SocketBase<TModel> : IDisposable
+        where TModel : class
     {
         protected ICommandFormatter CommandFormatter { get; }
 
+        protected ILogger Logger { get; }
+
         public event Action<TModel> OnSocketCommandModelRecieved;
 
-        protected SocketBase( FormatterType? formatterType )
+        protected SocketBase( FormatterType? formatterType, ILogger logger )
         {
             if ( formatterType == null )
                 formatterType = FormatterType.BinaryFormatter;
 
             CommandFormatter = FormatterFactory.CreateFormatter( formatterType.Value );
+            Logger = logger;
+        }
+
+        public void Dispose( )
+        {
+            Dispose( true );
         }
 
         /// <summary>
@@ -33,6 +45,15 @@ namespace HiLoSocket
             return commandBytetoSendWithSize;
         }
 
+        protected virtual void Dispose( bool disposing )
+        {
+        }
+
+        protected void InvokeOnSocketCommandModelRecieved( TModel model )
+        {
+            OnSocketCommandModelRecieved?.Invoke( model );
+        }
+
         /// <summary>
         /// Reads the socket command model.
         /// </summary>
@@ -43,23 +64,38 @@ namespace HiLoSocket
         {
             if ( asyncResult.AsyncState is StateObject state )
             {
+                var bytesRead = default( int );
                 var handler = state.WorkSocket;
-                var bytesRead = handler.EndReceive( asyncResult );
+
+                try
+                {
+                    handler = state.WorkSocket;
+                    bytesRead = handler.EndReceive( asyncResult );
+                }
+                catch ( Exception e )
+                {
+                    Logger?.Log( new LogModel
+                    {
+                        LogTime = DateTime.Now,
+                        LogMessage = $"資料模型接收失敗, 傳送端 : {handler.RemoteEndPoint}, 接收端 : {handler.LocalEndPoint}, 例外訊息 : {e.Message}"
+                    } );
+                }
 
                 if ( bytesRead == state.Buffer.Length )
                 {
-                    var model = CommandFormatter.Deserialize<TModel>( state.Buffer );
-                    Send( handler, model );
-                    OnSocketCommandModelRecieved?.Invoke( model );
+                    Logger?.Log( new LogModel
+                    {
+                        LogTime = DateTime.Now,
+                        LogMessage = $"資料模型已接收, 傳送端 : {handler.RemoteEndPoint}, 接收端 : {handler.LocalEndPoint}, 資料長度 : {bytesRead} bytes"
+                    } );
                 }
                 else
                 {
-                    // TODO : log
-                    throw new InvalidOperationException(
-                        $@"時間 : {DateTime.Now.GetDateTimeString( )};
-類別 : {nameof( SocketBase<TModel> )};
-方法 : ReadModel;
-內容 : 資料收集不完全阿。" );
+                    Logger?.Log( new LogModel
+                    {
+                        LogTime = DateTime.Now,
+                        LogMessage = $"資料收集不完全阿, 傳送端 : {handler.RemoteEndPoint}, 接收端 : {handler.LocalEndPoint}, 資料長度 : {bytesRead} bytes"
+                    } );
                 }
             }
         }
@@ -78,18 +114,23 @@ namespace HiLoSocket
 
                 if ( bytesRead == StateObject.DataInfoSize )
                 {
+                    Logger?.Log( new LogModel
+                    {
+                        LogTime = DateTime.Now,
+                        LogMessage = $"資料長度資訊已接收, 傳送端 : {handler.RemoteEndPoint}, 接收端 : {handler.LocalEndPoint}, 資料長度 : {bytesRead} bytes"
+                    } );
+
                     var totalBufferSize = BitConverter.ToInt32( state.Buffer, 0 );
                     state.Buffer = new byte[ totalBufferSize ];
                     handler.BeginReceive( state.Buffer, 0, totalBufferSize, SocketFlags.None, ReadModel, state );
                 }
                 else
                 {
-                    // TODO : log
-                    throw new InvalidOperationException(
-                        $@"時間 : {DateTime.Now.GetDateTimeString( )};
-類別 : {nameof( SocketBase<TModel> )};
-方法 : ReadTotalLength;
-內容 : 資料大小訊息收集失敗囉。" );
+                    Logger?.Log( new LogModel
+                    {
+                        LogTime = DateTime.Now,
+                        LogMessage = $"資料長度訊息不完整喔, 傳送端 : {handler.RemoteEndPoint}, 接收端 : {handler.LocalEndPoint}, 資料長度 : {bytesRead} bytes"
+                    } );
                 }
             }
         }
@@ -101,9 +142,22 @@ namespace HiLoSocket
         /// <param name="socketCommandModel">The socket command model.</param>
         protected void Send( Socket handler, TModel socketCommandModel )
         {
-            var bytestoSend = CommandFormatter.Serialize( socketCommandModel );
-            var bytesToSendWithSize = CreateBytesToSendWithSize( bytestoSend );
-            handler.BeginSend( bytesToSendWithSize, 0, bytesToSendWithSize.Length, 0, SendCallback, handler );
+            try
+            {
+                var bytestoSend = CommandFormatter.Serialize( socketCommandModel );
+                var bytesToSendWithSize = CreateBytesToSendWithSize( bytestoSend );
+                handler.BeginSend( bytesToSendWithSize, 0, bytesToSendWithSize.Length, 0, SendCallback, handler );
+            }
+            catch ( Exception e )
+            {
+                Logger?.Log( new LogModel
+                {
+                    LogTime = DateTime.Now,
+                    LogMessage = $"傳送資料失敗, 傳送端 : {handler.LocalEndPoint}, 接收端 : {handler.RemoteEndPoint}, 例外訊息 : {e.Message}"
+                } );
+
+                throw new InvalidOperationException( "傳送資料失敗，詳細請參照 Inner Exception。", e );
+            }
         }
 
         /// <summary>
@@ -112,20 +166,25 @@ namespace HiLoSocket
         /// <param name="asyncResult">The asynchronous result.</param>
         protected virtual void SendCallback( IAsyncResult asyncResult )
         {
-            try
+            if ( asyncResult.AsyncState is Socket handler )
             {
-                if ( asyncResult.AsyncState is Socket handler )
+                try
                 {
                     var bytesSent = handler.EndSend( asyncResult );
-                    Console.WriteLine( $"Sent {bytesSent} bytes to client." );
+                    Logger?.Log( new LogModel
+                    {
+                        LogTime = DateTime.Now,
+                        LogMessage = $"資料已傳輸, 傳送端 : {handler.LocalEndPoint}, 接收端 : {handler.RemoteEndPoint}, 資料長度 : {bytesSent} bytes"
+                    } );
                 }
-            }
-            catch ( Exception e )
-            {
-                Console.WriteLine( e.ToString( ) );
-
-                // TODO : log
-                throw;
+                catch ( Exception e )
+                {
+                    Logger?.Log( new LogModel
+                    {
+                        LogTime = DateTime.Now,
+                        LogMessage = $"資料傳輸失敗, 傳送端 : {handler.LocalEndPoint}, 接收端 : {handler.RemoteEndPoint}, 例外訊息 : {e.Message}"
+                    } );
+                }
             }
         }
     }

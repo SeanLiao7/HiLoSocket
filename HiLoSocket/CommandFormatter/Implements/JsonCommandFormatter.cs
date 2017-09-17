@@ -9,10 +9,10 @@ namespace HiLoSocket.CommandFormatter.Implements
         public T Deserialize<T>( byte[ ] bytes ) where T : class
         {
             if ( bytes == null )
-                throw new ArgumentNullException( $"{nameof( bytes )}" );
+                throw new ArgumentNullException( nameof( bytes ), "輸入參數沒東西可以反序列化喔" );
 
             if ( bytes.Length == 0 )
-                throw new ArgumentException( "陣列長度不能為零。", nameof( bytes ) );
+                throw new ArgumentException( "資料長度不能為零啦。", nameof( bytes ) );
 
             var str = Encoding.UTF8.GetString( bytes );
             return JsonConvert.DeserializeObject<T>( str );
@@ -21,7 +21,7 @@ namespace HiLoSocket.CommandFormatter.Implements
         public byte[ ] Serialize<T>( T command ) where T : class
         {
             if ( command == null )
-                throw new ArgumentNullException( nameof( command ) );
+                throw new ArgumentNullException( nameof( command ), "輸入參數沒東西可以序列化喔。" );
 
             var jObject = JsonConvert.SerializeObject( command );
             return Encoding.UTF8.GetBytes( jObject );

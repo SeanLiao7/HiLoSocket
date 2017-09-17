@@ -4,13 +4,19 @@ namespace HiLoSocket.CommandFormatter
 {
     public enum FormatterType
     {
+        /// <summary>
+        /// Default Formatter is BinaryFormatter
+        /// </summary>
+        [Description( "BinaryCommandFormatter" )]
+        DefaultFormatter = 0,
+
         [Description( "JsonCommandFormatter" )]
-        JSonFormatter = 0x01,
+        JSonFormatter = 1,
 
         [Description( "BinaryCommandFormatter" )]
-        BinaryFormatter = 0x02,
+        BinaryFormatter = 2,
 
         [Description( "MessagePackCommandFormatter" )]
-        MessagePackFormatter = 0x04
+        MessagePackFormatter = 3
     }
 }
