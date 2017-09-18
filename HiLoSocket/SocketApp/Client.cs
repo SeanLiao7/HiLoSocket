@@ -204,8 +204,6 @@ Inner Execption 訊息 : {e.Message}", e );
                         LogTime = DateTime.Now,
                         LogMessage = $"用戶端已連線至伺服器, 伺服器 : {client.RemoteEndPoint}, 用戶端 : {client.LocalEndPoint}"
                     } );
-
-                    _connectDone.Set( );
                 }
                 catch ( Exception e )
                 {
@@ -214,8 +212,10 @@ Inner Execption 訊息 : {e.Message}", e );
                         LogTime = DateTime.Now,
                         LogMessage = $"客戶端連線伺服器失敗, 例外訊息 : {e.Message}"
                     } );
-
-                    Close( client );
+                }
+                finally
+                {
+                    _connectDone.Set( );
                 }
             }
         }
