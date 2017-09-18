@@ -6,25 +6,29 @@ using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
-using HiLoSocket;
 using HiLoSocket.Logger;
 using HiLoSocket.Model;
+using HiLoSocket.SocketApp;
 using MetroFramework.Forms;
 
 namespace ClientForm
 {
     public partial class ClientForm : MetroForm
     {
-        private readonly Client<SocketCommandModel> _client = new Client<SocketCommandModel>( new ClientModel
-        {
-            LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8080 ),
-            RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 )
-        }, new ConsoleLogger( ) );
+        private readonly Client<SocketCommandModel> _client = new Client<SocketCommandModel>(
+            new ClientModel
+            {
+                LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8080 ),
+                RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 )
+            },
+            new ConsoleLogger( ) );
+
+        private bool _canSend = true;
 
         public ClientForm( )
         {
             InitializeComponent( );
-            _client.OnSocketCommandModelRecieved += Client_OnAckCommandReceived;
+            _client.OnCommandModelRecieved += Client_OnAckCommandReceived;
         }
 
         private void AppendText( RichTextBox box, Color color, string text )
@@ -48,18 +52,25 @@ namespace ClientForm
                 {
                     try
                     {
+                        while ( true )
+                        {
+                            if ( _canSend )
+                                break;
+                            Thread.Sleep( 100 );
+                        }
+
+                        _canSend = false;
                         _client.Send( new SocketCommandModel
                         {
-                            CommandName = "Test",
+                            CommandName = "Test2",
                             Id = Guid.NewGuid( ),
-                            Results = new List<string> { "123", "321" },
+                            Results = new List<string> { "333", "111" },
                             Time = DateTime.Now
                         } );
-                        Thread.Sleep( 100 );
                     }
-                    catch ( Exception ex )
+                    catch ( Exception )
                     {
-                        Trace.WriteLine( $"Client Stop! Exception Message : {ex.Message}" );
+                        Trace.WriteLine( "Client Stop!" );
                         break;
                     }
                 }
@@ -68,6 +79,8 @@ namespace ClientForm
 
         private void Client_OnAckCommandReceived( SocketCommandModel model )
         {
+            _canSend = true;
+
             if ( InvokeRequired )
                 Invoke( new Action( ( ) =>
                 {

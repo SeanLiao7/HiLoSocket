@@ -1,27 +1,29 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
-using HiLoSocket;
 using HiLoSocket.Logger;
 using HiLoSocket.Model;
+using HiLoSocket.SocketApp;
 using MetroFramework.Forms;
 
 namespace ServerForm
 {
     public partial class ServerForm : MetroForm
     {
-        private Server<SocketCommandModel> _server = new Server<SocketCommandModel>( new ServerModel
-        {
-            LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 )
-        }, new ConsoleLogger( ) );
+        private Server<SocketCommandModel> _server = new Server<SocketCommandModel>(
+            new ServerModel
+            {
+                LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 )
+            }, new ConsoleLogger( ) );
 
         public ServerForm( )
         {
             InitializeComponent( );
-            _server.OnSocketCommandModelRecieved += Server_OnSocketCommandRecevied;
+            _server.OnCommandModelRecieved += Server_OnSocketCommandRecevied;
         }
 
         private void AppendText( RichTextBox box, Color color, string text )
@@ -45,7 +47,17 @@ namespace ServerForm
                     LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 )
                 }, new ConsoleLogger( ) );
 
-            new Thread( _server.StartListening ).Start( );
+            new Thread( ( ) =>
+            {
+                try
+                {
+                    _server.StartListening( );
+                }
+                catch ( Exception ex )
+                {
+                    Trace.WriteLine( $"Server fail : {ex.Message}" );
+                };
+            } ).Start( );
             lblStatus.Text = @"Listening";
         }
 

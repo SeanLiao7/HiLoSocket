@@ -1,14 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using HiLoSocket.Extension;
 
 namespace HiLoSocket.CommandFormatter
 {
-    public static class FormatterFactory
+    public static class FormatterFactory<TCommandModel>
+        where TCommandModel : class
     {
-        private static readonly Dictionary<FormatterType, ICommandFormatter> _formatterTable =
-            new Dictionary<FormatterType, ICommandFormatter>( );
+        private static readonly Dictionary<FormatterType, ICommandFormatter<TCommandModel>> _formatterTable =
+            new Dictionary<FormatterType, ICommandFormatter<TCommandModel>>( );
 
-        public static ICommandFormatter CreateFormatter( FormatterType formatterType )
+        /// <summary>
+        /// Creates the formatter.
+        /// </summary>
+        /// <param name="formatterType">Type of the formatter.</param>
+        /// <returns>Instance which has implemented ICommandFormatter&lt;TCommandModel&gt;.</returns>
+        /// <exception cref="InvalidOperationException">formatter</exception>
+        public static ICommandFormatter<TCommandModel> CreateFormatter( FormatterType formatterType )
         {
             if ( formatterType == FormatterType.DefaultFormatter )
                 formatterType = FormatterType.BinaryFormatter;
@@ -16,11 +24,16 @@ namespace HiLoSocket.CommandFormatter
             if ( _formatterTable.TryGetValue( formatterType, out var formatter ) )
                 return formatter;
 
-            var type = Type.GetType( $"HiLoSocket.CommandFormatter.Implements.{formatterType.GetDescription( )}" );
-            formatter = ( ICommandFormatter ) Activator.CreateInstance(
-                type ?? throw new InvalidOperationException( nameof( formatterType ) ) );
+            var genericFormatter = Type.GetType( $"HiLoSocket.CommandFormatter.Implements.{formatterType.GetDescription( )}`1" );
+            var genericForamatterClass = genericFormatter?.MakeGenericType( typeof( TCommandModel ) );
+            if ( genericForamatterClass != null )
+            {
+                formatter = Activator.CreateInstance( genericForamatterClass ) as ICommandFormatter<TCommandModel>;
+                _formatterTable.Add( formatterType, formatter );
+            }
 
-            _formatterTable.Add( formatterType, formatter );
+            if ( formatter == null )
+                throw new InvalidOperationException( $"無法建立對應 {nameof( formatter )} 的物件" );
 
             return formatter;
         }

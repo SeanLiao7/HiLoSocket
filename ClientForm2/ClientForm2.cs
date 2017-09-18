@@ -6,9 +6,9 @@ using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
-using HiLoSocket;
 using HiLoSocket.Logger;
 using HiLoSocket.Model;
+using HiLoSocket.SocketApp;
 using MetroFramework.Forms;
 
 namespace ClientForm2
@@ -21,10 +21,12 @@ namespace ClientForm2
             RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 )
         }, new ConsoleLogger( ) );
 
+        private bool _canSend = true;
+
         public ClientForm2( )
         {
             InitializeComponent( );
-            _client.OnSocketCommandModelRecieved += Client_OnAckCommandReceived;
+            _client.OnCommandModelRecieved += Client_OnAckCommandReceived;
         }
 
         private void AppendText( RichTextBox box, Color color, string text )
@@ -48,6 +50,13 @@ namespace ClientForm2
                 {
                     try
                     {
+                        while ( true )
+                        {
+                            if ( _canSend )
+                                break;
+                            Thread.Sleep( 100 );
+                        }
+                        _canSend = false;
                         _client.Send( new SocketCommandModel
                         {
                             CommandName = "Test2",
@@ -55,21 +64,20 @@ namespace ClientForm2
                             Results = new List<string> { "333", "111" },
                             Time = DateTime.Now
                         } );
-                        Thread.Sleep( 100 );
                     }
-                    catch ( Exception ex )
+                    catch ( Exception )
                     {
-                        Trace.WriteLine( $"Client Stop! Exception Message : {ex.Message}" );
+                        Trace.WriteLine( "Client Stop!" );
                         break;
                     }
                 }
-
-                var x = 3;
             } ).Start( );
         }
 
         private void Client_OnAckCommandReceived( SocketCommandModel model )
         {
+            _canSend = true;
+
             if ( InvokeRequired )
                 Invoke( new Action( ( ) =>
                 {

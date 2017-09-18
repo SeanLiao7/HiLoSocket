@@ -59,17 +59,17 @@
     <Compile Include="CommandFormatter\ICommandFormatter.cs" />
     <Compile Include="CommandFormatter\Implements\JsonCommandFormatter.cs" />
     <Compile Include="CommandFormatter\Implements\MessagePackCommandFormatter.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="Extension\Extensions.cs" />
     <Compile Include="Logger\ConsoleLogger.cs" />
     <Compile Include="Logger\ILogger.cs" />
     <Compile Include="Model\ClientModel.cs" />
     <Compile Include="Model\LogModel.cs" />
     <Compile Include="Model\ServerModel.cs" />
-    <Compile Include="SocketBase.cs" />
+    <Compile Include="SocketApp\SocketBase.cs" />
     <Compile Include="Model\SocketCommandModel.cs" />
-    <Compile Include="StateObject.cs" />
-    <Compile Include="Client.cs" />
-    <Compile Include="Server.cs" />
+    <Compile Include="Model\StateObjectModel.cs" />
+    <Compile Include="SocketApp\Client.cs" />
+    <Compile Include="SocketApp\Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

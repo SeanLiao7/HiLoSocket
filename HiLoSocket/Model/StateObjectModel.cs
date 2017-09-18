@@ -1,9 +1,9 @@
 ﻿using System.Net.Sockets;
 
-namespace HiLoSocket
+namespace HiLoSocket.Model
 {
     // State object for reading client data asynchronously
-    public class StateObject
+    public class StateObjectModel
     {
         // Size of receive buffer.
         public const int DataInfoSize = 4;

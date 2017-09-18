@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
-namespace HiLoSocket
+namespace HiLoSocket.Extension
 {
     public static class Extensions
     {
