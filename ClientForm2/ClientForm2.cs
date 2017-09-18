@@ -68,6 +68,7 @@ namespace ClientForm2
                     catch ( Exception )
                     {
                         Trace.WriteLine( "Client Stop!" );
+                        _canSend = true;
                         break;
                     }
                 }

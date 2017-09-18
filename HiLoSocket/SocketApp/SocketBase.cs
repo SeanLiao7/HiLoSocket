@@ -105,7 +105,7 @@ namespace HiLoSocket.SocketApp
                     Logger?.Log( new LogModel
                     {
                         LogTime = DateTime.Now,
-                        LogMessage = $"資料長度訊息接收失敗, 傳送端 : {handler.RemoteEndPoint}, 接收端 : {handler.LocalEndPoint}, 例外訊息 : {e.Message}"
+                        LogMessage = $"資料長度訊息接收失敗, 例外訊息 : {e.Message}"
                     } );
                 }
 
@@ -150,7 +150,7 @@ namespace HiLoSocket.SocketApp
                     Logger?.Log( new LogModel
                     {
                         LogTime = DateTime.Now,
-                        LogMessage = $"資料模型接收失敗, 傳送端 : {handler.RemoteEndPoint}, 接收端 : {handler.LocalEndPoint}, 例外訊息 : {e.Message}"
+                        LogMessage = $"資料模型接收失敗, 例外訊息 : {e.Message}"
                     } );
                 }
 
@@ -192,7 +192,7 @@ namespace HiLoSocket.SocketApp
                 Logger?.Log( new LogModel
                 {
                     LogTime = DateTime.Now,
-                    LogMessage = $"傳送資料失敗, 傳送端 : {handler.LocalEndPoint}, 接收端 : {handler.RemoteEndPoint}, 例外訊息 : {e.Message}"
+                    LogMessage = $"傳送資料失敗, 例外訊息 : {e.Message}"
                 } );
 
                 throw new InvalidOperationException( $@"傳送資料失敗，詳細請參照 Inner Exception。
@@ -222,7 +222,7 @@ Inner Exception 訊息 : {e.Message}", e );
                     Logger?.Log( new LogModel
                     {
                         LogTime = DateTime.Now,
-                        LogMessage = $"資料傳輸失敗, 傳送端 : {handler.LocalEndPoint}, 接收端 : {handler.RemoteEndPoint}, 例外訊息 : {e.Message}"
+                        LogMessage = $"資料傳輸失敗, 例外訊息 : {e.Message}"
                     } );
                 }
             }
@@ -241,7 +241,7 @@ Inner Exception 訊息 : {e.Message}", e );
                 Logger?.Log( new LogModel
                 {
                     LogTime = DateTime.Now,
-                    LogMessage = $"嘗試接收資料模型失敗, 傳送端 : {handler.RemoteEndPoint}, 接收端 : {handler.LocalEndPoint}, 例外訊息 : {e.Message}"
+                    LogMessage = $"嘗試接收資料模型失敗, 例外訊息 : {e.Message}"
                 } );
             }
         }

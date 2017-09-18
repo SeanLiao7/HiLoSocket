@@ -114,7 +114,7 @@ namespace HiLoSocket.SocketApp
                 Logger?.Log( new LogModel
                 {
                     LogTime = DateTime.Now,
-                    LogMessage = $"客戶端資料傳送失敗啦, 傳送端 : {client.LocalEndPoint}, 接收端 : {client.RemoteEndPoint}, 例外訊息 : {e.Message}"
+                    LogMessage = $"客戶端資料傳送失敗啦, 例外訊息 : {e.Message}"
                 } );
 
                 throw new InvalidOperationException( $@"客戶端傳送訊息至伺服器失敗，詳細請參照 Inner Exception。
@@ -152,7 +152,7 @@ Inner Execption 訊息 : {e.Message}", e );
 
             if ( asyncResult.AsyncState is StateObjectModel state )
             {
-                Close( state );
+                Close( state.WorkSocket );
                 var commandModel = GetCommandModel( state );
                 InvokeOnSocketCommandModelRecieved( commandModel );
             }
@@ -166,14 +166,13 @@ Inner Execption 訊息 : {e.Message}", e );
             _sendDone.Set( );
         }
 
-        private void Close( StateObjectModel state )
+        private void Close( Socket handler )
         {
-            var handler = state.WorkSocket;
-            var remoteIp = handler.RemoteEndPoint;
-            var localIp = handler.LocalEndPoint;
-
             try
             {
+                var remoteIp = handler.RemoteEndPoint;
+                var localIp = handler.LocalEndPoint;
+
                 handler.Shutdown( SocketShutdown.Both );
                 handler.Close( );
 
@@ -183,12 +182,12 @@ Inner Execption 訊息 : {e.Message}", e );
                     LogMessage = $"用戶端已關閉與伺服器連線, 伺服器 : {remoteIp}, 用戶端 : {localIp}"
                 } );
             }
-            catch ( Exception )
+            catch ( Exception e )
             {
                 Logger?.Log( new LogModel
                 {
                     LogTime = DateTime.Now,
-                    LogMessage = $"用戶端關閉連線失敗囉, 伺服器 : {remoteIp}, 用戶端 : {localIp}"
+                    LogMessage = $"用戶端關閉連線失敗囉, 例外訊息 : {e.Message}"
                 } );
             }
         }
@@ -213,8 +212,10 @@ Inner Execption 訊息 : {e.Message}", e );
                     Logger?.Log( new LogModel
                     {
                         LogTime = DateTime.Now,
-                        LogMessage = $"客戶端連線伺服器失敗, 伺服器：{RemoteIpEndPoint}, 用戶端 : {LocalIpEndPoint}, 例外訊息 : {e.Message}"
+                        LogMessage = $"客戶端連線伺服器失敗, 例外訊息 : {e.Message}"
                     } );
+
+                    Close( client );
                 }
             }
         }
@@ -235,7 +236,7 @@ Inner Execption 訊息 : {e.Message}", e );
                 Logger?.Log( new LogModel
                 {
                     LogTime = DateTime.Now,
-                    LogMessage = $"資料接收失敗啦, 傳送端 : {client.RemoteEndPoint}, 接收端 : {client.LocalEndPoint}, 例外訊息 : {e.Message}"
+                    LogMessage = $"資料接收失敗啦, 例外訊息 : {e.Message}"
                 } );
 
                 throw new InvalidOperationException( $@"客戶端接收伺服器訊息失敗，詳細請參照 Inner Exception。

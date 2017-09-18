@@ -52,14 +52,6 @@ namespace ClientForm
                 {
                     try
                     {
-                        while ( true )
-                        {
-                            if ( _canSend )
-                                break;
-                            Thread.Sleep( 100 );
-                        }
-
-                        _canSend = false;
                         _client.Send( new SocketCommandModel
                         {
                             CommandName = "Test2",
@@ -79,8 +71,6 @@ namespace ClientForm
 
         private void Client_OnAckCommandReceived( SocketCommandModel model )
         {
-            _canSend = true;
-
             if ( InvokeRequired )
                 Invoke( new Action( ( ) =>
                 {
