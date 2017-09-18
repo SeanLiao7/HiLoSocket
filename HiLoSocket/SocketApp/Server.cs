@@ -15,7 +15,7 @@ namespace HiLoSocket.SocketApp
         /// <summary>
         /// The maximum pending connection length
         /// </summary>
-        public const int MaxPendingConnectionLength = 4;
+        public const int MaxPendingConnectionLength = 100;
 
         private readonly ManualResetEventSlim _allDone = new ManualResetEventSlim( );
         private Socket _listener;
@@ -44,8 +44,9 @@ namespace HiLoSocket.SocketApp
         /// </value>
         public IPEndPoint LocalIpEndPoint { get; }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a new instance of the <see cref="Server{TCommandModel}"/> class.
+        /// Initializes a new instance of the <see cref="T:HiLoSocket.SocketApp.Server`1" /> class.
         /// </summary>
         /// <param name="serverModel">The server model.</param>
         public Server( ServerModel serverModel )
@@ -115,7 +116,7 @@ namespace HiLoSocket.SocketApp
                         LogMessage = $"伺服器等待連線中, 伺服器 : {LocalIpEndPoint}"
                     } );
 
-                    listener.BeginAccept( AcceptCallback, _listener );
+                    listener.BeginAccept( AcceptCallback, listener );
                     _allDone.Wait( );
                 }
             }
@@ -181,7 +182,7 @@ Inner Exeption 訊息 : {e.Message}", e );
                 var handler = state.WorkSocket;
                 var commandModel = GetCommandModel( state );
                 Send( handler, commandModel );
-                InvokeOnSocketCommandModelRecieved( commandModel );
+                InvokeOnSocketCommandModelReceived( commandModel );
             }
         }
 

@@ -18,9 +18,6 @@ namespace HiLoSocket.CommandFormatter
         /// <exception cref="InvalidOperationException">formatter</exception>
         public static ICommandFormatter<TCommandModel> CreateFormatter( FormatterType formatterType )
         {
-            if ( formatterType == FormatterType.DefaultFormatter )
-                formatterType = FormatterType.BinaryFormatter;
-
             if ( _formatterTable.TryGetValue( formatterType, out var formatter ) )
                 return formatter;
 

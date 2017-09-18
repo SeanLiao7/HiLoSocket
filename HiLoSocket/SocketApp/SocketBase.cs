@@ -14,9 +14,9 @@ namespace HiLoSocket.SocketApp
         protected ILogger Logger { get; }
 
         /// <summary>
-        /// Occurs when [on command model recieved].
+        /// Occurs when [on command model received].
         /// </summary>
-        public event Action<TCommandModel> OnCommandModelRecieved;
+        public event Action<TCommandModel> OnCommandModelReceived;
 
         protected SocketBase( FormatterType? formatterType, ILogger logger )
         {
@@ -77,12 +77,12 @@ namespace HiLoSocket.SocketApp
         }
 
         /// <summary>
-        /// Invokes the on socket command model recieved.
+        /// Invokes the on socket command model received.
         /// </summary>
         /// <param name="commandModel">The command model.</param>
-        protected void InvokeOnSocketCommandModelRecieved( TCommandModel commandModel )
+        protected void InvokeOnSocketCommandModelReceived( TCommandModel commandModel )
         {
-            OnCommandModelRecieved?.Invoke( commandModel );
+            OnCommandModelReceived?.Invoke( commandModel );
         }
 
         /// <summary>

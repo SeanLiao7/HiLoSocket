@@ -40,8 +40,9 @@ namespace HiLoSocket.SocketApp
         /// </value>
         public IPEndPoint RemoteIpEndPoint { get; }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a new instance of the <see cref="Client{TModel}"/> class.
+        /// Initializes a new instance of the <see cref="T:HiLoSocket.SocketApp.Client`1" /> class.
         /// </summary>
         /// <param name="clientModel">The client model.</param>
         public Client( ClientModel clientModel )
@@ -154,7 +155,7 @@ Inner Execption 訊息 : {e.Message}", e );
             {
                 Close( state.WorkSocket );
                 var commandModel = GetCommandModel( state );
-                InvokeOnSocketCommandModelRecieved( commandModel );
+                InvokeOnSocketCommandModelReceived( commandModel );
             }
 
             _receiveDone.Set( );

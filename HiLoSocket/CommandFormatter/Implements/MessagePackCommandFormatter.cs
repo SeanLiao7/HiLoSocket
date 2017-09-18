@@ -7,6 +7,7 @@ namespace HiLoSocket.CommandFormatter.Implements
     public class MessagePackCommandFormatter<TCommandModel> : ICommandFormatter<TCommandModel>
         where TCommandModel : class
     {
+        /// <inheritdoc />
         /// <summary>
         /// Deserializes the specified bytes.
         /// </summary>
@@ -14,8 +15,8 @@ namespace HiLoSocket.CommandFormatter.Implements
         /// <returns>
         /// TCommandModel.
         /// </returns>
-        /// <exception cref="ArgumentNullException">bytes - 輸入參數沒東西可以反序列化喔。</exception>
-        /// <exception cref="ArgumentException">資料長度不能為零阿。 - bytes</exception>
+        /// <exception cref="T:System.ArgumentNullException">bytes - 輸入參數沒東西可以反序列化喔。</exception>
+        /// <exception cref="T:System.ArgumentException">資料長度不能為零阿。 - bytes</exception>
         public TCommandModel Deserialize( byte[ ] bytes )
         {
             if ( bytes == null )
@@ -27,6 +28,7 @@ namespace HiLoSocket.CommandFormatter.Implements
             return MessagePackSerializer.Deserialize<TCommandModel>( bytes, ContractlessStandardResolver.Instance );
         }
 
+        /// <inheritdoc />
         /// <summary>
         /// Serializes the specified command model.
         /// </summary>
@@ -34,7 +36,7 @@ namespace HiLoSocket.CommandFormatter.Implements
         /// <returns>
         /// Byte Array.
         /// </returns>
-        /// <exception cref="ArgumentNullException">commandModel - 輸入參數沒東西可以序列化喔。</exception>
+        /// <exception cref="T:System.ArgumentNullException">commandModel - 輸入參數沒東西可以序列化喔。</exception>
         public byte[ ] Serialize( TCommandModel commandModel )
         {
             if ( commandModel == null )

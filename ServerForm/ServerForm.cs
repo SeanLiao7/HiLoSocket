@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
+using HiLoSocket.CommandFormatter;
 using HiLoSocket.Logger;
 using HiLoSocket.Model;
 using HiLoSocket.SocketApp;
@@ -17,13 +18,14 @@ namespace ServerForm
         private Server<SocketCommandModel> _server = new Server<SocketCommandModel>(
             new ServerModel
             {
-                LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 )
+                LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
+                FormatterType = FormatterType.JSonFormatter
             }, new ConsoleLogger( ) );
 
         public ServerForm( )
         {
             InitializeComponent( );
-            _server.OnCommandModelRecieved += Server_OnSocketCommandRecevied;
+            _server.OnCommandModelReceived += Server_OnSocketCommandRecevied;
         }
 
         private void AppendText( RichTextBox box, Color color, string text )

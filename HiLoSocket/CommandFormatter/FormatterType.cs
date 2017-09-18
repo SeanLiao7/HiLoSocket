@@ -5,10 +5,10 @@ namespace HiLoSocket.CommandFormatter
     public enum FormatterType
     {
         /// <summary>
-        /// Default Formatter is BinaryFormatter
+        /// Binary Formatter
         /// </summary>
         [Description( "BinaryCommandFormatter" )]
-        DefaultFormatter = 0,
+        BinaryFormatter = 0,
 
         /// <summary>
         /// Json Formatter
@@ -17,15 +17,9 @@ namespace HiLoSocket.CommandFormatter
         JSonFormatter = 1,
 
         /// <summary>
-        /// Binary Formatter
-        /// </summary>
-        [Description( "BinaryCommandFormatter" )]
-        BinaryFormatter = 2,
-
-        /// <summary>
         /// MessagePack Formatter
         /// </summary>
         [Description( "MessagePackCommandFormatter" )]
-        MessagePackFormatter = 3
+        MessagePackFormatter = 2
     }
 }

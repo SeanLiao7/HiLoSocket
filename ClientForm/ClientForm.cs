@@ -6,6 +6,7 @@ using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
+using HiLoSocket.CommandFormatter;
 using HiLoSocket.Logger;
 using HiLoSocket.Model;
 using HiLoSocket.SocketApp;
@@ -18,17 +19,16 @@ namespace ClientForm
         private readonly Client<SocketCommandModel> _client = new Client<SocketCommandModel>(
             new ClientModel
             {
-                LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8080 ),
-                RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 )
+                LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8081 ),
+                RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
+                FormatterType = FormatterType.JSonFormatter
             },
             new ConsoleLogger( ) );
-
-        private bool _canSend = true;
 
         public ClientForm( )
         {
             InitializeComponent( );
-            _client.OnCommandModelRecieved += Client_OnAckCommandReceived;
+            _client.OnCommandModelReceived += Client_OnAckCommandReceived;
         }
 
         private void AppendText( RichTextBox box, Color color, string text )
@@ -59,6 +59,8 @@ namespace ClientForm
                             Results = new List<string> { "333", "111" },
                             Time = DateTime.Now
                         } );
+
+                        Thread.Sleep( 100 );
                     }
                     catch ( Exception )
                     {
