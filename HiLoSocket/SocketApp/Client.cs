@@ -61,26 +61,10 @@ namespace HiLoSocket.SocketApp
         public Client( ClientModel clientModel, ILogger logger )
             : base( clientModel?.FormatterType, logger )
         {
-            if ( clientModel == null )
-            {
-                throw new ArgumentNullException( nameof( clientModel ),
-                    $@"時間 : {DateTime.Now.GetDateTimeString( )},
-類別 : {nameof( Client<TCommandModel> )},
-方法 : Constructor,
-內容 : 你沒初始化 {nameof( clientModel )} 喔。" );
-            }
-
-            if ( clientModel.ValidateObject( out var errorMessages ) == false )
-            {
-                throw new ValidationException(
-                    $@"時間 : {DateTime.Now.GetDateTimeString( )},
-類別 : {nameof( Client<TCommandModel> )},
-方法 : Constructor,
-內容 : {string.Join( "\n", errorMessages )}" );
-            }
-
-            LocalIpEndPoint = clientModel.LocalIpEndPoint;
-            RemoteIpEndPoint = clientModel.RemoteIpEndPoint;
+            CheckIfNullModel( clientModel );
+            ValidateModel( clientModel );
+            LocalIpEndPoint = clientModel?.LocalIpEndPoint;
+            RemoteIpEndPoint = clientModel?.RemoteIpEndPoint;
         }
 
         /// <summary>
@@ -92,25 +76,15 @@ namespace HiLoSocket.SocketApp
         /// <exception cref="InvalidOperationException">客戶端傳送訊息至伺服器失敗，詳細請參照 Inner Exception。</exception>
         public void Send( TCommandModel commandModel )
         {
-            if ( IsDisposed )
-                throw new ObjectDisposedException( nameof( Client<TCommandModel> ), "Client 已經被 Dispose 囉" );
-
-            if ( commandModel == null )
-                throw new ArgumentNullException( nameof( commandModel ), "沒東西可以傳送喔，請記得初始化資料物件。" );
+            CheckIfDisposed( );
+            CheckIfNullInput( commandModel );
 
             var client = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
             _client = client;
 
             try
             {
-                client.BeginConnect( RemoteIpEndPoint, ConnectCallback, client );
-                _connectDone.Wait( );
-
-                Send( client, commandModel );
-                _sendDone.Wait( );
-
-                Receive( client );
-                _receiveDone.Wait( );
+                TrySend( client, commandModel );
             }
             catch ( Exception e )
             {
@@ -129,10 +103,8 @@ Inner Execption 訊息 : {e.Message}", e );
 
         public override string ToString( )
         {
-            if ( IsDisposed )
-                throw new ObjectDisposedException( nameof( Client<TCommandModel> ), "Client 已經被 Dispose 囉" );
-
-            return $"Client with {nameof( TCommandModel )} model";
+            CheckIfDisposed( );
+            return $"Client with {typeof( TCommandModel )} type model";
         }
 
         protected override void Dispose( bool disposing )
@@ -171,6 +143,42 @@ Inner Execption 訊息 : {e.Message}", e );
         {
             base.SendCallback( asyncResult );
             _sendDone.Set( );
+        }
+
+        private static void CheckIfNullInput( TCommandModel commandModel )
+        {
+            if ( commandModel == null )
+                throw new ArgumentNullException( nameof( commandModel ), "沒東西可以傳送喔，請記得初始化資料物件。" );
+        }
+
+        private static void CheckIfNullModel( ClientModel clientModel )
+        {
+            if ( clientModel == null )
+            {
+                throw new ArgumentNullException( nameof( clientModel ),
+                    $@"時間 : {DateTime.Now.GetDateTimeString( )},
+類別 : {nameof( Client<TCommandModel> )},
+方法 : Constructor,
+內容 : 你沒初始化 {nameof( clientModel )} 喔。" );
+            }
+        }
+
+        private static void ValidateModel( ClientModel clientModel )
+        {
+            if ( clientModel.ValidateObject( out var errorMessages ) == false )
+            {
+                throw new ValidationException(
+                    $@"時間 : {DateTime.Now.GetDateTimeString( )},
+類別 : {nameof( Client<TCommandModel> )},
+方法 : Constructor,
+內容 : {string.Join( "\n", errorMessages )}" );
+            }
+        }
+
+        private void CheckIfDisposed( )
+        {
+            if ( IsDisposed )
+                throw new ObjectDisposedException( nameof( Client<TCommandModel> ), "Client 已經被 Dispose 囉" );
         }
 
         private void Close( Socket handler )
@@ -249,6 +257,18 @@ Inner Execption 訊息 : {e.Message}", e );
                 throw new InvalidOperationException( $@"客戶端接收伺服器訊息失敗，詳細請參照 Inner Exception。
 Inner Execption 訊息 : {e.Message}", e );
             }
+        }
+
+        private void TrySend( Socket client, TCommandModel commandModel )
+        {
+            client.BeginConnect( RemoteIpEndPoint, ConnectCallback, client );
+            _connectDone.Wait( );
+
+            Send( client, commandModel );
+            _sendDone.Wait( );
+
+            Receive( client );
+            _receiveDone.Wait( );
         }
 
         ~Client( )

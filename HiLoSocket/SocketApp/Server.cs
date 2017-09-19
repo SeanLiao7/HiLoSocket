@@ -64,24 +64,9 @@ namespace HiLoSocket.SocketApp
         public Server( ServerModel serverModel, ILogger logger )
             : base( serverModel?.FormatterType, logger )
         {
-            if ( serverModel == null )
-            {
-                throw new ArgumentNullException( nameof( serverModel ),
-                    $@"時間 : {DateTime.Now.GetDateTimeString( )},
-類別 : {nameof( Server<TCommandModel> )},
-方法 : Constructor,
-內容 : 你沒初始化 {nameof( serverModel )} 喔。" );
-            }
-
-            if ( serverModel.ValidateObject( out var errorMessages ) == false )
-            {
-                throw new ValidationException( $@"時間 : {DateTime.Now.GetDateTimeString( )},
-類別 : {nameof( Server<TCommandModel> )},
-方法 : Constructor,
-內容 : {string.Join( "\n", errorMessages )}" );
-            }
-
-            LocalIpEndPoint = serverModel.LocalIpEndPoint;
+            CheckIfNullInput( serverModel );
+            ValidateInputModel( serverModel );
+            LocalIpEndPoint = serverModel?.LocalIpEndPoint;
         }
 
         /// <summary>
@@ -91,33 +76,20 @@ namespace HiLoSocket.SocketApp
         /// <exception cref="InvalidOperationException">伺服器監聽用戶端失敗，詳細資訊請參照 Inner Exception。</exception>
         public void StartListening( )
         {
-            if ( IsDisposed )
-                throw new ObjectDisposedException( nameof( Server<TCommandModel> ), "Server 已經被 Dispose 囉" );
+            CheckIfDisposed( );
 
             if ( IsListening )
                 return;
 
             var listener = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
             _listener = listener;
-            IsListening = true;
 
             try
             {
-                listener.Bind( LocalIpEndPoint );
-                listener.Listen( MaxPendingConnectionLength );
-
+                SetupListener( listener );
                 while ( IsListening )
                 {
-                    _allDone.Reset( );
-
-                    Logger?.Log( new LogModel
-                    {
-                        LogTime = DateTime.Now,
-                        LogMessage = $"伺服器等待連線中, 伺服器 : {LocalIpEndPoint}"
-                    } );
-
-                    listener.BeginAccept( AcceptCallback, listener );
-                    _allDone.Wait( );
+                    TryAcceptClient( listener );
                 }
             }
             catch ( Exception e )
@@ -143,9 +115,7 @@ Inner Exeption 訊息 : {e.Message}", e );
         /// <exception cref="ObjectDisposedException">物件已經被 Dispose 囉</exception>
         public void StopListening( )
         {
-            if ( IsDisposed )
-                throw new ObjectDisposedException( ToString( ), "物件已經被 Dispose 囉" );
-
+            CheckIfDisposed( );
             StopListening( _listener );
         }
 
@@ -154,7 +124,7 @@ Inner Exeption 訊息 : {e.Message}", e );
             if ( IsDisposed )
                 throw new ObjectDisposedException( nameof( Server<TCommandModel> ), "Server 已經被 Dispose 囉" );
 
-            return $"Server with {nameof( TCommandModel )} model";
+            return $"Server with {typeof( TCommandModel )} type model";
         }
 
         protected override void Dispose( bool disposing )
@@ -183,6 +153,29 @@ Inner Exeption 訊息 : {e.Message}", e );
                 var commandModel = GetCommandModel( state );
                 Send( handler, commandModel );
                 InvokeOnSocketCommandModelReceived( commandModel );
+            }
+        }
+
+        private static void CheckIfNullInput( ServerModel serverModel )
+        {
+            if ( serverModel == null )
+            {
+                throw new ArgumentNullException( nameof( serverModel ),
+                    $@"時間 : {DateTime.Now.GetDateTimeString( )},
+類別 : {nameof( Server<TCommandModel> )},
+方法 : Constructor,
+內容 : 你沒初始化 {nameof( serverModel )} 喔。" );
+            }
+        }
+
+        private static void ValidateInputModel( ServerModel serverModel )
+        {
+            if ( serverModel.ValidateObject( out var errorMessages ) == false )
+            {
+                throw new ValidationException( $@"時間 : {DateTime.Now.GetDateTimeString( )},
+類別 : {nameof( Server<TCommandModel> )},
+方法 : Constructor,
+內容 : {string.Join( "\n", errorMessages )}" );
             }
         }
 
@@ -219,10 +212,37 @@ Inner Exeption 訊息 : {e.Message}", e );
             }
         }
 
+        private void CheckIfDisposed( )
+        {
+            if ( IsDisposed )
+                throw new ObjectDisposedException( nameof( Server<TCommandModel> ), "Server 已經被 Dispose 囉" );
+        }
+
+        private void SetupListener( Socket listener )
+        {
+            listener.Bind( LocalIpEndPoint );
+            listener.Listen( MaxPendingConnectionLength );
+            IsListening = true;
+        }
+
         private void StopListening( Socket listener )
         {
             IsListening = false;
             listener?.Close( );
+        }
+
+        private void TryAcceptClient( Socket listener )
+        {
+            _allDone.Reset( );
+
+            Logger?.Log( new LogModel
+            {
+                LogTime = DateTime.Now,
+                LogMessage = $"伺服器等待連線中, 伺服器 : {LocalIpEndPoint}"
+            } );
+
+            listener.BeginAccept( AcceptCallback, listener );
+            _allDone.Wait( );
         }
 
         ~Server( )

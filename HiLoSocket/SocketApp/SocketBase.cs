@@ -10,7 +10,6 @@ namespace HiLoSocket.SocketApp
         where TCommandModel : class
     {
         protected ICommandFormatter<TCommandModel> CommandFormatter { get; }
-
         protected bool IgnoreFormatter { get; }
         protected ILogger Logger { get; }
 
@@ -33,6 +32,7 @@ namespace HiLoSocket.SocketApp
             Logger = logger;
         }
 
+        /// <inheritdoc />
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -133,7 +133,7 @@ namespace HiLoSocket.SocketApp
                     Logger?.Log( new LogModel
                     {
                         LogTime = DateTime.Now,
-                        LogMessage = $"資料長度訊息不完整喔, 傳送端 : {handler.RemoteEndPoint}, 接收端 : {handler.LocalEndPoint}, 資料長度 : {bytesRead} bytes"
+                        LogMessage = $"資料長度訊息接收不完整喔, 物件名稱 : {ToString( )}, 資料長度 : {bytesRead} bytes"
                     } );
                 }
             }
@@ -176,7 +176,7 @@ namespace HiLoSocket.SocketApp
                     Logger?.Log( new LogModel
                     {
                         LogTime = DateTime.Now,
-                        LogMessage = $"資料模型收集不完全阿, 傳送端 : {handler.RemoteEndPoint}, 接收端 : {handler.LocalEndPoint}, 資料長度 : {bytesRead} bytes"
+                        LogMessage = $"資料模型收集不完全阿, 物件名稱 : {ToString( )}, 資料長度 : {bytesRead} bytes"
                     } );
                 }
             }
