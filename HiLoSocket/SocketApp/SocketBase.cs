@@ -11,6 +11,7 @@ namespace HiLoSocket.SocketApp
     {
         protected ICommandFormatter<TCommandModel> CommandFormatter { get; }
 
+        protected bool IgnoreFormatter { get; }
         protected ILogger Logger { get; }
 
         /// <summary>
@@ -20,10 +21,15 @@ namespace HiLoSocket.SocketApp
 
         protected SocketBase( FormatterType? formatterType, ILogger logger )
         {
-            if ( formatterType == null )
-                formatterType = FormatterType.BinaryFormatter;
+            IgnoreFormatter = typeof( TCommandModel ) == typeof( byte[ ] );
 
-            CommandFormatter = FormatterFactory<TCommandModel>.CreateFormatter( formatterType.Value );
+            if ( IgnoreFormatter == false )
+            {
+                if ( formatterType == null )
+                    formatterType = FormatterType.BinaryFormatter;
+
+                CommandFormatter = FormatterFactory<TCommandModel>.CreateFormatter( formatterType.Value );
+            }
             Logger = logger;
         }
 
@@ -43,9 +49,9 @@ namespace HiLoSocket.SocketApp
         protected byte[ ] CreateBytesToSendWithSize( byte[ ] commandBytestoSend )
         {
             var lengthConvert = BitConverter.GetBytes( commandBytestoSend.Length ); // 將此次傳輸的 command 長度轉為 byte 陣列
-            var commandBytetoSendWithSize = new byte[ commandBytestoSend.Length + 4 ]; // 傳輸的資料包含長度包含 4 個代表 command 長度的陣列與本身
+            var commandBytetoSendWithSize = new byte[ commandBytestoSend.Length + StateObjectModel.DataInfoSize ]; // 傳輸的資料包含長度包含 4 個代表 command 長度的陣列與本身
             lengthConvert.CopyTo( commandBytetoSendWithSize, 0 ); // copy 長度資訊
-            commandBytestoSend.CopyTo( commandBytetoSendWithSize, 4 ); // copy command 資訊
+            commandBytestoSend.CopyTo( commandBytetoSendWithSize, StateObjectModel.DataInfoSize ); // copy command 資訊
 
             return commandBytetoSendWithSize;
         }
@@ -60,10 +66,12 @@ namespace HiLoSocket.SocketApp
 
         protected TCommandModel GetCommandModel( StateObjectModel state )
         {
-            TCommandModel commandModel = default( TCommandModel );
+            var commandModel = default( TCommandModel );
             try
             {
-                commandModel = CommandFormatter.Deserialize( state.Buffer );
+                commandModel = IgnoreFormatter
+                    ? state.Buffer as TCommandModel
+                    : CommandFormatter.Deserialize( state.Buffer );
             }
             catch ( Exception e )
             {
@@ -183,7 +191,10 @@ namespace HiLoSocket.SocketApp
         {
             try
             {
-                var bytestoSend = CommandFormatter.Serialize( commandModel );
+                var bytestoSend = IgnoreFormatter
+                    ? commandModel as byte[ ]
+                    : CommandFormatter.Serialize( commandModel );
+
                 var bytesToSendWithSize = CreateBytesToSendWithSize( bytestoSend );
                 handler.BeginSend( bytesToSendWithSize, 0, bytesToSendWithSize.Length, 0, SendCallback, handler );
             }

@@ -15,11 +15,11 @@ namespace ServerForm
 {
     public partial class ServerForm : MetroForm
     {
-        private Server<SocketCommandModel> _server = new Server<SocketCommandModel>(
+        private Server<byte[ ]> _server = new Server<byte[ ]>(
             new ServerModel
             {
                 LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
-                FormatterType = FormatterType.JSonFormatter
+                FormatterType = FormatterType.MessagePackFormatter
             }, new ConsoleLogger( ) );
 
         public ServerForm( )
@@ -43,12 +43,6 @@ namespace ServerForm
 
         private void btnListen_Click( object sender, EventArgs e )
         {
-            if ( _server == null )
-                _server = new Server<SocketCommandModel>( new ServerModel
-                {
-                    LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 )
-                }, new ConsoleLogger( ) );
-
             new Thread( ( ) =>
             {
                 try
@@ -58,6 +52,11 @@ namespace ServerForm
                 catch ( Exception ex )
                 {
                     Trace.WriteLine( $"Server fail : {ex.Message}" );
+                    if ( InvokeRequired )
+                        Invoke( new Action( ( ) =>
+                        {
+                            lblStatus.Text = @"Standby";
+                        } ) );
                 };
             } ).Start( );
             lblStatus.Text = @"Listening";
@@ -68,14 +67,15 @@ namespace ServerForm
             _server.StopListening( );
         }
 
-        private void Server_OnSocketCommandRecevied( SocketCommandModel model )
+        private void Server_OnSocketCommandRecevied( byte[ ] model )
         {
             if ( InvokeRequired )
                 Invoke( new Action( ( ) =>
                 {
-                    AppendText( rtbLog, Color.Red, model.Id.ToString( ) );
-                    rtbLog.AppendText( "\n" );
-                    rtbLog.AppendText( model.Time.ToString( CultureInfo.InvariantCulture ) );
+                    AppendText( rtbLog, Color.Red, model[ 0 ] + model[ 1 ].ToString( ) );
+                    //AppendText( rtbLog, Color.Red, model.Id.ToString( ) );
+                    //rtbLog.AppendText( "\n" );
+                    //rtbLog.AppendText( model.Time.ToString( CultureInfo.InvariantCulture ) );
                     rtbLog.AppendText( "\n" );
                 } ) );
         }

@@ -16,11 +16,11 @@ namespace ClientForm2
 {
     public partial class ClientForm2 : MetroForm
     {
-        private readonly Client<SocketCommandModel> _client = new Client<SocketCommandModel>( new ClientModel
+        private readonly Client<byte[ ]> _client = new Client<byte[ ]>( new ClientModel
         {
             LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8082 ),
             RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
-            FormatterType = FormatterType.JSonFormatter
+            FormatterType = FormatterType.MessagePackFormatter
         }, new ConsoleLogger( ) );
 
         public ClientForm2( )
@@ -50,33 +50,45 @@ namespace ClientForm2
                 {
                     try
                     {
-                        _client.Send( new SocketCommandModel
+                        //_client.Send( new SocketCommandModel
+                        //{
+                        //    CommandName = "Test2",
+                        //    Id = Guid.NewGuid( ),
+                        //    Results = new List<string> { "333", "111" },
+                        //    Time = DateTime.Now
+                        //} );
+
+                        _client.Send( new byte[ ]
                         {
-                            CommandName = "Test2",
-                            Id = Guid.NewGuid( ),
-                            Results = new List<string> { "333", "111" },
-                            Time = DateTime.Now
+                            87,99
                         } );
 
-                        Thread.Sleep( 100 );
+                        Thread.Sleep( 2000 );
                     }
                     catch ( Exception )
                     {
                         Trace.WriteLine( "Client Stop!" );
+                        if ( InvokeRequired )
+                            Invoke( new Action( ( ) =>
+                            {
+                                lblStatus.Text = @"StandBy";
+                            } ) );
                         break;
                     }
                 }
             } ).Start( );
+            lblStatus.Text = @"Working";
         }
 
-        private void Client_OnAckCommandReceived( SocketCommandModel model )
+        private void Client_OnAckCommandReceived( byte[ ] model )
         {
             if ( InvokeRequired )
                 Invoke( new Action( ( ) =>
                 {
-                    AppendText( rtbLog, Color.Red, model.Id.ToString( ) );
-                    rtbLog.AppendText( "\n" );
-                    rtbLog.AppendText( model.Time.ToString( CultureInfo.InvariantCulture ) );
+                    AppendText( rtbLog, Color.Red, model[ 0 ] + model[ 1 ].ToString( ) );
+                    //AppendText( rtbLog, Color.Red, model.Id.ToString( ) );
+                    //rtbLog.AppendText( "\n" );
+                    //rtbLog.AppendText( model.Time.ToString( CultureInfo.InvariantCulture ) );
                     rtbLog.AppendText( "\n" );
                 } ) );
         }
