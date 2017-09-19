@@ -65,7 +65,7 @@ namespace ClientForm
                             55,66
                         } );
 
-                        Thread.Sleep( 1000 );
+                        Thread.Sleep( 100 );
                     }
                     catch ( Exception )
                     {
