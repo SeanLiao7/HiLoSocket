@@ -65,6 +65,7 @@ namespace ServerForm
         private void btnStop_Click( object sender, EventArgs e )
         {
             _server.StopListening( );
+            lblStatus.Text = @"Standby";
         }
 
         private void Server_OnSocketCommandRecevied( byte[ ] model )

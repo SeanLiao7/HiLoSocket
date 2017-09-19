@@ -15,6 +15,7 @@ namespace HiLoSocket.SocketApp
         private readonly ManualResetEventSlim _connectDone = new ManualResetEventSlim( );
         private readonly ManualResetEventSlim _receiveDone = new ManualResetEventSlim( );
         private readonly ManualResetEventSlim _sendDone = new ManualResetEventSlim( );
+        private Socket _client;
 
         /// <summary>
         /// Gets a value indicating whether this instance is disposed.
@@ -98,6 +99,7 @@ namespace HiLoSocket.SocketApp
                 throw new ArgumentNullException( nameof( commandModel ), "沒東西可以傳送喔，請記得初始化資料物件。" );
 
             var client = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
+            _client = client;
 
             try
             {
@@ -115,8 +117,10 @@ namespace HiLoSocket.SocketApp
                 Logger?.Log( new LogModel
                 {
                     LogTime = DateTime.Now,
-                    LogMessage = $"客戶端資料傳送失敗啦, 例外訊息 : {e.Message}"
+                    LogMessage = $"客戶端資料傳送失敗啦, 連線關閉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
+
+                client.Close( );
 
                 throw new InvalidOperationException( $@"客戶端傳送訊息至伺服器失敗，詳細請參照 Inner Exception。
 Inner Execption 訊息 : {e.Message}", e );
@@ -141,6 +145,8 @@ Inner Execption 訊息 : {e.Message}", e );
                     _receiveDone?.Dispose( );
                     _sendDone?.Dispose( );
                 }
+
+                _client?.Dispose( );
             }
 
             IsDisposed = true;
@@ -188,7 +194,7 @@ Inner Execption 訊息 : {e.Message}", e );
                 Logger?.Log( new LogModel
                 {
                     LogTime = DateTime.Now,
-                    LogMessage = $"用戶端關閉連線失敗囉, 例外訊息 : {e.Message}"
+                    LogMessage = $"用戶端關閉連線失敗囉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
             }
         }
@@ -211,7 +217,7 @@ Inner Execption 訊息 : {e.Message}", e );
                     Logger?.Log( new LogModel
                     {
                         LogTime = DateTime.Now,
-                        LogMessage = $"客戶端連線伺服器失敗, 例外訊息 : {e.Message}"
+                        LogMessage = $"客戶端連線伺服器失敗, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                     } );
                 }
                 finally
@@ -237,12 +243,17 @@ Inner Execption 訊息 : {e.Message}", e );
                 Logger?.Log( new LogModel
                 {
                     LogTime = DateTime.Now,
-                    LogMessage = $"資料接收失敗啦, 例外訊息 : {e.Message}"
+                    LogMessage = $"資料接收失敗啦,  物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
 
                 throw new InvalidOperationException( $@"客戶端接收伺服器訊息失敗，詳細請參照 Inner Exception。
 Inner Execption 訊息 : {e.Message}", e );
             }
+        }
+
+        ~Client( )
+        {
+            Dispose( false );
         }
     }
 }

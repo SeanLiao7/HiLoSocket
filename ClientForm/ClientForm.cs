@@ -25,6 +25,8 @@ namespace ClientForm
             },
             new ConsoleLogger( ) );
 
+        private int _reStartTime = 0;
+
         public ClientForm( )
         {
             InitializeComponent( );
@@ -65,7 +67,7 @@ namespace ClientForm
                             55,66
                         } );
 
-                        Thread.Sleep( 100 );
+                        Thread.Sleep( 3000 );
                     }
                     catch ( Exception )
                     {
@@ -73,9 +75,8 @@ namespace ClientForm
                         if ( InvokeRequired )
                             Invoke( new Action( ( ) =>
                             {
-                                lblStatus.Text = @"StandBy";
+                                lblStatus.Text = $@"Working {( ++_reStartTime ).ToString( )}";
                             } ) );
-                        break;
                     }
                 }
             } ).Start( );

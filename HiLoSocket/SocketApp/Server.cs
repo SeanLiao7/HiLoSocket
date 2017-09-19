@@ -125,7 +125,7 @@ namespace HiLoSocket.SocketApp
                 Logger?.Log( new LogModel
                 {
                     LogTime = DateTime.Now,
-                    LogMessage = $"伺服器監聽用戶端失敗, 伺服器 : {LocalIpEndPoint}, 例外訊息 : {e.Message}"
+                    LogMessage = $"伺服器監聽用戶端失敗, 伺服器 : {LocalIpEndPoint}, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
 
                 throw new InvalidOperationException( $@"伺服器監聽用戶端失敗，詳細資訊請參照 Inner Exception。
@@ -213,7 +213,7 @@ Inner Exeption 訊息 : {e.Message}", e );
                     Logger?.Log( new LogModel
                     {
                         LogTime = DateTime.Now,
-                        LogMessage = $"伺服器已關閉, 伺服器：{LocalIpEndPoint}, 例外訊息 : {e.Message}"
+                        LogMessage = $"伺服器已關閉, 伺服器：{LocalIpEndPoint}, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                     } );
                 }
             }

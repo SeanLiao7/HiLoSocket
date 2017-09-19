@@ -39,6 +39,7 @@ namespace HiLoSocket.SocketApp
         public void Dispose( )
         {
             Dispose( true );
+            GC.SuppressFinalize( this );
         }
 
         /// <summary>
@@ -78,7 +79,7 @@ namespace HiLoSocket.SocketApp
                 Logger?.Log( new LogModel
                 {
                     LogTime = DateTime.Now,
-                    LogMessage = $"反序列化失敗囉, 例外訊息 : {e.Message}"
+                    LogMessage = $"反序列化失敗囉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
             }
             return commandModel;
@@ -113,7 +114,7 @@ namespace HiLoSocket.SocketApp
                     Logger?.Log( new LogModel
                     {
                         LogTime = DateTime.Now,
-                        LogMessage = $"資料長度訊息接收失敗, 例外訊息 : {e.Message}"
+                        LogMessage = $"資料長度訊息接收失敗, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                     } );
                 }
 
@@ -158,7 +159,7 @@ namespace HiLoSocket.SocketApp
                     Logger?.Log( new LogModel
                     {
                         LogTime = DateTime.Now,
-                        LogMessage = $"資料模型接收失敗, 例外訊息 : {e.Message}"
+                        LogMessage = $"資料模型接收失敗, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                     } );
                 }
 
@@ -203,7 +204,7 @@ namespace HiLoSocket.SocketApp
                 Logger?.Log( new LogModel
                 {
                     LogTime = DateTime.Now,
-                    LogMessage = $"傳送資料失敗, 例外訊息 : {e.Message}"
+                    LogMessage = $"傳送資料失敗, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
 
                 throw new InvalidOperationException( $@"傳送資料失敗，詳細請參照 Inner Exception。
@@ -233,7 +234,7 @@ Inner Exception 訊息 : {e.Message}", e );
                     Logger?.Log( new LogModel
                     {
                         LogTime = DateTime.Now,
-                        LogMessage = $"資料傳輸失敗, 例外訊息 : {e.Message}"
+                        LogMessage = $"資料傳輸失敗, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                     } );
                 }
             }
@@ -252,7 +253,7 @@ Inner Exception 訊息 : {e.Message}", e );
                 Logger?.Log( new LogModel
                 {
                     LogTime = DateTime.Now,
-                    LogMessage = $"嘗試接收資料模型失敗, 例外訊息 : {e.Message}"
+                    LogMessage = $"嘗試接收資料模型失敗, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
             }
         }
