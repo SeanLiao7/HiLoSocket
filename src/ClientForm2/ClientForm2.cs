@@ -14,7 +14,7 @@ namespace ClientForm2
 {
     public partial class ClientForm2 : MetroForm
     {
-        private readonly Client<byte[ ]> _client = new Client<byte[ ]>( new ClientModel
+        private readonly Client<byte[ ]> _client = new Client<byte[ ]>( new ClientConfigModel
         {
             LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8082 ),
             RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),

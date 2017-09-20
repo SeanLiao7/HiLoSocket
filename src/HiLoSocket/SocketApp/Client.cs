@@ -45,26 +45,26 @@ namespace HiLoSocket.SocketApp
         /// <summary>
         /// Initializes a new instance of the <see cref="T:HiLoSocket.SocketApp.Client`1" /> class.
         /// </summary>
-        /// <param name="clientModel">The client model.</param>
-        public Client( ClientModel clientModel )
-            : this( clientModel, null )
+        /// <param name="clientConfigModel">The client model.</param>
+        public Client( ClientConfigModel clientConfigModel )
+            : this( clientConfigModel, null )
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Client{TCommandModel}"/> class.
         /// </summary>
-        /// <param name="clientModel">The client model.</param>
+        /// <param name="clientConfigModel">The client model.</param>
         /// <param name="logger">The logger.</param>
-        /// <exception cref="ArgumentNullException">clientModel</exception>
+        /// <exception cref="ArgumentNullException">clientConfigModel</exception>
         /// <exception cref="ValidationException"></exception>
-        public Client( ClientModel clientModel, ILogger logger )
-            : base( clientModel?.FormatterType, clientModel?.CompressType, logger )
+        public Client( ClientConfigModel clientConfigModel, ILogger logger )
+            : base( clientConfigModel?.FormatterType, clientConfigModel?.CompressType, logger )
         {
-            CheckIfNullModel( clientModel );
-            ValidateModel( clientModel );
-            LocalIpEndPoint = clientModel?.LocalIpEndPoint;
-            RemoteIpEndPoint = clientModel?.RemoteIpEndPoint;
+            CheckIfNullModel( clientConfigModel );
+            ValidateModel( clientConfigModel );
+            LocalIpEndPoint = clientConfigModel?.LocalIpEndPoint;
+            RemoteIpEndPoint = clientConfigModel?.RemoteIpEndPoint;
         }
 
         /// <summary>
@@ -151,21 +151,21 @@ Inner Execption 訊息 : {e.Message}", e );
                 throw new ArgumentNullException( nameof( commandModel ), "沒東西可以傳送喔，請記得初始化資料物件。" );
         }
 
-        private static void CheckIfNullModel( ClientModel clientModel )
+        private static void CheckIfNullModel( ClientConfigModel clientConfigModel )
         {
-            if ( clientModel == null )
+            if ( clientConfigModel == null )
             {
-                throw new ArgumentNullException( nameof( clientModel ),
+                throw new ArgumentNullException( nameof( clientConfigModel ),
                     $@"時間 : {DateTime.Now.GetDateTimeString( )},
 類別 : {nameof( Client<TCommandModel> )},
 方法 : Constructor,
-內容 : 你沒初始化 {nameof( clientModel )} 喔。" );
+內容 : 你沒初始化 {nameof( clientConfigModel )} 喔。" );
             }
         }
 
-        private static void ValidateModel( ClientModel clientModel )
+        private static void ValidateModel( ClientConfigModel clientConfigModel )
         {
-            if ( clientModel.ValidateObject( out var errorMessages ) == false )
+            if ( clientConfigModel.ValidateObject( out var errorMessages ) == false )
             {
                 throw new ValidationException(
                     $@"時間 : {DateTime.Now.GetDateTimeString( )},

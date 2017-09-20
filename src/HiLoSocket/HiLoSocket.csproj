@@ -69,9 +69,9 @@
     <Compile Include="Extension\Extensions.cs" />
     <Compile Include="Logger\ConsoleLogger.cs" />
     <Compile Include="Logger\ILogger.cs" />
-    <Compile Include="Model\ClientModel.cs" />
+    <Compile Include="Model\ClientConfigModel.cs" />
     <Compile Include="Model\LogModel.cs" />
-    <Compile Include="Model\ServerModel.cs" />
+    <Compile Include="Model\ServerConfigModel.cs" />
     <Compile Include="SocketApp\SocketBase.cs" />
     <Compile Include="Model\SocketCommandModel.cs" />
     <Compile Include="Model\StateObjectModel.cs" />

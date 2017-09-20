@@ -17,7 +17,7 @@ namespace ServerForm
     public partial class ServerForm : MetroForm
     {
         private Server<SocketCommandModel> _server = new Server<SocketCommandModel>(
-            new ServerModel
+            new ServerConfigModel
             {
                 LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
                 FormatterType = FormatterType.MessagePackFormatter,

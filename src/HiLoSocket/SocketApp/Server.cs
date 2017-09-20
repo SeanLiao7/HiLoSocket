@@ -48,25 +48,25 @@ namespace HiLoSocket.SocketApp
         /// <summary>
         /// Initializes a new instance of the <see cref="T:HiLoSocket.SocketApp.Server`1" /> class.
         /// </summary>
-        /// <param name="serverModel">The server model.</param>
-        public Server( ServerModel serverModel )
-            : this( serverModel, null )
+        /// <param name="serverConfigModel">The server model.</param>
+        public Server( ServerConfigModel serverConfigModel )
+            : this( serverConfigModel, null )
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Server{TCommandModel}"/> class.
         /// </summary>
-        /// <param name="serverModel">The server model.</param>
+        /// <param name="serverConfigModel">The server model.</param>
         /// <param name="logger">The logger.</param>
-        /// <exception cref="ArgumentNullException">serverModel</exception>
+        /// <exception cref="ArgumentNullException">serverConfigModel</exception>
         /// <exception cref="ValidationException"></exception>
-        public Server( ServerModel serverModel, ILogger logger )
-            : base( serverModel?.FormatterType, serverModel?.CompressType, logger )
+        public Server( ServerConfigModel serverConfigModel, ILogger logger )
+            : base( serverConfigModel?.FormatterType, serverConfigModel?.CompressType, logger )
         {
-            CheckIfNullInput( serverModel );
-            ValidateInputModel( serverModel );
-            LocalIpEndPoint = serverModel?.LocalIpEndPoint;
+            CheckIfNullInput( serverConfigModel );
+            ValidateInputModel( serverConfigModel );
+            LocalIpEndPoint = serverConfigModel?.LocalIpEndPoint;
         }
 
         /// <summary>
@@ -156,21 +156,21 @@ Inner Exeption 訊息 : {e.Message}", e );
             }
         }
 
-        private static void CheckIfNullInput( ServerModel serverModel )
+        private static void CheckIfNullInput( ServerConfigModel serverConfigModel )
         {
-            if ( serverModel == null )
+            if ( serverConfigModel == null )
             {
-                throw new ArgumentNullException( nameof( serverModel ),
+                throw new ArgumentNullException( nameof( serverConfigModel ),
                     $@"時間 : {DateTime.Now.GetDateTimeString( )},
 類別 : {nameof( Server<TCommandModel> )},
 方法 : Constructor,
-內容 : 你沒初始化 {nameof( serverModel )} 喔。" );
+內容 : 你沒初始化 {nameof( serverConfigModel )} 喔。" );
             }
         }
 
-        private static void ValidateInputModel( ServerModel serverModel )
+        private static void ValidateInputModel( ServerConfigModel serverConfigModel )
         {
-            if ( serverModel.ValidateObject( out var errorMessages ) == false )
+            if ( serverConfigModel.ValidateObject( out var errorMessages ) == false )
             {
                 throw new ValidationException( $@"時間 : {DateTime.Now.GetDateTimeString( )},
 類別 : {nameof( Server<TCommandModel> )},

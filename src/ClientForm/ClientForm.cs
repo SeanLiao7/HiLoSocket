@@ -18,7 +18,7 @@ namespace ClientForm
     public partial class ClientForm : MetroForm
     {
         private readonly Client<SocketCommandModel> _client = new Client<SocketCommandModel>(
-            new ClientModel
+            new ClientConfigModel
             {
                 LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8081 ),
                 RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
