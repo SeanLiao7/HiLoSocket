@@ -4,12 +4,28 @@ namespace HiLoSocket.Compressor.Implements
 {
     internal class DefaultCompressor : ICompressor
     {
+        /// <inheritdoc />
+        /// <summary>
+        /// Compresses the specified bytes.
+        /// </summary>
+        /// <param name="bytes">The bytes.</param>
+        /// <returns>
+        /// Bytes
+        /// </returns>
         public byte[ ] Compress( byte[ ] bytes )
         {
             CheckIfCanBeCompressed( bytes );
             return bytes;
         }
 
+        /// <inheritdoc />
+        /// <summary>
+        /// Decompresses the specified bytes.
+        /// </summary>
+        /// <param name="bytes">The bytes.</param>
+        /// <returns>
+        /// Bytes
+        /// </returns>
         public byte[ ] Decompress( byte[ ] bytes )
         {
             CheckIfCanBeDecompressed( bytes );

@@ -8,6 +8,14 @@ namespace HiLoSocket.Compressor.Implements
     {
         private const int BufferSize = 4096;
 
+        /// <inheritdoc />
+        /// <summary>
+        /// Compresses the specified bytes.
+        /// </summary>
+        /// <param name="bytes">The bytes.</param>
+        /// <returns>
+        /// Bytes
+        /// </returns>
         public byte[ ] Compress( byte[ ] bytes )
         {
             CheckIfCanBeCompressed( bytes );
@@ -24,6 +32,14 @@ namespace HiLoSocket.Compressor.Implements
             return compressed;
         }
 
+        /// <inheritdoc />
+        /// <summary>
+        /// Decompresses the specified bytes.
+        /// </summary>
+        /// <param name="bytes">The bytes.</param>
+        /// <returns>
+        /// Bytes
+        /// </returns>
         public byte[ ] Decompress( byte[ ] bytes )
         {
             CheckIfCanBeDecompressed( bytes );

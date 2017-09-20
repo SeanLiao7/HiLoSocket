@@ -9,6 +9,12 @@ namespace HiLoSocket.Compressor
         private static readonly Dictionary<CompressType, ICompressor> _compressorTable =
             new Dictionary<CompressType, ICompressor>( );
 
+        /// <summary>
+        /// Creates the compressor.
+        /// </summary>
+        /// <param name="compressType">Type of the compress.</param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException">compressor</exception>
         public static ICompressor CreateCompressor( CompressType compressType )
         {
             if ( _compressorTable.TryGetValue( compressType, out var compressor ) )

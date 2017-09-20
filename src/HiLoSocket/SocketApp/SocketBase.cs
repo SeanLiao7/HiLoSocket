@@ -36,7 +36,6 @@ namespace HiLoSocket.SocketApp
                 compressType = CompressType.Default;
 
             Compressor = CompressorFactory.CreateCompressor( compressType.Value );
-
             Logger = logger;
         }
 
