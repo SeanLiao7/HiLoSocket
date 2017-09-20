@@ -20,8 +20,8 @@ namespace ServerForm
             new ServerModel
             {
                 LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
-                FormatterType = FormatterType.BinaryFormatter,
-                CompressType = CompressType.Default
+                FormatterType = FormatterType.MessagePackFormatter,
+                CompressType = CompressType.GZip
             }, new ConsoleLogger( ) );
 
         public ServerForm( )
