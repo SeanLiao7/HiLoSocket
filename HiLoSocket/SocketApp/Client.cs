@@ -59,7 +59,7 @@ namespace HiLoSocket.SocketApp
         /// <exception cref="ArgumentNullException">clientModel</exception>
         /// <exception cref="ValidationException"></exception>
         public Client( ClientModel clientModel, ILogger logger )
-            : base( clientModel?.FormatterType, logger )
+            : base( clientModel?.FormatterType, clientModel?.CompressType, logger )
         {
             CheckIfNullModel( clientModel );
             ValidateModel( clientModel );

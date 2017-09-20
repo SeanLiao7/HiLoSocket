@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using HiLoSocket.CommandFormatter;
+using HiLoSocket.Compressor;
 using HiLoSocket.Logger;
 using HiLoSocket.Model;
 using HiLoSocket.SocketApp;
@@ -14,11 +16,12 @@ namespace ServerForm
 {
     public partial class ServerForm : MetroForm
     {
-        private Server<byte[ ]> _server = new Server<byte[ ]>(
+        private Server<SocketCommandModel> _server = new Server<SocketCommandModel>(
             new ServerModel
             {
                 LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
-                FormatterType = FormatterType.MessagePackFormatter
+                FormatterType = FormatterType.BinaryFormatter,
+                CompressType = CompressType.Default
             }, new ConsoleLogger( ) );
 
         public ServerForm( )
@@ -67,15 +70,15 @@ namespace ServerForm
             lblStatus.Text = @"Standby";
         }
 
-        private void Server_OnSocketCommandRecevied( byte[ ] model )
+        private void Server_OnSocketCommandRecevied( SocketCommandModel model )
         {
             if ( InvokeRequired )
                 Invoke( new Action( ( ) =>
                 {
-                    AppendText( rtbLog, Color.Red, model[ 0 ] + model[ 1 ].ToString( ) );
-                    //AppendText( rtbLog, Color.Red, model.Id.ToString( ) );
-                    //rtbLog.AppendText( "\n" );
-                    //rtbLog.AppendText( model.Time.ToString( CultureInfo.InvariantCulture ) );
+                    //AppendText( rtbLog, Color.Red, model[ 0 ] + model[ 1 ].ToString( ) );
+                    AppendText( rtbLog, Color.Red, model.Id.ToString( ) );
+                    rtbLog.AppendText( "\n" );
+                    rtbLog.AppendText( model.Time.ToString( CultureInfo.InvariantCulture ) );
                     rtbLog.AppendText( "\n" );
                 } ) );
         }

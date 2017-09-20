@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using HiLoSocket.CommandFormatter;
+using HiLoSocket.Compressor;
 using HiLoSocket.Logger;
 using HiLoSocket.Model;
 
@@ -10,6 +11,7 @@ namespace HiLoSocket.SocketApp
         where TCommandModel : class
     {
         protected ICommandFormatter<TCommandModel> CommandFormatter { get; }
+        protected ICompressor Compressor { get; }
         protected bool IgnoreFormatter { get; }
         protected ILogger Logger { get; }
 
@@ -18,7 +20,7 @@ namespace HiLoSocket.SocketApp
         /// </summary>
         public event Action<TCommandModel> OnCommandModelReceived;
 
-        protected SocketBase( FormatterType? formatterType, ILogger logger )
+        protected SocketBase( FormatterType? formatterType, CompressType? compressType, ILogger logger )
         {
             IgnoreFormatter = typeof( TCommandModel ) == typeof( byte[ ] );
 
@@ -29,6 +31,12 @@ namespace HiLoSocket.SocketApp
 
                 CommandFormatter = FormatterFactory<TCommandModel>.CreateFormatter( formatterType.Value );
             }
+
+            if ( compressType == null )
+                compressType = CompressType.Default;
+
+            Compressor = CompressorFactory.CreateCompressor( compressType.Value );
+
             Logger = logger;
         }
 
@@ -72,7 +80,7 @@ namespace HiLoSocket.SocketApp
             {
                 commandModel = IgnoreFormatter
                     ? state.Buffer as TCommandModel
-                    : CommandFormatter.Deserialize( state.Buffer );
+                    : CommandFormatter.Deserialize( Compressor.Decompress( state.Buffer ) );
             }
             catch ( Exception e )
             {
@@ -196,7 +204,8 @@ namespace HiLoSocket.SocketApp
                     ? commandModel as byte[ ]
                     : CommandFormatter.Serialize( commandModel );
 
-                var bytesToSendWithSize = CreateBytesToSendWithSize( bytestoSend );
+                var compressedbytes = Compressor.Compress( bytestoSend );
+                var bytesToSendWithSize = CreateBytesToSendWithSize( compressedbytes );
                 handler.BeginSend( bytesToSendWithSize, 0, bytesToSendWithSize.Length, 0, SendCallback, handler );
             }
             catch ( Exception e )

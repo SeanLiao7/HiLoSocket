@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using HiLoSocket.CommandFormatter;
+using HiLoSocket.Compressor;
 using HiLoSocket.Logger;
 using HiLoSocket.Model;
 using HiLoSocket.SocketApp;
@@ -14,12 +17,13 @@ namespace ClientForm
 {
     public partial class ClientForm : MetroForm
     {
-        private readonly Client<byte[ ]> _client = new Client<byte[ ]>(
+        private readonly Client<SocketCommandModel> _client = new Client<SocketCommandModel>(
             new ClientModel
             {
                 LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8081 ),
                 RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
-                FormatterType = FormatterType.MessagePackFormatter
+                FormatterType = FormatterType.BinaryFormatter,
+                CompressType = CompressType.Default
             },
             new ConsoleLogger( ) );
 
@@ -48,22 +52,28 @@ namespace ClientForm
         {
             new Thread( ( ) =>
             {
+                var x = new Stopwatch( );
+
                 while ( true )
                 {
                     try
                     {
-                        //_client.Send( new SocketCommandModel
-                        //{
-                        //    CommandName = "Test2",
-                        //    Id = Guid.NewGuid( ),
-                        //    Results = new List<string> { "333", "111" },
-                        //    Time = DateTime.Now
-                        //} );
+                        x.Start( );
 
-                        _client.Send( new byte[ ]
+                        _client.Send( new SocketCommandModel
                         {
-                            55,66
+                            CommandName = "Test2Test2Test2Test2Test2Test2Test2Test2Test2Test2Test2Test2",
+                            Id = Guid.NewGuid( ),
+                            Results = new List<string>
+                            { "333", "111", "333", "111" , "333", "111", "333", "111", "333", "111", "333", "111"},
+                            Time = DateTime.Now
                         } );
+
+                        x.Stop( );
+                        Trace.WriteLine( $"Send Time : {x.ElapsedTicks}" );
+                        x.Reset( );
+
+                        //_client.Send( new byte[ 1024 ] );
 
                         Thread.Sleep( 3000 );
                     }
@@ -81,15 +91,15 @@ namespace ClientForm
             lblStatus.Text = @"Working";
         }
 
-        private void Client_OnAckCommandReceived( byte[ ] model )
+        private void Client_OnAckCommandReceived( SocketCommandModel model )
         {
             if ( InvokeRequired )
                 Invoke( new Action( ( ) =>
                 {
-                    AppendText( rtbLog, Color.Red, model[ 0 ] + model[ 1 ].ToString( ) );
-                    //AppendText( rtbLog, Color.Red, model.Id.ToString( ) );
-                    //rtbLog.AppendText( "\n" );
-                    //rtbLog.AppendText( model.Time.ToString( CultureInfo.InvariantCulture ) );
+                    //AppendText( rtbLog, Color.Red, model[ 0 ] + model[ 1 ].ToString( ) );
+                    AppendText( rtbLog, Color.Red, model.Id.ToString( ) );
+                    rtbLog.AppendText( "\n" );
+                    rtbLog.AppendText( model.Time.ToString( CultureInfo.InvariantCulture ) );
                     rtbLog.AppendText( "\n" );
                 } ) );
         }
