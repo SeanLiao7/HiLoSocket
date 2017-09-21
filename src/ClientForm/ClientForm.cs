@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Net;
@@ -7,7 +6,6 @@ using System.Threading;
 using System.Windows.Forms;
 using HiLoSocket.CommandFormatter;
 using HiLoSocket.Compressor;
-using HiLoSocket.Logger;
 using HiLoSocket.Model;
 using HiLoSocket.SocketApp;
 using MetroFramework.Forms;
@@ -16,26 +14,15 @@ namespace ClientForm
 {
     public partial class ClientForm : MetroForm
     {
-        private readonly Client<SocketCommandModel> _client;
-
+        private Client<SocketCommandModel> _client;
         private bool _isSending;
-        private int _reStartTime = 0;
+        private int _reStartTime;
 
         public ClientForm( )
         {
             InitializeComponent( );
-            var logger = new FormLogger( );
-
-            _client = new Client<SocketCommandModel>(
-                new ClientConfigModel
-                {
-                    LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8081 ),
-                    RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
-                    FormatterType = FormatterType.MessagePackFormatter,
-                    CompressType = CompressType.GZip
-                }, logger );
-            logger.OnLog += Logger_OnLog;
-            _client.OnCommandModelReceived += Client_OnAckCommandReceived;
+            mcbFormatter.SelectedIndex = 0;
+            mcbCompressor.SelectedIndex = 0;
         }
 
         private void AppendText( RichTextBox box, Color color, string text )
@@ -53,25 +40,28 @@ namespace ClientForm
 
         private void btnSend_Click( object sender, EventArgs e )
         {
+            if ( _isSending )
+                return;
+
+            Setup( );
+            _isSending = true;
+
             new Thread( ( ) =>
             {
-                _isSending = true;
-
                 while ( _isSending )
                 {
                     try
                     {
                         _client.Send( new SocketCommandModel
                         {
-                            CommandName = "Program",
+                            CommandName = "AutoProgram",
                             Id = Guid.NewGuid( ),
-                            Results = "true,true,true,true,false,true,true,true",
+                            Results = "true,true,true,true,false,true,true,true,true,true,true,true,false,true,true,true",
                             Time = DateTime.Now
                         } );
                     }
                     catch ( Exception )
                     {
-                        Trace.WriteLine( "Client Stop!" );
                         if ( InvokeRequired )
                             Invoke( new Action( ( ) =>
                             {
@@ -83,6 +73,7 @@ namespace ClientForm
                         Thread.Sleep( 3000 );
                     }
                 }
+                _isSending = false;
             } ).Start( );
             lblStatus.Text = @"Working";
         }
@@ -124,6 +115,22 @@ namespace ClientForm
                     rtbLog.SelectionStart = rtbLog.Text.Length;
                     rtbLog.ScrollToCaret( );
                 } ) );
+        }
+
+        private void Setup( )
+        {
+            var logger = new FormLogger( );
+            _client = new Client<SocketCommandModel>(
+                new ClientConfigModel
+                {
+                    LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8001 ),
+                    RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.01" ), 8000 ),
+                    FormatterType = ( FormatterType? ) Enum.Parse( typeof( FormatterType ), ( string ) mcbFormatter.SelectedItem ),
+                    CompressType = ( CompressType? ) Enum.Parse( typeof( CompressType ), ( string ) mcbCompressor.SelectedItem )
+                }, logger );
+
+            logger.OnLog += Logger_OnLog;
+            _client.OnCommandModelReceived += Client_OnAckCommandReceived;
         }
     }
 }

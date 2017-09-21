@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.Net;
@@ -15,23 +14,14 @@ namespace ServerForm
 {
     public partial class ServerForm : MetroForm
     {
+        private bool _isListening;
         private Server<SocketCommandModel> _server;
 
         public ServerForm( )
         {
             InitializeComponent( );
-            var logger = new FormLogger( );
-
-            _server = new Server<SocketCommandModel>(
-                new ServerConfigModel
-                {
-                    LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
-                    FormatterType = FormatterType.MessagePackFormatter,
-                    CompressType = CompressType.GZip
-                }, logger );
-
-            logger.OnLog += Logger_OnLog;
-            _server.OnCommandModelReceived += Server_OnSocketCommandRecevied;
+            mcbFormatter.SelectedIndex = 0;
+            mcbCompressor.SelectedIndex = 0;
         }
 
         private void AppendText( RichTextBox box, Color color, string text )
@@ -49,21 +39,30 @@ namespace ServerForm
 
         private void btnListen_Click( object sender, EventArgs e )
         {
+            if ( _isListening )
+                return;
+
+            Setup( );
+            _isListening = true;
+
             new Thread( ( ) =>
             {
                 try
                 {
                     _server.StartListening( );
                 }
-                catch ( Exception ex )
+                catch ( Exception )
                 {
-                    Trace.WriteLine( $"Server fail : {ex.Message}" );
                     if ( InvokeRequired )
                         Invoke( new Action( ( ) =>
                         {
                             lblStatus.Text = @"Standby";
                         } ) );
-                };
+                }
+                finally
+                {
+                    _isListening = false;
+                }
             } ).Start( );
             lblStatus.Text = @"Listening";
         }
@@ -104,6 +103,21 @@ namespace ServerForm
                     rtbMessage.SelectionStart = rtbMessage.Text.Length;
                     rtbMessage.ScrollToCaret( );
                 } ) );
+        }
+
+        private void Setup( )
+        {
+            var logger = new FormLogger( );
+            _server = new Server<SocketCommandModel>(
+                new ServerConfigModel
+                {
+                    LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
+                    FormatterType = ( FormatterType? ) Enum.Parse( typeof( FormatterType ), ( string ) mcbFormatter.SelectedItem ),
+                    CompressType = ( CompressType? ) Enum.Parse( typeof( CompressType ), ( string ) mcbCompressor.SelectedItem )
+                }, logger );
+
+            logger.OnLog += Logger_OnLog;
+            _server.OnCommandModelReceived += Server_OnSocketCommandRecevied;
         }
     }
 }
