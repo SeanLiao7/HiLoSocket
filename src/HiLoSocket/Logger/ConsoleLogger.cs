@@ -7,7 +7,7 @@ namespace HiLoSocket.Logger
     {
         public void Log( LogModel logModel )
         {
-            Trace.WriteLine( $"Time : {logModel.LogTime}, LogMessage : {logModel.LogMessage}" );
+            Trace.WriteLine( $"Time : {logModel.Time}, Message : {logModel.Message}" );
         }
     }
 }

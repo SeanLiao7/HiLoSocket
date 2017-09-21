@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
@@ -17,15 +16,7 @@ namespace ClientForm
 {
     public partial class ClientForm : MetroForm
     {
-        private readonly Client<SocketCommandModel> _client = new Client<SocketCommandModel>(
-            new ClientConfigModel
-            {
-                LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8081 ),
-                RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
-                FormatterType = FormatterType.MessagePackFormatter,
-                CompressType = CompressType.GZip
-            },
-            new ConsoleLogger( ) );
+        private readonly Client<SocketCommandModel> _client;
 
         private bool _isSending;
         private int _reStartTime = 0;
@@ -33,6 +24,17 @@ namespace ClientForm
         public ClientForm( )
         {
             InitializeComponent( );
+            var logger = new FormLogger( );
+
+            _client = new Client<SocketCommandModel>(
+                new ClientConfigModel
+                {
+                    LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8081 ),
+                    RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
+                    FormatterType = FormatterType.MessagePackFormatter,
+                    CompressType = CompressType.GZip
+                }, logger );
+            logger.OnLog += Logger_OnLog;
             _client.OnCommandModelReceived += Client_OnAckCommandReceived;
         }
 
@@ -53,31 +55,19 @@ namespace ClientForm
         {
             new Thread( ( ) =>
             {
-                var x = new Stopwatch( );
                 _isSending = true;
 
                 while ( _isSending )
                 {
                     try
                     {
-                        x.Start( );
-
                         _client.Send( new SocketCommandModel
                         {
-                            CommandName = "Test2Test2Test2Test2Test2Test2Test2Test2Test2Test2Test2Test2",
+                            CommandName = "Program",
                             Id = Guid.NewGuid( ),
-                            Results = new List<string>
-                            { "333", "111", "333", "111" , "333", "111", "333", "111", "333", "111", "333", "111"},
+                            Results = "true,true,true,true,false,true,true,true",
                             Time = DateTime.Now
                         } );
-
-                        x.Stop( );
-                        Trace.WriteLine( $"Send Time : {x.ElapsedTicks}" );
-                        x.Reset( );
-
-                        //_client.Send( new byte[ 1024 ] );
-
-                        Thread.Sleep( 100 );
                     }
                     catch ( Exception )
                     {
@@ -88,6 +78,10 @@ namespace ClientForm
                                 lblStatus.Text = $@"Working {( ++_reStartTime ).ToString( )}";
                             } ) );
                     }
+                    finally
+                    {
+                        Thread.Sleep( 3000 );
+                    }
                 }
             } ).Start( );
             lblStatus.Text = @"Working";
@@ -96,6 +90,7 @@ namespace ClientForm
         private void btnStop_Click( object sender, EventArgs e )
         {
             _isSending = false;
+            _reStartTime = 0;
             lblStatus.Text = @"Standby";
         }
 
@@ -104,11 +99,30 @@ namespace ClientForm
             if ( InvokeRequired )
                 Invoke( new Action( ( ) =>
                 {
-                    //AppendText( rtbLog, Color.Red, model[ 0 ] + model[ 1 ].ToString( ) );
-                    AppendText( rtbLog, Color.Red, model.Id.ToString( ) );
+                    AppendText( rtbMessage, Color.Red, model.Id.ToString( ) );
+                    rtbMessage.AppendText( "\n" );
+                    AppendText( rtbMessage, Color.Black, model.CommandName );
+                    rtbMessage.AppendText( "\n" );
+                    AppendText( rtbMessage, Color.Black, model.Time.ToString( CultureInfo.InvariantCulture ) );
+                    rtbMessage.AppendText( "\n" );
+                    AppendText( rtbMessage, Color.Black, ( string ) model.Results );
+                    rtbMessage.AppendText( "\n" );
+                    rtbMessage.SelectionStart = rtbMessage.Text.Length;
+                    rtbMessage.ScrollToCaret( );
+                } ) );
+        }
+
+        private void Logger_OnLog( LogModel logModel )
+        {
+            if ( InvokeRequired )
+                Invoke( new Action( ( ) =>
+                {
+                    AppendText( rtbLog, Color.Green, logModel.Time.ToString( CultureInfo.InvariantCulture ) );
                     rtbLog.AppendText( "\n" );
-                    rtbLog.AppendText( model.Time.ToString( CultureInfo.InvariantCulture ) );
+                    AppendText( rtbLog, Color.Blue, logModel.Message.ToString( CultureInfo.InvariantCulture ) );
                     rtbLog.AppendText( "\n" );
+                    rtbLog.SelectionStart = rtbLog.Text.Length;
+                    rtbLog.ScrollToCaret( );
                 } ) );
         }
     }

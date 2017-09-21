@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiLoSocket", "src\HiLoSocket\HiLoSocket.csproj", "{20E9BB3C-A727-4783-A877-03066FCF9AA7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientForm", "src\ClientForm\ClientForm.csproj", "{2D0F1AF5-868E-4425-9FE6-9E6E7A9D7CF1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientForm2", "src\ClientForm2\ClientForm2.csproj", "{B106C259-91DC-4B7A-AEDF-9C0D9891622C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerForm", "src\ServerForm\ServerForm.csproj", "{29DE3990-DDB4-44DF-9901-8F8F6A513CD5}"
 EndProject
@@ -25,10 +23,6 @@ Global
 		{2D0F1AF5-868E-4425-9FE6-9E6E7A9D7CF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D0F1AF5-868E-4425-9FE6-9E6E7A9D7CF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D0F1AF5-868E-4425-9FE6-9E6E7A9D7CF1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B106C259-91DC-4B7A-AEDF-9C0D9891622C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B106C259-91DC-4B7A-AEDF-9C0D9891622C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B106C259-91DC-4B7A-AEDF-9C0D9891622C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B106C259-91DC-4B7A-AEDF-9C0D9891622C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{29DE3990-DDB4-44DF-9901-8F8F6A513CD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{29DE3990-DDB4-44DF-9901-8F8F6A513CD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29DE3990-DDB4-44DF-9901-8F8F6A513CD5}.Release|Any CPU.ActiveCfg = Release|Any CPU

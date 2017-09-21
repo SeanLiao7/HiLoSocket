@@ -89,8 +89,8 @@ namespace HiLoSocket.SocketApp
             {
                 Logger?.Log( new LogModel
                 {
-                    LogTime = DateTime.Now,
-                    LogMessage = $"客戶端資料傳送失敗啦, 連線關閉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
+                    Time = DateTime.Now,
+                    Message = $"客戶端資料傳送失敗啦, 連線關閉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
 
                 throw new InvalidOperationException( $@"客戶端傳送訊息至伺服器失敗，詳細請參照 Inner Exception。
@@ -193,16 +193,16 @@ Inner Execption 訊息 : {e.Message}", e );
 
                 Logger?.Log( new LogModel
                 {
-                    LogTime = DateTime.Now,
-                    LogMessage = $"用戶端已關閉與伺服器連線, 伺服器 : {remoteIp}, 用戶端 : {localIp}"
+                    Time = DateTime.Now,
+                    Message = $"用戶端已關閉與伺服器連線, 伺服器 : {remoteIp}, 用戶端 : {localIp}"
                 } );
             }
             catch ( Exception e )
             {
                 Logger?.Log( new LogModel
                 {
-                    LogTime = DateTime.Now,
-                    LogMessage = $"用戶端關閉連線失敗囉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
+                    Time = DateTime.Now,
+                    Message = $"用戶端關閉連線失敗囉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
             }
         }
@@ -216,16 +216,16 @@ Inner Execption 訊息 : {e.Message}", e );
                     client.EndConnect( asyncResult );
                     Logger?.Log( new LogModel
                     {
-                        LogTime = DateTime.Now,
-                        LogMessage = $"用戶端已連線至伺服器, 伺服器 : {client.RemoteEndPoint}, 用戶端 : {client.LocalEndPoint}"
+                        Time = DateTime.Now,
+                        Message = $"用戶端已連線至伺服器, 伺服器 : {client.RemoteEndPoint}, 用戶端 : {client.LocalEndPoint}"
                     } );
                 }
                 catch ( Exception e )
                 {
                     Logger?.Log( new LogModel
                     {
-                        LogTime = DateTime.Now,
-                        LogMessage = $"客戶端連線伺服器失敗, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
+                        Time = DateTime.Now,
+                        Message = $"客戶端連線伺服器失敗, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                     } );
                 }
                 finally
@@ -250,8 +250,8 @@ Inner Execption 訊息 : {e.Message}", e );
             {
                 Logger?.Log( new LogModel
                 {
-                    LogTime = DateTime.Now,
-                    LogMessage = $"資料接收失敗啦,  物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
+                    Time = DateTime.Now,
+                    Message = $"資料接收失敗啦,  物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
 
                 throw new InvalidOperationException( $@"客戶端接收伺服器訊息失敗，詳細請參照 Inner Exception。
@@ -290,8 +290,8 @@ Inner Execption 訊息 : {e.Message}", e );
                 {
                     Logger?.Log( new LogModel
                     {
-                        LogTime = DateTime.Now,
-                        LogMessage = $"客戶端資料傳送失敗啦, 連線關閉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
+                        Time = DateTime.Now,
+                        Message = $"客戶端資料傳送失敗啦, 連線關閉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                     } );
 
                     throw new InvalidOperationException( $@"客戶端傳送訊息至伺服器失敗，詳細請參照 Inner Exception。

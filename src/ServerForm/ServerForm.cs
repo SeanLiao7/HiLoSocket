@@ -7,7 +7,6 @@ using System.Threading;
 using System.Windows.Forms;
 using HiLoSocket.CommandFormatter;
 using HiLoSocket.Compressor;
-using HiLoSocket.Logger;
 using HiLoSocket.Model;
 using HiLoSocket.SocketApp;
 using MetroFramework.Forms;
@@ -16,17 +15,22 @@ namespace ServerForm
 {
     public partial class ServerForm : MetroForm
     {
-        private Server<SocketCommandModel> _server = new Server<SocketCommandModel>(
-            new ServerConfigModel
-            {
-                LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
-                FormatterType = FormatterType.MessagePackFormatter,
-                CompressType = CompressType.GZip
-            }, new ConsoleLogger( ) );
+        private Server<SocketCommandModel> _server;
 
         public ServerForm( )
         {
             InitializeComponent( );
+            var logger = new FormLogger( );
+
+            _server = new Server<SocketCommandModel>(
+                new ServerConfigModel
+                {
+                    LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
+                    FormatterType = FormatterType.MessagePackFormatter,
+                    CompressType = CompressType.GZip
+                }, logger );
+
+            logger.OnLog += Logger_OnLog;
             _server.OnCommandModelReceived += Server_OnSocketCommandRecevied;
         }
 
@@ -70,16 +74,35 @@ namespace ServerForm
             lblStatus.Text = @"Standby";
         }
 
+        private void Logger_OnLog( LogModel logModel )
+        {
+            if ( InvokeRequired )
+                Invoke( new Action( ( ) =>
+                {
+                    AppendText( rtbLog, Color.Green, logModel.Time.ToString( CultureInfo.InvariantCulture ) );
+                    rtbLog.AppendText( "\n" );
+                    AppendText( rtbLog, Color.Blue, logModel.Message.ToString( CultureInfo.InvariantCulture ) );
+                    rtbLog.AppendText( "\n" );
+                    rtbLog.SelectionStart = rtbLog.Text.Length;
+                    rtbLog.ScrollToCaret( );
+                } ) );
+        }
+
         private void Server_OnSocketCommandRecevied( SocketCommandModel model )
         {
             if ( InvokeRequired )
                 Invoke( new Action( ( ) =>
                 {
-                    //AppendText( rtbLog, Color.Red, model[ 0 ] + model[ 1 ].ToString( ) );
-                    AppendText( rtbLog, Color.Red, model.Id.ToString( ) );
-                    rtbLog.AppendText( "\n" );
-                    rtbLog.AppendText( model.Time.ToString( CultureInfo.InvariantCulture ) );
-                    rtbLog.AppendText( "\n" );
+                    AppendText( rtbMessage, Color.Red, model.Id.ToString( ) );
+                    rtbMessage.AppendText( "\n" );
+                    AppendText( rtbMessage, Color.Black, model.CommandName );
+                    rtbMessage.AppendText( "\n" );
+                    AppendText( rtbMessage, Color.Black, model.Time.ToString( CultureInfo.InvariantCulture ) );
+                    rtbMessage.AppendText( "\n" );
+                    AppendText( rtbMessage, Color.Black, ( string ) model.Results );
+                    rtbMessage.AppendText( "\n" );
+                    rtbMessage.SelectionStart = rtbMessage.Text.Length;
+                    rtbMessage.ScrollToCaret( );
                 } ) );
         }
     }
