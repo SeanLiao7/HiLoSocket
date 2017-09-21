@@ -18,6 +18,7 @@ namespace HiLoSocket.SocketApp
         public const int MaxPendingConnectionLength = 100;
 
         private readonly ManualResetEventSlim _allDone = new ManualResetEventSlim( );
+        private readonly object _listenerLock = new object( );
         private Socket _listener;
 
         /// <summary>
@@ -78,7 +79,7 @@ namespace HiLoSocket.SocketApp
         {
             CheckIfDisposed( );
 
-            if ( IsListening )
+            if ( CheckIfIsListening( ) )
                 return;
 
             var listener = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
@@ -86,11 +87,7 @@ namespace HiLoSocket.SocketApp
 
             try
             {
-                SetupListener( listener );
-                while ( IsListening )
-                {
-                    TryAcceptClient( listener );
-                }
+                TryListen( listener );
             }
             catch ( Exception e )
             {
@@ -218,17 +215,28 @@ Inner Exeption 訊息 : {e.Message}", e );
                 throw new ObjectDisposedException( nameof( Server<TCommandModel> ), "Server 已經被 Dispose 囉" );
         }
 
+        private bool CheckIfIsListening( )
+        {
+            lock ( _listenerLock )
+            {
+                if ( IsListening )
+                    return true;
+
+                IsListening = true;
+            }
+            return false;
+        }
+
         private void SetupListener( Socket listener )
         {
             listener.Bind( LocalIpEndPoint );
             listener.Listen( MaxPendingConnectionLength );
-            IsListening = true;
         }
 
         private void StopListening( Socket listener )
         {
-            IsListening = false;
             listener?.Close( );
+            IsListening = false;
         }
 
         private void TryAcceptClient( Socket listener )
@@ -243,6 +251,16 @@ Inner Exeption 訊息 : {e.Message}", e );
 
             listener.BeginAccept( AcceptCallback, listener );
             _allDone.Wait( );
+        }
+
+        private void TryListen( Socket listener )
+        {
+            SetupListener( listener );
+            while ( IsListening )
+            {
+                CheckIfDisposed( );
+                TryAcceptClient( listener );
+            }
         }
 
         ~Server( )

@@ -15,7 +15,7 @@ namespace HiLoSocket.SocketApp
         private readonly ManualResetEventSlim _connectDone = new ManualResetEventSlim( );
         private readonly ManualResetEventSlim _receiveDone = new ManualResetEventSlim( );
         private readonly ManualResetEventSlim _sendDone = new ManualResetEventSlim( );
-        private Socket _client;
+        private readonly object _sendLock = new object( );
 
         /// <summary>
         /// Gets a value indicating whether this instance is disposed.
@@ -80,7 +80,6 @@ namespace HiLoSocket.SocketApp
             CheckIfNullInput( commandModel );
 
             var client = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
-            _client = client;
 
             try
             {
@@ -94,10 +93,13 @@ namespace HiLoSocket.SocketApp
                     LogMessage = $"客戶端資料傳送失敗啦, 連線關閉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
 
-                client.Close( );
-
                 throw new InvalidOperationException( $@"客戶端傳送訊息至伺服器失敗，詳細請參照 Inner Exception。
 Inner Execption 訊息 : {e.Message}", e );
+            }
+            finally
+            {
+                client.Close( );
+                ResetDoneEvent( );
             }
         }
 
@@ -117,8 +119,6 @@ Inner Execption 訊息 : {e.Message}", e );
                     _receiveDone?.Dispose( );
                     _sendDone?.Dispose( );
                 }
-
-                _client?.Dispose( );
             }
 
             IsDisposed = true;
@@ -259,7 +259,14 @@ Inner Execption 訊息 : {e.Message}", e );
             }
         }
 
-        private void TrySend( Socket client, TCommandModel commandModel )
+        private void ResetDoneEvent( )
+        {
+            _connectDone.Reset( );
+            _receiveDone.Reset( );
+            _sendDone.Reset( );
+        }
+
+        private void SendCommandModel( Socket client, TCommandModel commandModel )
         {
             client.BeginConnect( RemoteIpEndPoint, ConnectCallback, client );
             _connectDone.Wait( );
@@ -271,9 +278,31 @@ Inner Execption 訊息 : {e.Message}", e );
             _receiveDone.Wait( );
         }
 
-        ~Client( )
+        private void TrySend( Socket client, TCommandModel commandModel )
         {
-            Dispose( false );
+            lock ( _sendLock )
+            {
+                try
+                {
+                    SendCommandModel( client, commandModel );
+                }
+                catch ( Exception e )
+                {
+                    Logger?.Log( new LogModel
+                    {
+                        LogTime = DateTime.Now,
+                        LogMessage = $"客戶端資料傳送失敗啦, 連線關閉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
+                    } );
+
+                    throw new InvalidOperationException( $@"客戶端傳送訊息至伺服器失敗，詳細請參照 Inner Exception。
+Inner Execption 訊息 : {e.Message}", e );
+                }
+                finally
+                {
+                    client.Close( );
+                    ResetDoneEvent( );
+                }
+            }
         }
     }
 }

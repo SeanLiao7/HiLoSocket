@@ -27,6 +27,7 @@ namespace ClientForm
             },
             new ConsoleLogger( ) );
 
+        private bool _isSending;
         private int _reStartTime = 0;
 
         public ClientForm( )
@@ -53,8 +54,9 @@ namespace ClientForm
             new Thread( ( ) =>
             {
                 var x = new Stopwatch( );
+                _isSending = true;
 
-                while ( true )
+                while ( _isSending )
                 {
                     try
                     {
@@ -75,7 +77,7 @@ namespace ClientForm
 
                         //_client.Send( new byte[ 1024 ] );
 
-                        Thread.Sleep( 3000 );
+                        Thread.Sleep( 100 );
                     }
                     catch ( Exception )
                     {
@@ -89,6 +91,12 @@ namespace ClientForm
                 }
             } ).Start( );
             lblStatus.Text = @"Working";
+        }
+
+        private void btnStop_Click( object sender, EventArgs e )
+        {
+            _isSending = false;
+            lblStatus.Text = @"Standby";
         }
 
         private void Client_OnAckCommandReceived( SocketCommandModel model )
