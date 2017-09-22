@@ -1,5 +1,8 @@
 ﻿namespace HiLoSocket.Compressor
 {
+    /// <summary>
+    /// ICompressor.
+    /// </summary>
     public interface ICompressor
     {
         /// <summary>

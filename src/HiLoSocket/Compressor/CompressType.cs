@@ -2,6 +2,9 @@
 
 namespace HiLoSocket.Compressor
 {
+    /// <summary>
+    /// CompressType.
+    /// </summary>
     public enum CompressType
     {
         /// <summary>

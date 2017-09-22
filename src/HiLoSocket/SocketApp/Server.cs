@@ -9,6 +9,12 @@ using HiLoSocket.Model;
 
 namespace HiLoSocket.SocketApp
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// Socket Server.
+    /// </summary>
+    /// <typeparam name="TCommandModel">The type of the command model.</typeparam>
+    /// <seealso cref="T:HiLoSocket.SocketApp.SocketBase`1" />
     public class Server<TCommandModel> : SocketBase<TCommandModel>
         where TCommandModel : class
     {
@@ -55,13 +61,14 @@ namespace HiLoSocket.SocketApp
         {
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a new instance of the <see cref="Server{TCommandModel}"/> class.
+        /// Initializes a new instance of the <see cref="T:HiLoSocket.SocketApp.Server`1" /> class.
         /// </summary>
         /// <param name="serverConfigModel">The server model.</param>
         /// <param name="logger">The logger.</param>
-        /// <exception cref="ArgumentNullException">serverConfigModel</exception>
-        /// <exception cref="ValidationException"></exception>
+        /// <exception cref="T:System.ArgumentNullException">serverConfigModel</exception>
+        /// <exception cref="T:System.ComponentModel.DataAnnotations.ValidationException"></exception>
         public Server( ServerConfigModel serverConfigModel, ILogger logger )
             : base( serverConfigModel?.FormatterType, serverConfigModel?.CompressType, logger )
         {
@@ -71,7 +78,7 @@ namespace HiLoSocket.SocketApp
         }
 
         /// <summary>
-        /// Starts the listening.
+        /// Starts listening.
         /// </summary>
         /// <exception cref="ObjectDisposedException">TCommandModel - Server 已經被 Dispose 囉</exception>
         /// <exception cref="InvalidOperationException">伺服器監聽用戶端失敗，詳細資訊請參照 Inner Exception。</exception>
@@ -107,7 +114,7 @@ Inner Exeption 訊息 : {e.Message}", e );
         }
 
         /// <summary>
-        /// Stops the listening.
+        /// Stops listening.
         /// </summary>
         /// <exception cref="ObjectDisposedException">物件已經被 Dispose 囉</exception>
         public void StopListening( )
@@ -116,6 +123,13 @@ Inner Exeption 訊息 : {e.Message}", e );
             StopListening( _listener );
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
+        /// <exception cref="ObjectDisposedException">TCommandModel - Server 已經被 Dispose 囉</exception>
         public override string ToString( )
         {
             if ( IsDisposed )
@@ -124,6 +138,10 @@ Inner Exeption 訊息 : {e.Message}", e );
             return $"Server with {typeof( TCommandModel )} type model";
         }
 
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected override void Dispose( bool disposing )
         {
             if ( !IsDisposed )
@@ -141,6 +159,11 @@ Inner Exeption 訊息 : {e.Message}", e );
             base.Dispose( disposing );
         }
 
+        /// <inheritdoc />
+        /// <summary>
+        /// Receives the command model callback.
+        /// </summary>
+        /// <param name="asyncResult">The asynchronous result.</param>
         protected override void ReceiveCommandModelCallback( IAsyncResult asyncResult )
         {
             base.ReceiveCommandModelCallback( asyncResult );
@@ -152,6 +175,12 @@ Inner Exeption 訊息 : {e.Message}", e );
             }
         }
 
+        /// <inheritdoc />
+        /// <summary>
+        /// Sends the commandModel with specified handler.
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        /// <param name="commandModel">The command model.</param>
         protected override void Send( Socket handler, TCommandModel commandModel )
         {
             try
@@ -280,6 +309,9 @@ Inner Exeption 訊息 : {e.Message}", e );
             }
         }
 
+        /// <summary>
+        /// Finalizes an instance of the <see cref="Server{TCommandModel}"/> class.
+        /// </summary>
         ~Server( )
         {
             Dispose( false );

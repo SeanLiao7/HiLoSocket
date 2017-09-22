@@ -2,6 +2,9 @@
 
 namespace HiLoSocket.CommandFormatter
 {
+    /// <summary>
+    /// FormatterType.
+    /// </summary>
     public enum FormatterType
     {
         /// <summary>

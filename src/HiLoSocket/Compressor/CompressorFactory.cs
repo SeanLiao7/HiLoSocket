@@ -4,6 +4,9 @@ using HiLoSocket.Extension;
 
 namespace HiLoSocket.Compressor
 {
+    /// <summary>
+    /// CompressorFactory.
+    /// </summary>
     public static class CompressorFactory
     {
         private static readonly Dictionary<CompressType, ICompressor> _compressorTable =

@@ -1,5 +1,9 @@
 ﻿namespace HiLoSocket.CommandFormatter
 {
+    /// <summary>
+    /// ICommandFormatter.
+    /// </summary>
+    /// <typeparam name="TCommandModel">The type of the command model.</typeparam>
     public interface ICommandFormatter<TCommandModel>
         where TCommandModel : class
     {

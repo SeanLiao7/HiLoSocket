@@ -4,6 +4,10 @@ using HiLoSocket.Extension;
 
 namespace HiLoSocket.CommandFormatter
 {
+    /// <summary>
+    /// FormatterFactory.
+    /// </summary>
+    /// <typeparam name="TCommandModel">The type of the command model.</typeparam>
     public static class FormatterFactory<TCommandModel>
         where TCommandModel : class
     {

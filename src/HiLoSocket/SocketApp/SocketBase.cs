@@ -7,12 +7,45 @@ using HiLoSocket.Model;
 
 namespace HiLoSocket.SocketApp
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// Base class for Socket app.
+    /// </summary>
+    /// <typeparam name="TCommandModel">The type of the command model.</typeparam>
+    /// <seealso cref="T:System.IDisposable" />
     public abstract class SocketBase<TCommandModel> : IDisposable
         where TCommandModel : class
     {
+        /// <summary>
+        /// Gets the command formatter.
+        /// </summary>
+        /// <value>
+        /// The command formatter.
+        /// </value>
         protected ICommandFormatter<TCommandModel> CommandFormatter { get; }
+
+        /// <summary>
+        /// Gets the compressor.
+        /// </summary>
+        /// <value>
+        /// The compressor.
+        /// </value>
         protected ICompressor Compressor { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether [ignore formatter].
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if [ignore formatter]; otherwise, <c>false</c>.
+        /// </value>
         protected bool IgnoreFormatter { get; }
+
+        /// <summary>
+        /// Gets the logger.
+        /// </summary>
+        /// <value>
+        /// The logger.
+        /// </value>
         protected ILogger Logger { get; }
 
         /// <summary>
@@ -20,6 +53,12 @@ namespace HiLoSocket.SocketApp
         /// </summary>
         public event Action<TCommandModel> OnCommandModelReceived;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SocketBase{TCommandModel}"/> class.
+        /// </summary>
+        /// <param name="formatterType">Type of the formatter.</param>
+        /// <param name="compressType">Type of the compress.</param>
+        /// <param name="logger">The logger.</param>
         protected SocketBase( FormatterType? formatterType, CompressType? compressType, ILogger logger )
         {
             IgnoreFormatter = typeof( TCommandModel ) == typeof( byte[ ] );
@@ -72,6 +111,11 @@ namespace HiLoSocket.SocketApp
         {
         }
 
+        /// <summary>
+        /// Gets the command model.
+        /// </summary>
+        /// <param name="state">The state.</param>
+        /// <returns></returns>
         protected TCommandModel GetCommandModel( StateObjectModel<Socket> state )
         {
             var commandModel = default( TCommandModel );
@@ -192,7 +236,7 @@ namespace HiLoSocket.SocketApp
         }
 
         /// <summary>
-        /// Sends the specified handler.
+        /// Sends the commandModel with specified handler.
         /// </summary>
         /// <param name="handler">The handler.</param>
         /// <param name="commandModel">The command model.</param>

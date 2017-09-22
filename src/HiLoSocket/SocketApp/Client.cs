@@ -9,6 +9,12 @@ using HiLoSocket.Model;
 
 namespace HiLoSocket.SocketApp
 {
+    /// <inheritdoc />
+    /// <summary>
+    /// Socket Client.
+    /// </summary>
+    /// <typeparam name="TCommandModel">The type of the command model.</typeparam>
+    /// <seealso cref="T:HiLoSocket.SocketApp.SocketBase`1" />
     public class Client<TCommandModel> : SocketBase<TCommandModel>
         where TCommandModel : class
     {
@@ -59,13 +65,14 @@ namespace HiLoSocket.SocketApp
         {
         }
 
+        /// <inheritdoc />
         /// <summary>
-        /// Initializes a new instance of the <see cref="Client{TCommandModel}"/> class.
+        /// Initializes a new instance of the <see cref="T:HiLoSocket.SocketApp.Client`1" /> class.
         /// </summary>
         /// <param name="clientConfigModel">The client model.</param>
         /// <param name="logger">The logger.</param>
-        /// <exception cref="ArgumentNullException">clientConfigModel</exception>
-        /// <exception cref="ValidationException"></exception>
+        /// <exception cref="T:System.ArgumentNullException">clientConfigModel</exception>
+        /// <exception cref="T:System.ComponentModel.DataAnnotations.ValidationException"></exception>
         public Client( ClientConfigModel clientConfigModel, ILogger logger )
             : base( clientConfigModel?.FormatterType, clientConfigModel?.CompressType, logger )
         {
@@ -112,12 +119,23 @@ Inner Execption 訊息 : {e.Message}", e );
             }
         }
 
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="System.String" /> that represents this instance.
+        /// </returns>
         public override string ToString( )
         {
             CheckIfDisposed( );
             return $"Client with {typeof( TCommandModel )} type model";
         }
 
+        /// <inheritdoc />
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected override void Dispose( bool disposing )
         {
             if ( !IsDisposed )
@@ -134,6 +152,11 @@ Inner Execption 訊息 : {e.Message}", e );
             base.Dispose( disposing );
         }
 
+        /// <inheritdoc />
+        /// <summary>
+        /// Receives the command model callback.
+        /// </summary>
+        /// <param name="asyncResult">The asynchronous result.</param>
         protected override void ReceiveCommandModelCallback( IAsyncResult asyncResult )
         {
             base.ReceiveCommandModelCallback( asyncResult );
@@ -147,6 +170,13 @@ Inner Execption 訊息 : {e.Message}", e );
             _receiveDone.Set( );
         }
 
+        /// <inheritdoc />
+        /// <summary>
+        /// Sends the commandModel with specified handler.
+        /// </summary>
+        /// <param name="handler">The handler.</param>
+        /// <param name="commandModel">The command model.</param>
+        /// <exception cref="T:System.InvalidOperationException"></exception>
         protected override void Send( Socket handler, TCommandModel commandModel )
         {
             try
@@ -160,6 +190,11 @@ Inner Exception 訊息 : {e.Message}", e );
             }
         }
 
+        /// <inheritdoc />
+        /// <summary>
+        /// Sends the callback.
+        /// </summary>
+        /// <param name="asyncResult">The asynchronous result.</param>
         protected override void SendCallback( IAsyncResult asyncResult )
         {
             base.SendCallback( asyncResult );
