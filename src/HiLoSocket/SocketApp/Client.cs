@@ -41,6 +41,14 @@ namespace HiLoSocket.SocketApp
         /// </value>
         public IPEndPoint RemoteIpEndPoint { get; }
 
+        /// <summary>
+        /// Gets the timeout time.
+        /// </summary>
+        /// <value>
+        /// The timeout time.
+        /// </value>
+        public int TimeoutTime { get; }
+
         /// <inheritdoc />
         /// <summary>
         /// Initializes a new instance of the <see cref="T:HiLoSocket.SocketApp.Client`1" /> class.
@@ -65,6 +73,7 @@ namespace HiLoSocket.SocketApp
             ValidateModel( clientConfigModel );
             LocalIpEndPoint = clientConfigModel?.LocalIpEndPoint;
             RemoteIpEndPoint = clientConfigModel?.RemoteIpEndPoint;
+            TimeoutTime = clientConfigModel?.TimeOutTime ?? 3000;
         }
 
         /// <summary>
@@ -98,7 +107,7 @@ Inner Execption 訊息 : {e.Message}", e );
             }
             finally
             {
-                client.Close( );
+                Close( client );
                 ResetDoneEvent( );
             }
         }
@@ -129,14 +138,26 @@ Inner Execption 訊息 : {e.Message}", e );
         {
             base.ReceiveCommandModelCallback( asyncResult );
 
-            if ( asyncResult.AsyncState is StateObjectModel state )
+            if ( asyncResult.AsyncState is StateObjectModel<Socket> state )
             {
-                Close( state.WorkSocket );
                 var commandModel = GetCommandModel( state );
                 InvokeOnSocketCommandModelReceived( commandModel );
             }
 
             _receiveDone.Set( );
+        }
+
+        protected override void Send( Socket handler, TCommandModel commandModel )
+        {
+            try
+            {
+                base.Send( handler, commandModel );
+            }
+            catch ( Exception e )
+            {
+                throw new InvalidOperationException( $@"傳送資料失敗，詳細請參照 Inner Exception。
+Inner Exception 訊息 : {e.Message}", e );
+            }
         }
 
         protected override void SendCallback( IAsyncResult asyncResult )
@@ -205,6 +226,10 @@ Inner Execption 訊息 : {e.Message}", e );
                     Message = $"用戶端關閉連線失敗囉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
             }
+            finally
+            {
+                SetDoneEvent( );
+            }
         }
 
         private void ConnectCallback( IAsyncResult asyncResult )
@@ -239,19 +264,20 @@ Inner Execption 訊息 : {e.Message}", e );
         {
             try
             {
-                var state = new StateObjectModel
+                var state = new StateObjectModel<Socket>
                 {
-                    WorkSocket = client
+                    WorkSocket = client,
+                    TimeoutChecker = new TimeoutChecker<Socket>( Close, client, TimeoutTime ),
                 };
 
-                client.BeginReceive( state.Buffer, 0, StateObjectModel.DataInfoSize, 0, ReadTotalLengthCallback, state );
+                client.BeginReceive( state.Buffer, 0, StateObjectModel<Socket>.DataInfoSize, 0, ReadTotalLengthCallback, state );
             }
             catch ( Exception e )
             {
                 Logger?.Log( new LogModel
                 {
                     Time = DateTime.Now,
-                    Message = $"資料接收失敗啦,  物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
+                    Message = $"資料接收失敗啦, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
 
                 throw new InvalidOperationException( $@"客戶端接收伺服器訊息失敗，詳細請參照 Inner Exception。
@@ -278,6 +304,13 @@ Inner Execption 訊息 : {e.Message}", e );
             _receiveDone.Wait( );
         }
 
+        private void SetDoneEvent( )
+        {
+            _connectDone.Set( );
+            _receiveDone.Set( );
+            _sendDone.Set( );
+        }
+
         private void TrySend( Socket client, TCommandModel commandModel )
         {
             lock ( _sendLock )
@@ -296,11 +329,6 @@ Inner Execption 訊息 : {e.Message}", e );
 
                     throw new InvalidOperationException( $@"客戶端傳送訊息至伺服器失敗，詳細請參照 Inner Exception。
 Inner Execption 訊息 : {e.Message}", e );
-                }
-                finally
-                {
-                    client.Close( );
-                    ResetDoneEvent( );
                 }
             }
         }

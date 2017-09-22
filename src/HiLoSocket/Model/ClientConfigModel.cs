@@ -15,5 +15,8 @@ namespace HiLoSocket.Model
 
         [Required( ErrorMessage = "遠端 IP 沒有設定喔，不知道遠端的 IP 嗎？" )]
         public IPEndPoint RemoteIpEndPoint { get; set; }
+
+        [Range( 2000, 120000, ErrorMessage = "Timeout 時間需介於 2000 ~ 120000 毫秒" )]
+        public int TimeOutTime { get; set; }
     }
 }

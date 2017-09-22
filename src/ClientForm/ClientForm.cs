@@ -27,6 +27,9 @@ namespace ClientForm
 
         private void AppendText( RichTextBox box, Color color, string text )
         {
+            if ( text == null )
+                return;
+
             var start = box.TextLength;
             box.AppendText( text );
             var end = box.TextLength;
@@ -70,7 +73,7 @@ namespace ClientForm
                     }
                     finally
                     {
-                        Thread.Sleep( 3000 );
+                        Thread.Sleep( 5000 );
                     }
                 }
                 _isSending = false;
@@ -90,13 +93,13 @@ namespace ClientForm
             if ( InvokeRequired )
                 Invoke( new Action( ( ) =>
                 {
-                    AppendText( rtbMessage, Color.Red, model.Id.ToString( ) );
+                    AppendText( rtbMessage, Color.Red, model?.Id.ToString( ) );
                     rtbMessage.AppendText( "\n" );
-                    AppendText( rtbMessage, Color.Black, model.CommandName );
+                    AppendText( rtbMessage, Color.Black, model?.CommandName );
                     rtbMessage.AppendText( "\n" );
-                    AppendText( rtbMessage, Color.Black, model.Time.ToString( CultureInfo.InvariantCulture ) );
+                    AppendText( rtbMessage, Color.Black, model?.Time.ToString( CultureInfo.InvariantCulture ) );
                     rtbMessage.AppendText( "\n" );
-                    AppendText( rtbMessage, Color.Black, ( string ) model.Results );
+                    AppendText( rtbMessage, Color.Black, ( string ) model?.Results );
                     rtbMessage.AppendText( "\n" );
                     rtbMessage.SelectionStart = rtbMessage.Text.Length;
                     rtbMessage.ScrollToCaret( );
@@ -126,7 +129,8 @@ namespace ClientForm
                     LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8001 ),
                     RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.01" ), 8000 ),
                     FormatterType = ( FormatterType? ) Enum.Parse( typeof( FormatterType ), ( string ) mcbFormatter.SelectedItem ),
-                    CompressType = ( CompressType? ) Enum.Parse( typeof( CompressType ), ( string ) mcbCompressor.SelectedItem )
+                    CompressType = ( CompressType? ) Enum.Parse( typeof( CompressType ), ( string ) mcbCompressor.SelectedItem ),
+                    TimeOutTime = 2000
                 }, logger );
 
             logger.OnLog += Logger_OnLog;

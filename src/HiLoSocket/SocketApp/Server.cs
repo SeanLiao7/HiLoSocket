@@ -144,12 +144,29 @@ Inner Exeption 訊息 : {e.Message}", e );
         protected override void ReceiveCommandModelCallback( IAsyncResult asyncResult )
         {
             base.ReceiveCommandModelCallback( asyncResult );
-            if ( asyncResult.AsyncState is StateObjectModel state )
+            if ( asyncResult.AsyncState is StateObjectModel<Socket> state )
             {
                 var handler = state.WorkSocket;
                 var commandModel = GetCommandModel( state );
                 Send( handler, commandModel );
+            }
+        }
+
+        protected override void Send( Socket handler, TCommandModel commandModel )
+        {
+            try
+            {
+                base.Send( handler, commandModel );
                 InvokeOnSocketCommandModelReceived( commandModel );
+            }
+            catch ( Exception e )
+            {
+                StopListening( );
+                Logger?.Log( new LogModel
+                {
+                    Time = DateTime.Now,
+                    Message = $"伺服器回傳資料至客戶端失敗, 伺服器已關閉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
+                } );
             }
         }
 
@@ -185,7 +202,7 @@ Inner Exeption 訊息 : {e.Message}", e );
                 try
                 {
                     var handler = listener.EndAccept( asyncResult );
-                    var state = new StateObjectModel
+                    var state = new StateObjectModel<Socket>
                     {
                         WorkSocket = handler
                     };
@@ -196,7 +213,7 @@ Inner Exeption 訊息 : {e.Message}", e );
                         Message = $"伺服器已接受用戶連線, 伺服器 : {handler.LocalEndPoint}, 用戶端 : {handler.RemoteEndPoint}"
                     } );
 
-                    handler.BeginReceive( state.Buffer, 0, StateObjectModel.DataInfoSize, 0, ReadTotalLengthCallback, state );
+                    handler.BeginReceive( state.Buffer, 0, StateObjectModel<Socket>.DataInfoSize, 0, ReadTotalLengthCallback, state );
                 }
                 catch ( ObjectDisposedException e )
                 {

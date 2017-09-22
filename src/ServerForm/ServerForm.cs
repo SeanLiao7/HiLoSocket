@@ -26,6 +26,9 @@ namespace ServerForm
 
         private void AppendText( RichTextBox box, Color color, string text )
         {
+            if ( text == null )
+                return;
+
             var start = box.TextLength;
             box.AppendText( text );
             var end = box.TextLength;
@@ -92,13 +95,13 @@ namespace ServerForm
             if ( InvokeRequired )
                 Invoke( new Action( ( ) =>
                 {
-                    AppendText( rtbMessage, Color.Red, model.Id.ToString( ) );
+                    AppendText( rtbMessage, Color.Red, model?.Id.ToString( ) );
                     rtbMessage.AppendText( "\n" );
-                    AppendText( rtbMessage, Color.Black, model.CommandName );
+                    AppendText( rtbMessage, Color.Black, model?.CommandName );
                     rtbMessage.AppendText( "\n" );
-                    AppendText( rtbMessage, Color.Black, model.Time.ToString( CultureInfo.InvariantCulture ) );
+                    AppendText( rtbMessage, Color.Black, model?.Time.ToString( CultureInfo.InvariantCulture ) );
                     rtbMessage.AppendText( "\n" );
-                    AppendText( rtbMessage, Color.Black, ( string ) model.Results );
+                    AppendText( rtbMessage, Color.Black, ( string ) model?.Results );
                     rtbMessage.AppendText( "\n" );
                     rtbMessage.SelectionStart = rtbMessage.Text.Length;
                     rtbMessage.ScrollToCaret( );

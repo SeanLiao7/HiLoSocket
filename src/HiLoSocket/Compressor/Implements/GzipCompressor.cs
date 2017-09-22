@@ -49,7 +49,7 @@ namespace HiLoSocket.Compressor.Implements
                 var buffer = new byte[ BufferSize ];
                 using ( var memory = new MemoryStream( ) )
                 {
-                    var count = 0;
+                    int count;
                     do
                     {
                         count = stream.Read( buffer, 0, BufferSize );

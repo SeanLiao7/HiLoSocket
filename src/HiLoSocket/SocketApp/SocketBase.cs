@@ -57,9 +57,9 @@ namespace HiLoSocket.SocketApp
         protected byte[ ] CreateBytesToSendWithSize( byte[ ] commandBytestoSend )
         {
             var lengthConvert = BitConverter.GetBytes( commandBytestoSend.Length ); // 將此次傳輸的 command 長度轉為 byte 陣列
-            var commandBytetoSendWithSize = new byte[ commandBytestoSend.Length + StateObjectModel.DataInfoSize ]; // 傳輸的資料包含長度包含 4 個代表 command 長度的陣列與本身
+            var commandBytetoSendWithSize = new byte[ commandBytestoSend.Length + StateObjectModel<Socket>.DataInfoSize ]; // 傳輸的資料包含長度包含 4 個代表 command 長度的陣列與本身
             lengthConvert.CopyTo( commandBytetoSendWithSize, 0 ); // copy 長度資訊
-            commandBytestoSend.CopyTo( commandBytetoSendWithSize, StateObjectModel.DataInfoSize ); // copy command 資訊
+            commandBytestoSend.CopyTo( commandBytetoSendWithSize, StateObjectModel<Socket>.DataInfoSize ); // copy command 資訊
 
             return commandBytetoSendWithSize;
         }
@@ -72,7 +72,7 @@ namespace HiLoSocket.SocketApp
         {
         }
 
-        protected TCommandModel GetCommandModel( StateObjectModel state )
+        protected TCommandModel GetCommandModel( StateObjectModel<Socket> state )
         {
             var commandModel = default( TCommandModel );
             try
@@ -107,7 +107,7 @@ namespace HiLoSocket.SocketApp
         /// <param name="asyncResult">The asynchronous result.</param>
         protected void ReadTotalLengthCallback( IAsyncResult asyncResult )
         {
-            if ( asyncResult.AsyncState is StateObjectModel state )
+            if ( asyncResult.AsyncState is StateObjectModel<Socket> state )
             {
                 var bytesRead = default( int );
                 var handler = state.WorkSocket;
@@ -125,7 +125,7 @@ namespace HiLoSocket.SocketApp
                     } );
                 }
 
-                if ( bytesRead == StateObjectModel.DataInfoSize )
+                if ( bytesRead == StateObjectModel<Socket>.DataInfoSize )
                 {
                     Logger?.Log( new LogModel
                     {
@@ -152,14 +152,16 @@ namespace HiLoSocket.SocketApp
         /// <param name="asyncResult">The asynchronous result.</param>
         protected virtual void ReceiveCommandModelCallback( IAsyncResult asyncResult )
         {
-            if ( asyncResult.AsyncState is StateObjectModel state )
+            if ( asyncResult.AsyncState is StateObjectModel<Socket> state )
             {
                 var bytesRead = default( int );
                 var handler = state.WorkSocket;
+                var timer = state.TimeoutChecker;
 
                 try
                 {
                     bytesRead = handler.EndReceive( asyncResult );
+                    timer?.StopChecking( );
                 }
                 catch ( Exception e )
                 {
@@ -194,8 +196,7 @@ namespace HiLoSocket.SocketApp
         /// </summary>
         /// <param name="handler">The handler.</param>
         /// <param name="commandModel">The command model.</param>
-        /// <exception cref="InvalidOperationException">傳送資料失敗，詳細請參照 Inner Exception。</exception>
-        protected void Send( Socket handler, TCommandModel commandModel )
+        protected virtual void Send( Socket handler, TCommandModel commandModel )
         {
             try
             {
@@ -214,9 +215,7 @@ namespace HiLoSocket.SocketApp
                     Time = DateTime.Now,
                     Message = $"傳送資料失敗, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
                 } );
-
-                throw new InvalidOperationException( $@"傳送資料失敗，詳細請參照 Inner Exception。
-Inner Exception 訊息 : {e.Message}", e );
+                throw;
             }
         }
 
@@ -248,7 +247,7 @@ Inner Exception 訊息 : {e.Message}", e );
             }
         }
 
-        private void TryReceiveCommandModel( Socket handler, StateObjectModel state )
+        private void TryReceiveCommandModel( Socket handler, StateObjectModel<Socket> state )
         {
             var totalBufferSize = BitConverter.ToInt32( state.Buffer, 0 );
             state.Buffer = new byte[ totalBufferSize ];
