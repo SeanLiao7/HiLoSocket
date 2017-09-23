@@ -6,6 +6,7 @@ using System.Threading;
 using HiLoSocket.Extension;
 using HiLoSocket.Logger;
 using HiLoSocket.Model;
+using HiLoSocket.Model.InternalOnly;
 
 namespace HiLoSocket.SocketApp
 {
@@ -302,7 +303,14 @@ Inner Exception 訊息 : {e.Message}", e );
                 var state = new StateObjectModel<Socket>
                 {
                     WorkSocket = client,
-                    TimeoutChecker = new TimeoutChecker<Socket>( Close, client, TimeoutTime ),
+                    TimeoutChecker = new TimeoutChecker<Socket>(
+                        new TimeoutCheckerModel<Socket>
+                        {
+                            Target = client,
+                            OnTimeoutAction = Close,
+                            Logger = Logger,
+                            TimeoutTime = TimeoutTime
+                        } )
                 };
 
                 client.BeginReceive( state.Buffer, 0, StateObjectModel<Socket>.DataInfoSize, 0, ReadTotalLengthCallback, state );
@@ -327,18 +335,6 @@ Inner Execption 訊息 : {e.Message}", e );
             _sendDone.Reset( );
         }
 
-        private void SendCommandModel( Socket client, TCommandModel commandModel )
-        {
-            client.BeginConnect( RemoteIpEndPoint, ConnectCallback, client );
-            _connectDone.Wait( );
-
-            Send( client, commandModel );
-            _sendDone.Wait( );
-
-            Receive( client );
-            _receiveDone.Wait( );
-        }
-
         private void SetDoneEvent( )
         {
             _connectDone.Set( );
@@ -350,21 +346,14 @@ Inner Execption 訊息 : {e.Message}", e );
         {
             lock ( _sendLock )
             {
-                try
-                {
-                    SendCommandModel( client, commandModel );
-                }
-                catch ( Exception e )
-                {
-                    Logger?.Log( new LogModel
-                    {
-                        Time = DateTime.Now,
-                        Message = $"客戶端資料傳送失敗啦, 連線關閉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
-                    } );
+                client.BeginConnect( RemoteIpEndPoint, ConnectCallback, client );
+                _connectDone.Wait( );
 
-                    throw new InvalidOperationException( $@"客戶端傳送訊息至伺服器失敗，詳細請參照 Inner Exception。
-Inner Execption 訊息 : {e.Message}", e );
-                }
+                Send( client, commandModel );
+                _sendDone.Wait( );
+
+                Receive( client );
+                _receiveDone.Wait( );
             }
         }
     }

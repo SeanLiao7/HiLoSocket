@@ -130,7 +130,7 @@ namespace ClientForm
                     RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.01" ), 8000 ),
                     FormatterType = ( FormatterType? ) Enum.Parse( typeof( FormatterType ), ( string ) mcbFormatter.SelectedItem ),
                     CompressType = ( CompressType? ) Enum.Parse( typeof( CompressType ), ( string ) mcbCompressor.SelectedItem ),
-                    TimeOutTime = 2000
+                    TimeOutTime = 5000
                 }, logger );
 
             logger.OnLog += Logger_OnLog;

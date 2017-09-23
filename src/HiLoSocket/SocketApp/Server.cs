@@ -6,6 +6,7 @@ using System.Threading;
 using HiLoSocket.Extension;
 using HiLoSocket.Logger;
 using HiLoSocket.Model;
+using HiLoSocket.Model.InternalOnly;
 
 namespace HiLoSocket.SocketApp
 {
@@ -138,6 +139,7 @@ Inner Exeption 訊息 : {e.Message}", e );
             return $"Server with {typeof( TCommandModel )} type model";
         }
 
+        /// <inheritdoc />
         /// <summary>
         /// Releases unmanaged and - optionally - managed resources.
         /// </summary>

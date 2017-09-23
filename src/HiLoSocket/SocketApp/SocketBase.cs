@@ -4,6 +4,7 @@ using HiLoSocket.CommandFormatter;
 using HiLoSocket.Compressor;
 using HiLoSocket.Logger;
 using HiLoSocket.Model;
+using HiLoSocket.Model.InternalOnly;
 
 namespace HiLoSocket.SocketApp
 {
@@ -89,6 +90,31 @@ namespace HiLoSocket.SocketApp
         }
 
         /// <summary>
+        /// Gets the command model.
+        /// </summary>
+        /// <param name="state">The state.</param>
+        /// <returns></returns>
+        internal TCommandModel GetCommandModel( StateObjectModel<Socket> state )
+        {
+            var commandModel = default( TCommandModel );
+            try
+            {
+                commandModel = IgnoreFormatter
+                    ? state.Buffer as TCommandModel
+                    : CommandFormatter.Deserialize( Compressor.Decompress( state.Buffer ) );
+            }
+            catch ( Exception e )
+            {
+                Logger?.Log( new LogModel
+                {
+                    Time = DateTime.Now,
+                    Message = $"反序列化失敗囉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
+                } );
+            }
+            return commandModel;
+        }
+
+        /// <summary>
         /// Creates the size of the bytes to send with.
         /// </summary>
         /// <param name="commandBytestoSend">The command bytesto send.</param>
@@ -109,31 +135,6 @@ namespace HiLoSocket.SocketApp
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected virtual void Dispose( bool disposing )
         {
-        }
-
-        /// <summary>
-        /// Gets the command model.
-        /// </summary>
-        /// <param name="state">The state.</param>
-        /// <returns></returns>
-        protected TCommandModel GetCommandModel( StateObjectModel<Socket> state )
-        {
-            var commandModel = default( TCommandModel );
-            try
-            {
-                commandModel = IgnoreFormatter
-                    ? state.Buffer as TCommandModel
-                    : CommandFormatter.Deserialize( Compressor.Decompress( state.Buffer ) );
-            }
-            catch ( Exception e )
-            {
-                Logger?.Log( new LogModel
-                {
-                    Time = DateTime.Now,
-                    Message = $"反序列化失敗囉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
-                } );
-            }
-            return commandModel;
         }
 
         /// <summary>

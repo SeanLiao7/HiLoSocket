@@ -74,9 +74,10 @@
     <Compile Include="Model\ClientConfigModel.cs" />
     <Compile Include="Model\LogModel.cs" />
     <Compile Include="Model\ServerConfigModel.cs" />
+    <Compile Include="Model\InternalOnly\TimeoutCheckerModel.cs" />
     <Compile Include="SocketApp\SocketBase.cs" />
     <Compile Include="Model\SocketCommandModel.cs" />
-    <Compile Include="Model\StateObjectModel.cs" />
+    <Compile Include="Model\InternalOnly\StateObjectModel.cs" />
     <Compile Include="SocketApp\Client.cs" />
     <Compile Include="SocketApp\Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

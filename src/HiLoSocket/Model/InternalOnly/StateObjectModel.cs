@@ -1,13 +1,13 @@
 ﻿using System.Net.Sockets;
 using HiLoSocket.SocketApp;
 
-namespace HiLoSocket.Model
+namespace HiLoSocket.Model.InternalOnly
 {
     /// <summary>
     /// StateObjectModel for socket async communication.
     /// </summary>
     /// <typeparam name="T">User define type.</typeparam>
-    public class StateObjectModel<T> where T : class
+    internal class StateObjectModel<T> where T : class
     {
         /// <summary>
         /// The data information size
