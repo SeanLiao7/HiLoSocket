@@ -48,7 +48,7 @@ namespace ClientForm
 
             Setup( );
             _isSending = true;
-
+            var delay = ( int ) nudDelayTime.Value;
             new Thread( ( ) =>
             {
                 while ( _isSending )
@@ -72,7 +72,7 @@ namespace ClientForm
                     }
                     finally
                     {
-                        Thread.Sleep( 5000 );
+                        Thread.Sleep( delay );
                     }
                 }
                 _isSending = false;
