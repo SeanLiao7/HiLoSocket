@@ -65,11 +65,10 @@ namespace ClientForm
                     }
                     catch ( Exception )
                     {
-                        if ( InvokeRequired )
-                            Invoke( new Action( ( ) =>
-                            {
-                                lblStatus.Text = $@"Working {( ++_reStartTime ).ToString( )}";
-                            } ) );
+                        this.UpdateUi( ( ) =>
+                        {
+                            lblStatus.Text = $@"Working {( ++_reStartTime ).ToString( )}";
+                        } );
                     }
                     finally
                     {
@@ -90,34 +89,32 @@ namespace ClientForm
 
         private void Client_OnAckCommandReceived( SocketCommandModel model )
         {
-            if ( InvokeRequired )
-                Invoke( new Action( ( ) =>
-                {
-                    AppendText( rtbMessage, Color.Red, model?.Id.ToString( ) );
-                    rtbMessage.AppendText( "\n" );
-                    AppendText( rtbMessage, Color.Black, model?.CommandName );
-                    rtbMessage.AppendText( "\n" );
-                    AppendText( rtbMessage, Color.Black, model?.Time.ToString( CultureInfo.InvariantCulture ) );
-                    rtbMessage.AppendText( "\n" );
-                    AppendText( rtbMessage, Color.Black, ( string ) model?.Results );
-                    rtbMessage.AppendText( "\n" );
-                    rtbMessage.SelectionStart = rtbMessage.Text.Length;
-                    rtbMessage.ScrollToCaret( );
-                } ) );
+            this.UpdateUi( ( ) =>
+            {
+                AppendText( rtbMessage, Color.Red, model?.Id.ToString( ) );
+                rtbMessage.AppendText( "\n" );
+                AppendText( rtbMessage, Color.Black, model?.CommandName );
+                rtbMessage.AppendText( "\n" );
+                AppendText( rtbMessage, Color.Black, model?.Time.ToString( CultureInfo.InvariantCulture ) );
+                rtbMessage.AppendText( "\n" );
+                AppendText( rtbMessage, Color.Black, ( string ) model?.Results );
+                rtbMessage.AppendText( "\n" );
+                rtbMessage.SelectionStart = rtbMessage.Text.Length;
+                rtbMessage.ScrollToCaret( );
+            } );
         }
 
         private void Logger_OnLog( LogModel logModel )
         {
-            if ( InvokeRequired )
-                Invoke( new Action( ( ) =>
-                {
-                    AppendText( rtbLog, Color.Green, logModel.Time.ToString( CultureInfo.InvariantCulture ) );
-                    rtbLog.AppendText( "\n" );
-                    AppendText( rtbLog, Color.Blue, logModel.Message.ToString( CultureInfo.InvariantCulture ) );
-                    rtbLog.AppendText( "\n" );
-                    rtbLog.SelectionStart = rtbLog.Text.Length;
-                    rtbLog.ScrollToCaret( );
-                } ) );
+            this.UpdateUi( ( ) =>
+            {
+                AppendText( rtbLog, Color.Green, logModel.Time.ToString( CultureInfo.InvariantCulture ) );
+                rtbLog.AppendText( "\n" );
+                AppendText( rtbLog, Color.Blue, logModel.Message.ToString( CultureInfo.InvariantCulture ) );
+                rtbLog.AppendText( "\n" );
+                rtbLog.SelectionStart = rtbLog.Text.Length;
+                rtbLog.ScrollToCaret( );
+            } );
         }
 
         private void Setup( )
