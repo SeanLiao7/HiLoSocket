@@ -3,12 +3,12 @@ using System.Net;
 using HiLoSocket.CommandFormatter;
 using HiLoSocket.Compressor;
 
-namespace HiLoSocket.Model
+namespace HiLoSocket.Model.InternalOnly
 {
     /// <summary>
     /// ConfigModel for Server constructor.
     /// </summary>
-    public class ServerConfigModel
+    internal class ServerConfigModel
     {
         /// <summary>
         /// Gets or sets the type of the compress.

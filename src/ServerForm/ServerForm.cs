@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
+using HiLoSocket.Builder.Server;
 using HiLoSocket.CommandFormatter;
 using HiLoSocket.Compressor;
 using HiLoSocket.Model;
@@ -108,13 +109,14 @@ namespace ServerForm
         private void Setup( )
         {
             var logger = new FormLogger( );
-            _server = new Server<SocketCommandModel>(
-                new ServerConfigModel
-                {
-                    LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ),
-                    FormatterType = ( FormatterType? ) Enum.Parse( typeof( FormatterType ), ( string ) mcbFormatter.SelectedItem ),
-                    CompressType = ( CompressType? ) Enum.Parse( typeof( CompressType ), ( string ) mcbCompressor.SelectedItem )
-                }, logger );
+            _server = ServerBuilder<SocketCommandModel>.CreateNew( )
+                .SetLocalIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ) )
+                .SetFormatterType( ( FormatterType? ) Enum.Parse( typeof( FormatterType ),
+                    ( string ) mcbFormatter.SelectedItem ) )
+                .SetCompressType( ( CompressType? ) Enum.Parse( typeof( CompressType ),
+                    ( string ) mcbCompressor.SelectedItem ) )
+                .SetLogger( logger )
+                .Build( );
 
             logger.OnLog += Logger_OnLog;
             _server.OnCommandModelReceived += Server_OnSocketCommandRecevied;

@@ -10,7 +10,8 @@ namespace HiLoSocket.SocketApp
     /// Timeout Checker.
     /// </summary>
     /// <typeparam name="T">User define type.</typeparam>
-    internal class TimeoutChecker<T> where T : class
+    internal class TimeoutChecker<T>
+        where T : class
     {
         public ILogger Logger { get; }
         public Action<T> OnTimeoutAction { get; }

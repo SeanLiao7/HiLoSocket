@@ -3,12 +3,12 @@ using System.Net;
 using HiLoSocket.CommandFormatter;
 using HiLoSocket.Compressor;
 
-namespace HiLoSocket.Model
+namespace HiLoSocket.Model.InternalOnly
 {
     /// <summary>
     /// ConfigModel for Client constructor.
     /// </summary>
-    public class ClientConfigModel
+    internal class ClientConfigModel
     {
         /// <summary>
         /// Gets or sets the type of the compress.
@@ -50,7 +50,7 @@ namespace HiLoSocket.Model
         /// <value>
         /// The time out time.
         /// </value>
-        [Range( 2000, 120000, ErrorMessage = "Timeout 時間需介於 2000 ~ 120000 毫秒" )]
+        [Range( 2000, 20000, ErrorMessage = "Timeout 時間需介於 2000 ~ 20000 毫秒" )]
         public int TimeOutTime { get; set; }
     }
 }

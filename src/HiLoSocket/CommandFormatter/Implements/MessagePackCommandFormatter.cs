@@ -4,7 +4,7 @@ using MessagePack.Resolvers;
 
 namespace HiLoSocket.CommandFormatter.Implements
 {
-    public class MessagePackCommandFormatter<TCommandModel> : ICommandFormatter<TCommandModel>
+    internal class MessagePackCommandFormatter<TCommandModel> : ICommandFormatter<TCommandModel>
         where TCommandModel : class
     {
         /// <inheritdoc />

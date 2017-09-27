@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
+using HiLoSocket.Builder.Client;
 using HiLoSocket.CommandFormatter;
 using HiLoSocket.Compressor;
 using HiLoSocket.Model;
@@ -120,15 +121,16 @@ namespace ClientForm
         private void Setup( )
         {
             var logger = new FormLogger( );
-            _client = new Client<SocketCommandModel>(
-                new ClientConfigModel
-                {
-                    LocalIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8001 ),
-                    RemoteIpEndPoint = new IPEndPoint( IPAddress.Parse( "127.0.01" ), 8000 ),
-                    FormatterType = ( FormatterType? ) Enum.Parse( typeof( FormatterType ), ( string ) mcbFormatter.SelectedItem ),
-                    CompressType = ( CompressType? ) Enum.Parse( typeof( CompressType ), ( string ) mcbCompressor.SelectedItem ),
-                    TimeOutTime = 5000
-                }, logger );
+            _client = ClientBuilder<SocketCommandModel>.CreateNew( )
+                .SetLocalIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8001 ) )
+                .SetRemoteIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.01" ), 8000 ) )
+                .SetFormatterType( ( FormatterType? ) Enum.Parse( typeof( FormatterType ),
+                    ( string ) mcbFormatter.SelectedItem ) )
+                .SetCompressType( ( CompressType? ) Enum.Parse( typeof( CompressType ),
+                    ( string ) mcbCompressor.SelectedItem ) )
+                .SetTimeoutTime( 2000 )
+                .SetLogger( logger )
+                .Build( );
 
             logger.OnLog += Logger_OnLog;
             _client.OnCommandModelReceived += Client_OnAckCommandReceived;

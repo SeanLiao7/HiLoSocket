@@ -61,7 +61,7 @@ namespace HiLoSocket.SocketApp
         /// Initializes a new instance of the <see cref="T:HiLoSocket.SocketApp.Client`1" /> class.
         /// </summary>
         /// <param name="clientConfigModel">The client model.</param>
-        public Client( ClientConfigModel clientConfigModel )
+        internal Client( ClientConfigModel clientConfigModel )
             : this( clientConfigModel, null )
         {
         }
@@ -74,7 +74,7 @@ namespace HiLoSocket.SocketApp
         /// <param name="logger">The logger.</param>
         /// <exception cref="T:System.ArgumentNullException">clientConfigModel</exception>
         /// <exception cref="T:System.ComponentModel.DataAnnotations.ValidationException"></exception>
-        public Client( ClientConfigModel clientConfigModel, ILogger logger )
+        internal Client( ClientConfigModel clientConfigModel, ILogger logger )
             : base( clientConfigModel?.FormatterType, clientConfigModel?.CompressType, logger )
         {
             CheckIfNullModel( clientConfigModel );

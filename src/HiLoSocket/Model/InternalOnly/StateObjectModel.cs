@@ -7,7 +7,8 @@ namespace HiLoSocket.Model.InternalOnly
     /// StateObjectModel for socket async communication.
     /// </summary>
     /// <typeparam name="T">User define type.</typeparam>
-    internal class StateObjectModel<T> where T : class
+    internal class StateObjectModel<T>
+        where T : class
     {
         /// <summary>
         /// The data information size

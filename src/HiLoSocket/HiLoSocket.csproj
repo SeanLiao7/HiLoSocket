@@ -63,6 +63,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builder\Client\ClientBuilder.cs" />
+    <Compile Include="Builder\Client\IClientBuilder.cs" />
+    <Compile Include="Builder\Client\ISetCompressType.cs" />
+    <Compile Include="Builder\Client\ISetFormatterType.cs" />
+    <Compile Include="Builder\Client\ISetLocalIpEndPoint.cs" />
+    <Compile Include="Builder\Client\ISetLogger.cs" />
+    <Compile Include="Builder\Client\ISetRemoteIpEndPoint.cs" />
+    <Compile Include="Builder\Client\ISetTimeoutTime.cs" />
+    <Compile Include="Builder\Server\IServerBuilder.cs" />
+    <Compile Include="Builder\Server\ISetCompressType.cs" />
+    <Compile Include="Builder\Server\ISetFormatterType.cs" />
+    <Compile Include="Builder\Server\ISetLocalIpEndPoint.cs" />
+    <Compile Include="Builder\Server\ISetLogger.cs" />
+    <Compile Include="Builder\Server\ServerBuilder.cs" />
     <Compile Include="CommandFormatter\Implements\BinaryCommandFormatter.cs" />
     <Compile Include="CommandFormatter\FormatterFactory.cs" />
     <Compile Include="CommandFormatter\FormatterType.cs" />
@@ -77,9 +91,9 @@
     <Compile Include="Extension\Extensions.cs" />
     <Compile Include="Logger\ConsoleLogger.cs" />
     <Compile Include="Logger\ILogger.cs" />
-    <Compile Include="Model\ClientConfigModel.cs" />
+    <Compile Include="Model\InternalOnly\ClientConfigModel.cs" />
     <Compile Include="Model\LogModel.cs" />
-    <Compile Include="Model\ServerConfigModel.cs" />
+    <Compile Include="Model\InternalOnly\ServerConfigModel.cs" />
     <Compile Include="Model\InternalOnly\TimeoutCheckerModel.cs" />
     <Compile Include="SocketApp\SocketBase.cs" />
     <Compile Include="Model\SocketCommandModel.cs" />

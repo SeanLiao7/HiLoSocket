@@ -26,6 +26,7 @@ namespace HiLoSocket.SocketApp
 
         private readonly ManualResetEventSlim _allDone = new ManualResetEventSlim( );
         private readonly object _listenerLock = new object( );
+        private volatile bool _isListening;
         private Socket _listener;
 
         /// <summary>
@@ -42,7 +43,7 @@ namespace HiLoSocket.SocketApp
         /// <value>
         ///   <c>true</c> if this instance is listening; otherwise, <c>false</c>.
         /// </value>
-        public bool IsListening { get; private set; }
+        public bool IsListening => _isListening;
 
         /// <summary>
         /// Gets the local ip end point.
@@ -57,7 +58,7 @@ namespace HiLoSocket.SocketApp
         /// Initializes a new instance of the <see cref="T:HiLoSocket.SocketApp.Server`1" /> class.
         /// </summary>
         /// <param name="serverConfigModel">The server model.</param>
-        public Server( ServerConfigModel serverConfigModel )
+        internal Server( ServerConfigModel serverConfigModel )
             : this( serverConfigModel, null )
         {
         }
@@ -70,7 +71,7 @@ namespace HiLoSocket.SocketApp
         /// <param name="logger">The logger.</param>
         /// <exception cref="T:System.ArgumentNullException">serverConfigModel</exception>
         /// <exception cref="T:System.ComponentModel.DataAnnotations.ValidationException"></exception>
-        public Server( ServerConfigModel serverConfigModel, ILogger logger )
+        internal Server( ServerConfigModel serverConfigModel, ILogger logger )
             : base( serverConfigModel?.FormatterType, serverConfigModel?.CompressType, logger )
         {
             CheckIfNullInput( serverConfigModel );
@@ -151,7 +152,7 @@ Inner Exeption 訊息 : {e.Message}", e );
                 if ( disposing )
                 {
                     _allDone?.Dispose( );
-                    IsListening = false;
+                    _isListening = false;
                 }
 
                 _listener?.Close( );
@@ -270,7 +271,7 @@ Inner Exeption 訊息 : {e.Message}", e );
                 if ( IsListening )
                     return true;
 
-                IsListening = true;
+                _isListening = true;
             }
             return false;
         }
@@ -284,7 +285,7 @@ Inner Exeption 訊息 : {e.Message}", e );
         private void StopListening( Socket listener )
         {
             listener?.Close( );
-            IsListening = false;
+            _isListening = false;
         }
 
         private void TryAcceptClient( Socket listener )

@@ -10,6 +10,7 @@ namespace HiLoSocket.Logger
     /// <seealso cref="T:HiLoSocket.Logger.ILogger" />
     public class ConsoleLogger : ILogger
     {
+        /// <inheritdoc />
         /// <summary>
         /// Logs the specified log model.
         /// </summary>

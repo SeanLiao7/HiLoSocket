@@ -6,7 +6,8 @@ namespace HiLoSocket.Model.InternalOnly
     /// <summary>
     /// TimeoutCheckerModel
     /// </summary>
-    internal class TimeoutCheckerModel<T> where T : class
+    internal class TimeoutCheckerModel<T>
+        where T : class
     {
         /// <summary>
         /// Gets or sets the logger.
