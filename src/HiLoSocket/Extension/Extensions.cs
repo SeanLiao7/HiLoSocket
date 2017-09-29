@@ -23,12 +23,11 @@ namespace HiLoSocket.Extension
         }
 
         /// <summary>
-        /// Get description with specified property.
+        /// Gets the description.
         /// </summary>
-        /// <typeparam name="T">Target type T.</typeparam>
-        /// <param name="value">Input value.</param>
+        /// <param name="value">The value.</param>
         /// <returns>Description.</returns>
-        public static string GetDescription<T>( this T value )
+        public static string GetDescription( this Enum value )
         {
             var fi = value.GetType( ).GetField( value.ToString( ) );
             var attributes = fi.GetCustomAttributes( typeof( DescriptionAttribute ), false ) as DescriptionAttribute[ ];
@@ -44,6 +43,7 @@ namespace HiLoSocket.Extension
         /// <param name="errorMessages">Error messages.</param>
         /// <returns>IsSuccess.</returns>
         public static bool ValidateObject<T>( this T value, out IEnumerable<string> errorMessages )
+            where T : class
         {
             var context = new ValidationContext( value, null, null );
             var errors = new List<ValidationResult>( );
