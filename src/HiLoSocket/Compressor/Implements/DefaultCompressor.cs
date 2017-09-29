@@ -2,7 +2,7 @@
 
 namespace HiLoSocket.Compressor.Implements
 {
-    internal class DefaultCompressor : ICompressor
+    internal sealed class DefaultCompressor : ICompressor
     {
         /// <inheritdoc />
         /// <summary>

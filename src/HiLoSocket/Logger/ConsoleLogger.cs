@@ -8,7 +8,7 @@ namespace HiLoSocket.Logger
     /// Console Logger.
     /// </summary>
     /// <seealso cref="T:HiLoSocket.Logger.ILogger" />
-    public class ConsoleLogger : ILogger
+    public sealed class ConsoleLogger : ILogger
     {
         /// <inheritdoc />
         /// <summary>

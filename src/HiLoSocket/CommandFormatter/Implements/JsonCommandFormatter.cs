@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace HiLoSocket.CommandFormatter.Implements
 {
-    internal class JsonCommandFormatter<TCommandModel> : ICommandFormatter<TCommandModel>
+    internal sealed class JsonCommandFormatter<TCommandModel> : ICommandFormatter<TCommandModel>
         where TCommandModel : class
     {
         /// <inheritdoc />

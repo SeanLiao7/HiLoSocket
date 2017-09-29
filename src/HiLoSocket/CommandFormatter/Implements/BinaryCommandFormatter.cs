@@ -5,7 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace HiLoSocket.CommandFormatter.Implements
 {
-    internal class BinaryCommandFormatter<TCommandModel> : ICommandFormatter<TCommandModel>
+    internal sealed class BinaryCommandFormatter<TCommandModel> : ICommandFormatter<TCommandModel>
         where TCommandModel : class
     {
         /// <inheritdoc />
