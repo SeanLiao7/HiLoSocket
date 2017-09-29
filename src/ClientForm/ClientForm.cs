@@ -123,7 +123,7 @@ namespace ClientForm
             var logger = new FormLogger( );
             _client = ClientBuilder<SocketCommandModel>.CreateNew( )
                 .SetLocalIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8001 ) )
-                .SetRemoteIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.01" ), 8000 ) )
+                .SetRemoteIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ) )
                 .SetFormatterType( ( FormatterType? ) Enum.Parse( typeof( FormatterType ),
                     ( string ) mcbFormatter.SelectedItem ) )
                 .SetCompressType( ( CompressType? ) Enum.Parse( typeof( CompressType ),
