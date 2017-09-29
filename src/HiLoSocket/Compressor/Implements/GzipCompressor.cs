@@ -4,7 +4,7 @@ using System.IO.Compression;
 
 namespace HiLoSocket.Compressor.Implements
 {
-    internal class GZipCompressor : ICompressor
+    internal sealed class GZipCompressor : ICompressor
     {
         private const int BufferSize = 4096;
 
