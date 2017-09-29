@@ -60,7 +60,7 @@ namespace HiLoSocket.SocketApp
         /// <param name="formatterType">Type of the formatter.</param>
         /// <param name="compressType">Type of the compress.</param>
         /// <param name="logger">The logger.</param>
-        protected SocketBase( FormatterType? formatterType, CompressType? compressType, ILogger logger )
+        internal SocketBase( FormatterType? formatterType, CompressType? compressType, ILogger logger )
         {
             IgnoreFormatter = typeof( TCommandModel ) == typeof( byte[ ] );
 
