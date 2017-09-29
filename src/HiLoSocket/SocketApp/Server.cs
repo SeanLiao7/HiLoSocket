@@ -16,7 +16,7 @@ namespace HiLoSocket.SocketApp
     /// </summary>
     /// <typeparam name="TCommandModel">The type of the command model.</typeparam>
     /// <seealso cref="T:HiLoSocket.SocketApp.SocketBase`1" />
-    public class Server<TCommandModel> : SocketBase<TCommandModel>
+    public sealed class Server<TCommandModel> : SocketBase<TCommandModel>
         where TCommandModel : class
     {
         /// <summary>
