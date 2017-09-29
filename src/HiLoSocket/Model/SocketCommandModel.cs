@@ -1,4 +1,5 @@
 ﻿using System;
+using ProtoBuf;
 
 namespace HiLoSocket.Model
 {
@@ -6,6 +7,7 @@ namespace HiLoSocket.Model
     /// Data Model for socket transmition.
     /// </summary>
     [Serializable]
+    [ProtoContract]
     public class SocketCommandModel
     {
         /// <summary>
@@ -14,6 +16,7 @@ namespace HiLoSocket.Model
         /// <value>
         /// The name of the command.
         /// </value>
+        [ProtoMember( 1 )]
         public string CommandName { get; set; }
 
         /// <summary>
@@ -22,6 +25,7 @@ namespace HiLoSocket.Model
         /// <value>
         /// The identifier.
         /// </value>
+        [ProtoMember( 2 )]
         public Guid Id { get; set; }
 
         /// <summary>
@@ -30,7 +34,8 @@ namespace HiLoSocket.Model
         /// <value>
         /// The results.
         /// </value>
-        public object Results { get; set; }
+        [ProtoMember( 3 )]
+        public string Results { get; set; }
 
         /// <summary>
         /// Gets or sets the time.
@@ -38,6 +43,7 @@ namespace HiLoSocket.Model
         /// <value>
         /// The time.
         /// </value>
+        [ProtoMember( 4 )]
         public DateTime Time { get; set; }
     }
 }
