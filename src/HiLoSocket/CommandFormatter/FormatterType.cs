@@ -22,7 +22,7 @@ namespace HiLoSocket.CommandFormatter
         /// <summary>
         /// MessagePack Formatter
         /// </summary>
-        [Description( "MessagePackCommandFormatter" )]
-        MessagePackFormatter = 2
+        //[Description( "MessagePackCommandFormatter" )]
+        //MessagePackFormatter = 2
     }
 }

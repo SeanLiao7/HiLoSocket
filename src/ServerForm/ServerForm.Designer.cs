@@ -42,7 +42,7 @@
             // rtbMessage
             // 
             this.rtbMessage.Location = new System.Drawing.Point(17, 64);
-            this.rtbMessage.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.rtbMessage.Margin = new System.Windows.Forms.Padding(2);
             this.rtbMessage.Name = "rtbMessage";
             this.rtbMessage.Size = new System.Drawing.Size(298, 158);
             this.rtbMessage.TabIndex = 0;
@@ -52,7 +52,7 @@
             // 
             this.btnListen.FontSize = MetroFramework.MetroButtonSize.Tall;
             this.btnListen.Location = new System.Drawing.Point(438, 326);
-            this.btnListen.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnListen.Margin = new System.Windows.Forms.Padding(2);
             this.btnListen.Name = "btnListen";
             this.btnListen.Size = new System.Drawing.Size(129, 82);
             this.btnListen.TabIndex = 1;
@@ -75,7 +75,7 @@
             // 
             this.btnStop.FontSize = MetroFramework.MetroButtonSize.Tall;
             this.btnStop.Location = new System.Drawing.Point(438, 217);
-            this.btnStop.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnStop.Margin = new System.Windows.Forms.Padding(2);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(129, 82);
             this.btnStop.TabIndex = 3;
@@ -86,7 +86,7 @@
             // rtbLog
             // 
             this.rtbLog.Location = new System.Drawing.Point(17, 250);
-            this.rtbLog.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.rtbLog.Margin = new System.Windows.Forms.Padding(2);
             this.rtbLog.Name = "rtbLog";
             this.rtbLog.Size = new System.Drawing.Size(298, 158);
             this.rtbLog.TabIndex = 4;
@@ -98,10 +98,9 @@
             this.mcbFormatter.ItemHeight = 23;
             this.mcbFormatter.Items.AddRange(new object[] {
             "BinaryFormatter",
-            "JSonFormatter",
-            "MessagePackFormatter"});
+            "JSonFormatter"});
             this.mcbFormatter.Location = new System.Drawing.Point(438, 104);
-            this.mcbFormatter.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.mcbFormatter.Margin = new System.Windows.Forms.Padding(2);
             this.mcbFormatter.Name = "mcbFormatter";
             this.mcbFormatter.Size = new System.Drawing.Size(167, 29);
             this.mcbFormatter.TabIndex = 5;
@@ -115,7 +114,7 @@
             "Default",
             "GZip"});
             this.mcbCompressor.Location = new System.Drawing.Point(438, 147);
-            this.mcbCompressor.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.mcbCompressor.Margin = new System.Windows.Forms.Padding(2);
             this.mcbCompressor.Name = "mcbCompressor";
             this.mcbCompressor.Size = new System.Drawing.Size(167, 29);
             this.mcbCompressor.TabIndex = 6;
@@ -157,7 +156,7 @@
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.btnListen);
             this.Controls.Add(this.rtbMessage);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "ServerForm";
             this.Padding = new System.Windows.Forms.Padding(15, 60, 15, 16);
             this.Text = "Server";

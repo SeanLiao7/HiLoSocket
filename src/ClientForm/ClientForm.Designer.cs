@@ -136,8 +136,7 @@
             this.mcbFormatter.ItemHeight = 23;
             this.mcbFormatter.Items.AddRange(new object[] {
             "BinaryFormatter",
-            "JSonFormatter",
-            "MessagePackFormatter"});
+            "JSonFormatter"});
             this.mcbFormatter.Location = new System.Drawing.Point(433, 99);
             this.mcbFormatter.Margin = new System.Windows.Forms.Padding(2);
             this.mcbFormatter.Name = "mcbFormatter";
