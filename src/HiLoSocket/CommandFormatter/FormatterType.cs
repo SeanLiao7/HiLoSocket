@@ -8,21 +8,27 @@ namespace HiLoSocket.CommandFormatter
     public enum FormatterType
     {
         /// <summary>
-        /// Binary Formatter
+        /// Binary Formatter.
         /// </summary>
         [Description( "BinaryCommandFormatter" )]
         BinaryFormatter = 0,
 
         /// <summary>
-        /// Json Formatter
+        /// Json Formatter.
         /// </summary>
         [Description( "JsonCommandFormatter" )]
         JSonFormatter = 1,
 
         /// <summary>
-        /// MessagePack Formatter
+        /// MessagePack Formatter.
         /// </summary>
         [Description( "MessagePackCommandFormatter" )]
-        MessagePackFormatter = 2
+        MessagePackFormatter = 2,
+
+        /// <summary>
+        /// Protobuf Formatter.
+        /// </summary>
+        [Description( "ProtobufCommandFormatter" )]
+        ProtobufFormatter = 3
     }
 }
