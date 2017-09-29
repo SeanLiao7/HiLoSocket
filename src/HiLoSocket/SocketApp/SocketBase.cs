@@ -5,7 +5,6 @@ using HiLoSocket.Compressor;
 using HiLoSocket.Logger;
 using HiLoSocket.Model;
 using HiLoSocket.Model.InternalOnly;
-using Reinterpret.Net;
 
 namespace HiLoSocket.SocketApp
 {
@@ -122,7 +121,7 @@ namespace HiLoSocket.SocketApp
         /// <returns>Bytes to send with size.</returns>
         protected byte[ ] CreateBytesToSendWithSize( byte[ ] commandBytestoSend )
         {
-            var lengthConvert = commandBytestoSend.Length.Reinterpret( ); // 將此次傳輸的 command 長度轉為 byte 陣列
+            var lengthConvert = BitConverter.GetBytes( commandBytestoSend.Length ); // 將此次傳輸的 command 長度轉為 byte 陣列
             var commandBytetoSendWithSize = new byte[ commandBytestoSend.Length + StateObjectModel<Socket>.DataInfoSize ]; // 傳輸的資料包含長度包含 4 個代表 command 長度的陣列與本身
             lengthConvert.CopyTo( commandBytetoSendWithSize, 0 ); // copy 長度資訊
             commandBytestoSend.CopyTo( commandBytetoSendWithSize, StateObjectModel<Socket>.DataInfoSize ); // copy command 資訊
