@@ -21,7 +21,9 @@ namespace HiLoSocket.CommandFormatter.Implements
         {
             CheckIfCanBeDeserialized( bytes );
             var str = Encoding.UTF8.GetString( bytes );
-            return JsonConvert.DeserializeObject<TCommandModel>( str );
+            return JsonConvert.DeserializeObject<TCommandModel>(
+                str,
+                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All } );
         }
 
         /// <inheritdoc />
@@ -36,7 +38,9 @@ namespace HiLoSocket.CommandFormatter.Implements
         public byte[ ] Serialize( TCommandModel commandModel )
         {
             CheckIfCanBeSerialized( commandModel );
-            var jObject = JsonConvert.SerializeObject( commandModel );
+            var jObject = JsonConvert.SerializeObject(
+                commandModel,
+                new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.All } );
             return Encoding.UTF8.GetBytes( jObject );
         }
 
