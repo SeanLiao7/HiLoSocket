@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientForm", "src\ClientFor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerForm", "src\ServerForm\ServerForm.csproj", "{29DE3990-DDB4-44DF-9901-8F8F6A513CD5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HiLoSocketTests", "src\HiLoSocketTests\HiLoSocketTests.csproj", "{0174A893-59B7-4982-B093-CCEF824A28BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{29DE3990-DDB4-44DF-9901-8F8F6A513CD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29DE3990-DDB4-44DF-9901-8F8F6A513CD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29DE3990-DDB4-44DF-9901-8F8F6A513CD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0174A893-59B7-4982-B093-CCEF824A28BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0174A893-59B7-4982-B093-CCEF824A28BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0174A893-59B7-4982-B093-CCEF824A28BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0174A893-59B7-4982-B093-CCEF824A28BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
