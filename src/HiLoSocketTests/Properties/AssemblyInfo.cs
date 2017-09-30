@@ -1,19 +1,17 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "HiLoSocket" )]
+[assembly: AssemblyTitle( "HiLoSocketTests" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "" )]
-[assembly: AssemblyProduct( "HiLoSocket" )]
+[assembly: AssemblyProduct( "HiLoSocketTests" )]
 [assembly: AssemblyCopyright( "Copyright ©  2017" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
-[assembly: InternalsVisibleTo( "HiLoSocketTests" )]
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
@@ -21,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible( false )]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid( "20e9bb3c-a727-4783-a877-03066fcf9aa7" )]
+[assembly: Guid( "0174a893-59b7-4982-b093-ccef824a28be" )]
 
 // Version information for an assembly consists of the following four values:
 //
