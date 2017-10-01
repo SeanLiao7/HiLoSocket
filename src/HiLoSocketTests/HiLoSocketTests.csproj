@@ -40,6 +40,9 @@
       <HintPath>..\..\packages\NUnit.3.8.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Threading.Tasks.Extensions">
+      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.4.0\lib\portable-net45+win8+wp8+wpa81\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -52,6 +55,7 @@
   <ItemGroup>
     <Compile Include="CommandFormatter\Implements\BinaryCommandFormatterTests.cs" />
     <Compile Include="CommandFormatter\Implements\JsonCommandFormatterTests.cs" />
+    <Compile Include="CommandFormatter\Implements\MessagePackCommandFormatterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -60,7 +64,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HiLoSocket\HiLoSocket.csproj">
-      <Project>{20E9BB3C-A727-4783-A877-03066FCF9AA7}</Project>
+      <Project>{20e9bb3c-a727-4783-a877-03066fcf9aa7}</Project>
       <Name>HiLoSocket</Name>
     </ProjectReference>
   </ItemGroup>
