@@ -1,37 +1,16 @@
 ﻿using System;
-using System.Runtime.Serialization;
 using HiLoSocket.CommandFormatter;
 using NUnit.Framework;
 
 namespace HiLoSocketTests.CommandFormatter.Implements
 {
     [TestFixture]
-    public class BinaryCommandFormatterTests
+    public class MessagePackCommandFormatterTests
     {
-        [Test]
-        public void DeserializeNonSerializableTest( )
-        {
-            var formatter = FormatterFactory<NonSerializableData>.CreateFormatter( FormatterType.BinaryFormatter );
-            var input = new byte[ 1 ];
-            Assert.Throws(
-                typeof( SerializationException ),
-                ( ) => formatter.Deserialize( input ) );
-        }
-
-        [Test]
-        public void DeserializeNonSerializedDataTest( )
-        {
-            var formatter = FormatterFactory<SerializableData>.CreateFormatter( FormatterType.BinaryFormatter );
-            var input = new byte[ 1 ];
-            Assert.Throws(
-                typeof( SerializationException ),
-                ( ) => formatter.Deserialize( input ) );
-        }
-
         [Test]
         public void DeserializeNullInputTest( )
         {
-            var formatter = FormatterFactory<SerializableData>.CreateFormatter( FormatterType.BinaryFormatter );
+            var formatter = FormatterFactory<MessagePackData>.CreateFormatter( FormatterType.MessagePackFormatter );
             Assert.Throws(
                 typeof( ArgumentNullException ),
                 ( ) => formatter.Deserialize( null ) );
@@ -40,7 +19,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         [Test]
         public void DeserializeZeroLengthTest( )
         {
-            var formatter = FormatterFactory<SerializableData>.CreateFormatter( FormatterType.BinaryFormatter );
+            var formatter = FormatterFactory<MessagePackData>.CreateFormatter( FormatterType.MessagePackFormatter );
             var input = new byte[ 0 ];
             Assert.Throws(
                 typeof( ArgumentException ),
@@ -48,22 +27,9 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         }
 
         [Test]
-        public void SerializeNonSerializableTest( )
-        {
-            var formatter = FormatterFactory<NonSerializableData>.CreateFormatter( FormatterType.BinaryFormatter );
-            var input = new NonSerializableData
-            {
-                Name = "Tom"
-            };
-            Assert.Throws(
-                typeof( SerializationException ),
-                ( ) => formatter.Serialize( input ) );
-        }
-
-        [Test]
         public void SerializeNullInputTest( )
         {
-            var formatter = FormatterFactory<SerializableData>.CreateFormatter( FormatterType.BinaryFormatter );
+            var formatter = FormatterFactory<MessagePackData>.CreateFormatter( FormatterType.MessagePackFormatter );
             Assert.Throws(
                 typeof( ArgumentNullException ),
                 ( ) => formatter.Serialize( null ) );
@@ -72,8 +38,8 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         [Test]
         public void SerializeObjectTest( )
         {
-            var formatter = FormatterFactory<SerializableData>.CreateFormatter( FormatterType.BinaryFormatter );
-            var expected = new SerializableData
+            var formatter = FormatterFactory<MessagePackData>.CreateFormatter( FormatterType.MessagePackFormatter );
+            var expected = new MessagePackData( Guid.NewGuid( ) )
             {
                 Name = "Penny",
                 Age = 20
@@ -89,35 +55,34 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         [TestCase( "* 測 → 】試 0 『 Y Z　＠ ●" )]
         public void SerializeStringTest( string expected )
         {
-            var formatter = FormatterFactory<string>.CreateFormatter( FormatterType.BinaryFormatter );
+            var formatter = FormatterFactory<string>.CreateFormatter( FormatterType.MessagePackFormatter );
             var serializedResult = formatter.Serialize( expected );
             var actual = formatter.Deserialize( serializedResult );
             Assert.AreEqual( expected, actual );
         }
 
-        public class NonSerializableData
-        {
-            public string Name { get; set; }
-        }
-
-        [Serializable]
-        public class SerializableData : IEquatable<SerializableData>
+        public class MessagePackData : IEquatable<MessagePackData>
         {
             public int Age { get; set; }
-            public Guid Id { get; } = Guid.NewGuid( );
+            public Guid Id { get; }
             public string Name { get; set; }
 
-            public static bool operator !=( SerializableData a, SerializableData b )
+            public MessagePackData( Guid id )
+            {
+                Id = id;
+            }
+
+            public static bool operator !=( MessagePackData a, MessagePackData b )
             {
                 return !( a == b );
             }
 
-            public static bool operator ==( SerializableData a, SerializableData b )
+            public static bool operator ==( MessagePackData a, MessagePackData b )
             {
                 return Equals( a, b );
             }
 
-            public bool Equals( SerializableData other )
+            public bool Equals( MessagePackData other )
             {
                 if ( ReferenceEquals( null, other ) ) return false;
                 if ( ReferenceEquals( this, other ) ) return true;
@@ -131,7 +96,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
                 if ( ReferenceEquals( null, obj ) ) return false;
                 if ( ReferenceEquals( this, obj ) ) return true;
                 return obj.GetType( ) == GetType( )
-                    && Equals( ( SerializableData ) obj );
+                    && Equals( ( MessagePackData ) obj );
             }
 
             public override int GetHashCode( )

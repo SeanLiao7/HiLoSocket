@@ -50,10 +50,12 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         }
 
         [Test]
-        public void SerializeStringTest( )
+        [TestCase( "*測試 Test#_$% ?" )]
+        [TestCase( "*測試 0    ZZp $% ? ●" )]
+        [TestCase( "* 測 → 】試 0 『 Y Z　＠ ●" )]
+        public void SerializeStringTest( string expected )
         {
             var formatter = FormatterFactory<string>.CreateFormatter( FormatterType.JSonFormatter );
-            const string expected = "*測試 Test#_$% ?";
             var serializedResult = formatter.Serialize( expected );
             var actual = formatter.Deserialize( serializedResult );
             Assert.AreEqual( expected, actual );
