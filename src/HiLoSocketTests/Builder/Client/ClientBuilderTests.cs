@@ -10,7 +10,10 @@ namespace HiLoSocketTests.Builder.Client
     public class ClientBuilderTests
     {
         [Test]
-        public void BuildInvalidTimeoutTimeTest( )
+        [TestCase( -2000 )]
+        [TestCase( 0 )]
+        [TestCase( 300000 )]
+        public void BuildInvalidTimeoutTimeTest( int timeoutTime )
         {
             Should.Throw<ValidationException>(
                 ( ) => ClientBuilder<string>.CreateNew( )
@@ -18,7 +21,7 @@ namespace HiLoSocketTests.Builder.Client
                     .SetRemoteIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8080 ) )
                     .SetFormatterType( null )
                     .SetCompressType( null )
-                    .SetTimeoutTime( 0 )
+                    .SetTimeoutTime( timeoutTime )
                     .SetLogger( null )
                     .Build( ) );
         }
