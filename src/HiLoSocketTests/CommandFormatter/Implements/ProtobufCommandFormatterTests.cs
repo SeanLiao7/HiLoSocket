@@ -2,6 +2,7 @@
 using HiLoSocket.CommandFormatter;
 using NUnit.Framework;
 using ProtoBuf;
+using Shouldly;
 
 namespace HiLoSocketTests.CommandFormatter.Implements
 {
@@ -12,8 +13,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         public void DeserializeNullInputTest( )
         {
             var formatter = FormatterFactory<ProtobufData>.CreateFormatter( FormatterType.ProtobufFormatter );
-            Assert.Throws(
-                typeof( ArgumentNullException ),
+            Should.Throw<ArgumentNullException>(
                 ( ) => formatter.Deserialize( null ) );
         }
 
@@ -22,8 +22,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         {
             var formatter = FormatterFactory<ProtobufData>.CreateFormatter( FormatterType.ProtobufFormatter );
             var input = new byte[ 0 ];
-            Assert.Throws(
-                typeof( ArgumentException ),
+            Should.Throw<ArgumentException>(
                 ( ) => formatter.Deserialize( input ) );
         }
 
@@ -31,8 +30,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         public void SerializeNullInputTest( )
         {
             var formatter = FormatterFactory<ProtobufData>.CreateFormatter( FormatterType.ProtobufFormatter );
-            Assert.Throws(
-                typeof( ArgumentNullException ),
+            Should.Throw<ArgumentNullException>(
                 ( ) => formatter.Serialize( null ) );
         }
 
@@ -47,7 +45,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
             };
             var serializedResult = formatter.Serialize( expected );
             var actual = formatter.Deserialize( serializedResult );
-            Assert.AreEqual( expected, actual );
+            actual.ShouldBe( expected );
         }
 
         [Test]
@@ -59,7 +57,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
             var formatter = FormatterFactory<string>.CreateFormatter( FormatterType.ProtobufFormatter );
             var serializedResult = formatter.Serialize( expected );
             var actual = formatter.Deserialize( serializedResult );
-            Assert.AreEqual( expected, actual );
+            actual.ShouldBe( expected );
         }
 
         [ProtoContract]
