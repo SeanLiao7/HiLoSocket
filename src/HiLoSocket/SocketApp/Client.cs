@@ -20,9 +20,9 @@ namespace HiLoSocket.SocketApp
         where TCommandModel : class
     {
         private readonly ManualResetEventSlim _connectDone = new ManualResetEventSlim( );
+        private readonly object _disposedLock = new object( );
         private readonly ManualResetEventSlim _receiveDone = new ManualResetEventSlim( );
         private readonly ManualResetEventSlim _sendDone = new ManualResetEventSlim( );
-        private readonly object _sendLock = new object( );
 
         /// <summary>
         /// Gets a value indicating whether this instance is disposed.
@@ -98,25 +98,28 @@ namespace HiLoSocket.SocketApp
 
             var client = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
 
-            try
+            lock ( _disposedLock )
             {
-                TrySend( client, commandModel );
-            }
-            catch ( Exception e )
-            {
-                Logger?.Log( new LogModel
+                try
                 {
-                    Time = DateTime.Now,
-                    Message = $"客戶端資料傳送失敗啦, 連線關閉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
-                } );
+                    TrySend( client, commandModel );
+                }
+                catch ( Exception e )
+                {
+                    Logger?.Log( new LogModel
+                    {
+                        Time = DateTime.Now,
+                        Message = $"客戶端資料傳送失敗啦, 連線關閉, 物件名稱 : {ToString( )}, 例外訊息 : {e.Message}"
+                    } );
 
-                throw new InvalidOperationException( $@"客戶端傳送訊息至伺服器失敗，詳細請參照 Inner Exception。
+                    throw new InvalidOperationException( $@"客戶端傳送訊息至伺服器失敗，詳細請參照 Inner Exception。
 Inner Execption 訊息 : {e.Message}", e );
-            }
-            finally
-            {
-                Close( client );
-                ResetDoneEvent( );
+                }
+                finally
+                {
+                    Close( client );
+                    ResetDoneEvent( );
+                }
             }
         }
 
@@ -139,18 +142,21 @@ Inner Execption 訊息 : {e.Message}", e );
         /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
         protected override void Dispose( bool disposing )
         {
-            if ( !IsDisposed )
+            lock ( _disposedLock )
             {
-                if ( disposing )
+                if ( !IsDisposed )
                 {
-                    _connectDone?.Dispose( );
-                    _receiveDone?.Dispose( );
-                    _sendDone?.Dispose( );
+                    if ( disposing )
+                    {
+                        _connectDone?.Dispose( );
+                        _receiveDone?.Dispose( );
+                        _sendDone?.Dispose( );
+                    }
                 }
-            }
 
-            IsDisposed = true;
-            base.Dispose( disposing );
+                IsDisposed = true;
+                base.Dispose( disposing );
+            }
         }
 
         /// <inheritdoc />
@@ -344,17 +350,14 @@ Inner Execption 訊息 : {e.Message}", e );
 
         private void TrySend( Socket client, TCommandModel commandModel )
         {
-            lock ( _sendLock )
-            {
-                client.BeginConnect( RemoteIpEndPoint, ConnectCallback, client );
-                _connectDone.Wait( );
+            client.BeginConnect( RemoteIpEndPoint, ConnectCallback, client );
+            _connectDone.Wait( );
 
-                Send( client, commandModel );
-                _sendDone.Wait( );
+            Send( client, commandModel );
+            _sendDone.Wait( );
 
-                Receive( client );
-                _receiveDone.Wait( );
-            }
+            Receive( client );
+            _receiveDone.Wait( );
         }
     }
 }
