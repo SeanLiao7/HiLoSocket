@@ -2,6 +2,7 @@
 using System.Linq;
 using HiLoSocket.Compressor;
 using NUnit.Framework;
+using Shouldly;
 
 namespace HiLoSocketTests.Compressor.Implements
 {
@@ -23,8 +24,7 @@ namespace HiLoSocketTests.Compressor.Implements
         public void CompressNullInputTest( byte[ ] input )
         {
             var compressor = CompressorFactory.CreateCompressor( CompressType.Default );
-            Assert.Throws(
-                typeof( ArgumentNullException ),
+            Should.Throw<ArgumentNullException>(
                 ( ) => compressor.Compress( input ) );
         }
 
@@ -33,8 +33,7 @@ namespace HiLoSocketTests.Compressor.Implements
         public void CompressZeroLengthInputTest( byte[ ] input )
         {
             var compressor = CompressorFactory.CreateCompressor( CompressType.Default );
-            Assert.Throws(
-                typeof( ArgumentException ),
+            Should.Throw<ArgumentException>(
                 ( ) => compressor.Compress( input ) );
         }
 
@@ -43,8 +42,7 @@ namespace HiLoSocketTests.Compressor.Implements
         public void DecompressNullInputTest( byte[ ] input )
         {
             var compressor = CompressorFactory.CreateCompressor( CompressType.Default );
-            Assert.Throws(
-                typeof( ArgumentNullException ),
+            Should.Throw<ArgumentNullException>(
                 ( ) => compressor.Decompress( input ) );
         }
 
@@ -53,8 +51,7 @@ namespace HiLoSocketTests.Compressor.Implements
         public void DecompressZeroLengthInputTest( byte[ ] input )
         {
             var compressor = CompressorFactory.CreateCompressor( CompressType.Default );
-            Assert.Throws(
-                typeof( ArgumentException ),
+            Should.Throw<ArgumentException>(
                 ( ) => compressor.Decompress( input ) );
         }
     }

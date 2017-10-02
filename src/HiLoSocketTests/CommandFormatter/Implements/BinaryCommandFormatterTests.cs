@@ -2,6 +2,7 @@
 using System.Runtime.Serialization;
 using HiLoSocket.CommandFormatter;
 using NUnit.Framework;
+using Shouldly;
 
 namespace HiLoSocketTests.CommandFormatter.Implements
 {
@@ -13,8 +14,8 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         {
             var formatter = FormatterFactory<NonSerializableData>.CreateFormatter( FormatterType.BinaryFormatter );
             var input = new byte[ 1 ];
-            Assert.Throws(
-                typeof( SerializationException ),
+
+            Should.Throw<SerializationException>(
                 ( ) => formatter.Deserialize( input ) );
         }
 
@@ -23,8 +24,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         {
             var formatter = FormatterFactory<SerializableData>.CreateFormatter( FormatterType.BinaryFormatter );
             var input = new byte[ 1 ];
-            Assert.Throws(
-                typeof( SerializationException ),
+            Should.Throw<SerializationException>(
                 ( ) => formatter.Deserialize( input ) );
         }
 
@@ -32,8 +32,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         public void DeserializeNullInputTest( )
         {
             var formatter = FormatterFactory<SerializableData>.CreateFormatter( FormatterType.BinaryFormatter );
-            Assert.Throws(
-                typeof( ArgumentNullException ),
+            Should.Throw<ArgumentNullException>(
                 ( ) => formatter.Deserialize( null ) );
         }
 
@@ -42,8 +41,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         {
             var formatter = FormatterFactory<SerializableData>.CreateFormatter( FormatterType.BinaryFormatter );
             var input = new byte[ 0 ];
-            Assert.Throws(
-                typeof( ArgumentException ),
+            Should.Throw<ArgumentException>(
                 ( ) => formatter.Deserialize( input ) );
         }
 
@@ -55,8 +53,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
             {
                 Name = "Tom"
             };
-            Assert.Throws(
-                typeof( SerializationException ),
+            Should.Throw<SerializationException>(
                 ( ) => formatter.Serialize( input ) );
         }
 
@@ -64,8 +61,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         public void SerializeNullInputTest( )
         {
             var formatter = FormatterFactory<SerializableData>.CreateFormatter( FormatterType.BinaryFormatter );
-            Assert.Throws(
-                typeof( ArgumentNullException ),
+            Should.Throw<ArgumentNullException>(
                 ( ) => formatter.Serialize( null ) );
         }
 
@@ -80,7 +76,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
             };
             var serializedResult = formatter.Serialize( expected );
             var actual = formatter.Deserialize( serializedResult );
-            Assert.AreEqual( expected, actual );
+            actual.ShouldBe( expected );
         }
 
         [Test]
@@ -92,7 +88,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
             var formatter = FormatterFactory<string>.CreateFormatter( FormatterType.BinaryFormatter );
             var serializedResult = formatter.Serialize( expected );
             var actual = formatter.Deserialize( serializedResult );
-            Assert.AreEqual( expected, actual );
+            actual.ShouldBe( expected );
         }
 
         public class NonSerializableData
