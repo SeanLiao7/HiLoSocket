@@ -14,7 +14,6 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         {
             var formatter = FormatterFactory<NonSerializableData>.CreateFormatter( FormatterType.BinaryFormatter );
             var input = new byte[ 1 ];
-
             Should.Throw<SerializationException>(
                 ( ) => formatter.Deserialize( input ) );
         }
