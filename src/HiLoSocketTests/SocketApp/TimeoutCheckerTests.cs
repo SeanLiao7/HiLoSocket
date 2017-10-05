@@ -41,9 +41,9 @@ namespace HiLoSocketTests.SocketApp
                     Logger = logger,
                     OnTimeoutAction = null,
                     Target = target,
-                    TimeoutTime = 10
+                    TimeoutTime = Timeout
                 } );
-            Thread.Sleep( 50 );
+            Thread.Sleep( DelayTime );
             actual.ShouldBe( expected );
         }
 
