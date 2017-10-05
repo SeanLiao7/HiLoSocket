@@ -18,6 +18,9 @@ namespace HiLoSocketTests.SocketApp
     [TestFixture]
     public class TimeoutCheckerTests
     {
+        public const int DelayTime = 50;
+        public const int Timeout = 10;
+
         [Test]
         public void TimeoutCheckerLoggerTest( )
         {
@@ -57,7 +60,7 @@ namespace HiLoSocketTests.SocketApp
             var target = new FakeTarget( );
             var checker = CreateTimeroutChecker( target );
             checker.StopChecking( );
-            Thread.Sleep( 50 );
+            Thread.Sleep( DelayTime );
             target.Result.ShouldBe( "Operating" );
         }
 
@@ -66,7 +69,7 @@ namespace HiLoSocketTests.SocketApp
         {
             var target = new FakeTarget( );
             var checker = CreateTimeroutChecker( target );
-            Thread.Sleep( 50 );
+            Thread.Sleep( DelayTime );
             checker.StopChecking( );
             target.Result.ShouldBe( "Time out!" );
         }
@@ -79,7 +82,7 @@ namespace HiLoSocketTests.SocketApp
                     Logger = null,
                     OnTimeoutAction = x => x.Result = "Time out!",
                     Target = fakeTarget,
-                    TimeoutTime = 10
+                    TimeoutTime = Timeout
                 } );
         }
     }
