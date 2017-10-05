@@ -58,49 +58,49 @@ namespace HiLoSocketTests.CommandFormatter.Implements
             var actual = formatter.Deserialize( serializedResult );
             actual.ShouldBe( expected );
         }
+    }
 
-        public class MessagePackData : IEquatable<MessagePackData>
+    public class MessagePackData : IEquatable<MessagePackData>
+    {
+        public int Age { get; set; }
+        public Guid Id { get; }
+        public string Name { get; set; }
+
+        public MessagePackData( Guid id )
         {
-            public int Age { get; set; }
-            public Guid Id { get; }
-            public string Name { get; set; }
+            Id = id;
+        }
 
-            public MessagePackData( Guid id )
-            {
-                Id = id;
-            }
+        public static bool operator !=( MessagePackData a, MessagePackData b )
+        {
+            return !( a == b );
+        }
 
-            public static bool operator !=( MessagePackData a, MessagePackData b )
-            {
-                return !( a == b );
-            }
+        public static bool operator ==( MessagePackData a, MessagePackData b )
+        {
+            return Equals( a, b );
+        }
 
-            public static bool operator ==( MessagePackData a, MessagePackData b )
-            {
-                return Equals( a, b );
-            }
+        public bool Equals( MessagePackData other )
+        {
+            if ( ReferenceEquals( null, other ) ) return false;
+            if ( ReferenceEquals( this, other ) ) return true;
+            return Id.Equals( other.Id )
+                   && Name.Equals( other.Name )
+                   && Age.Equals( other.Age );
+        }
 
-            public bool Equals( MessagePackData other )
-            {
-                if ( ReferenceEquals( null, other ) ) return false;
-                if ( ReferenceEquals( this, other ) ) return true;
-                return Id.Equals( other.Id )
-                    && Name.Equals( other.Name )
-                    && Age.Equals( other.Age );
-            }
+        public override bool Equals( object obj )
+        {
+            if ( ReferenceEquals( null, obj ) ) return false;
+            if ( ReferenceEquals( this, obj ) ) return true;
+            return obj.GetType( ) == GetType( )
+                   && Equals( ( MessagePackData ) obj );
+        }
 
-            public override bool Equals( object obj )
-            {
-                if ( ReferenceEquals( null, obj ) ) return false;
-                if ( ReferenceEquals( this, obj ) ) return true;
-                return obj.GetType( ) == GetType( )
-                    && Equals( ( MessagePackData ) obj );
-            }
-
-            public override int GetHashCode( )
-            {
-                return Id.GetHashCode( );
-            }
+        public override int GetHashCode( )
+        {
+            return Id.GetHashCode( );
         }
     }
 }

@@ -89,50 +89,50 @@ namespace HiLoSocketTests.CommandFormatter.Implements
             var actual = formatter.Deserialize( serializedResult );
             actual.ShouldBe( expected );
         }
+    }
 
-        public class NonSerializableData
+    public class NonSerializableData
+    {
+        public string Name { get; set; }
+    }
+
+    [Serializable]
+    public class SerializableData : IEquatable<SerializableData>
+    {
+        public int Age { get; set; }
+        public Guid Id { get; } = Guid.NewGuid( );
+        public string Name { get; set; }
+
+        public static bool operator !=( SerializableData a, SerializableData b )
         {
-            public string Name { get; set; }
+            return !( a == b );
         }
 
-        [Serializable]
-        public class SerializableData : IEquatable<SerializableData>
+        public static bool operator ==( SerializableData a, SerializableData b )
         {
-            public int Age { get; set; }
-            public Guid Id { get; } = Guid.NewGuid( );
-            public string Name { get; set; }
+            return Equals( a, b );
+        }
 
-            public static bool operator !=( SerializableData a, SerializableData b )
-            {
-                return !( a == b );
-            }
+        public bool Equals( SerializableData other )
+        {
+            if ( ReferenceEquals( null, other ) ) return false;
+            if ( ReferenceEquals( this, other ) ) return true;
+            return Id.Equals( other.Id )
+                   && Name.Equals( other.Name )
+                   && Age.Equals( other.Age );
+        }
 
-            public static bool operator ==( SerializableData a, SerializableData b )
-            {
-                return Equals( a, b );
-            }
+        public override bool Equals( object obj )
+        {
+            if ( ReferenceEquals( null, obj ) ) return false;
+            if ( ReferenceEquals( this, obj ) ) return true;
+            return obj.GetType( ) == GetType( )
+                   && Equals( ( SerializableData ) obj );
+        }
 
-            public bool Equals( SerializableData other )
-            {
-                if ( ReferenceEquals( null, other ) ) return false;
-                if ( ReferenceEquals( this, other ) ) return true;
-                return Id.Equals( other.Id )
-                    && Name.Equals( other.Name )
-                    && Age.Equals( other.Age );
-            }
-
-            public override bool Equals( object obj )
-            {
-                if ( ReferenceEquals( null, obj ) ) return false;
-                if ( ReferenceEquals( this, obj ) ) return true;
-                return obj.GetType( ) == GetType( )
-                    && Equals( ( SerializableData ) obj );
-            }
-
-            public override int GetHashCode( )
-            {
-                return Id.GetHashCode( );
-            }
+        public override int GetHashCode( )
+        {
+            return Id.GetHashCode( );
         }
     }
 }

@@ -13,10 +13,10 @@ namespace HiLoSocket.SocketApp
     internal sealed class TimeoutChecker<T>
         where T : class
     {
-        public ILogger Logger { get; }
-        public Action<T> OnTimeoutAction { get; }
-        public int TimeoutTime { get; }
-        public Timer Timer { get; }
+        private readonly ILogger _logger;
+        private readonly Action<T> _onTimeoutAction;
+        private readonly int _timeoutTime;
+        private readonly Timer _timer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TimeoutChecker{T}"/> class.
@@ -29,10 +29,10 @@ namespace HiLoSocket.SocketApp
                 throw new ArgumentNullException( nameof( timeoutCheckerModel ), "建構子參數不能為空值喔，請記得初始化。" );
 
             var target = timeoutCheckerModel.Target;
-            TimeoutTime = timeoutCheckerModel.TimeoutTime;
-            OnTimeoutAction = timeoutCheckerModel.OnTimeoutAction;
-            Logger = timeoutCheckerModel.Logger;
-            Timer = new Timer( OnTimeout, target, TimeoutTime, Timeout.Infinite );
+            _timeoutTime = timeoutCheckerModel.TimeoutTime;
+            _onTimeoutAction = timeoutCheckerModel.OnTimeoutAction;
+            _logger = timeoutCheckerModel.Logger;
+            _timer = new Timer( OnTimeout, target, _timeoutTime, Timeout.Infinite );
         }
 
         /// <summary>
@@ -40,19 +40,19 @@ namespace HiLoSocket.SocketApp
         /// </summary>
         public void StopChecking( )
         {
-            Timer.Dispose( );
+            _timer.Dispose( );
         }
 
         private void OnTimeout( object obj )
         {
-            Logger?.Log( new LogModel
+            _logger?.Log( new LogModel
             {
                 Time = DateTime.Now,
-                Message = $"資料傳輸逾時，等待時間 : {TimeoutTime.ToString( )} 毫秒。"
+                Message = $"資料傳輸逾時，等待時間 : {_timeoutTime.ToString( )} 毫秒。"
             } );
 
             var target = obj as T;
-            OnTimeoutAction?.Invoke( target );
+            _onTimeoutAction?.Invoke( target );
         }
     }
 }

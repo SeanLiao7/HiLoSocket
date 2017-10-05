@@ -58,49 +58,49 @@ namespace HiLoSocketTests.CommandFormatter.Implements
             var actual = formatter.Deserialize( serializedResult );
             actual.ShouldBe( expected );
         }
+    }
 
-        public class JsonData : IEquatable<JsonData>
+    public class JsonData : IEquatable<JsonData>
+    {
+        public int Age { get; set; }
+        public Guid Id { get; }
+        public string Name { get; set; }
+
+        public JsonData( Guid id )
         {
-            public int Age { get; set; }
-            public Guid Id { get; }
-            public string Name { get; set; }
+            Id = id;
+        }
 
-            public JsonData( Guid id )
-            {
-                Id = id;
-            }
+        public static bool operator !=( JsonData a, JsonData b )
+        {
+            return !( a == b );
+        }
 
-            public static bool operator !=( JsonData a, JsonData b )
-            {
-                return !( a == b );
-            }
+        public static bool operator ==( JsonData a, JsonData b )
+        {
+            return Equals( a, b );
+        }
 
-            public static bool operator ==( JsonData a, JsonData b )
-            {
-                return Equals( a, b );
-            }
+        public bool Equals( JsonData other )
+        {
+            if ( ReferenceEquals( null, other ) ) return false;
+            if ( ReferenceEquals( this, other ) ) return true;
+            return Id.Equals( other.Id )
+                   && Name.Equals( other.Name )
+                   && Age.Equals( other.Age );
+        }
 
-            public bool Equals( JsonData other )
-            {
-                if ( ReferenceEquals( null, other ) ) return false;
-                if ( ReferenceEquals( this, other ) ) return true;
-                return Id.Equals( other.Id )
-                    && Name.Equals( other.Name )
-                    && Age.Equals( other.Age );
-            }
+        public override bool Equals( object obj )
+        {
+            if ( ReferenceEquals( null, obj ) ) return false;
+            if ( ReferenceEquals( this, obj ) ) return true;
+            return obj.GetType( ) == GetType( )
+                   && Equals( ( JsonData ) obj );
+        }
 
-            public override bool Equals( object obj )
-            {
-                if ( ReferenceEquals( null, obj ) ) return false;
-                if ( ReferenceEquals( this, obj ) ) return true;
-                return obj.GetType( ) == GetType( )
-                    && Equals( ( JsonData ) obj );
-            }
-
-            public override int GetHashCode( )
-            {
-                return Id.GetHashCode( );
-            }
+        public override int GetHashCode( )
+        {
+            return Id.GetHashCode( );
         }
     }
 }
