@@ -59,59 +59,59 @@ namespace HiLoSocketTests.CommandFormatter.Implements
             var actual = formatter.Deserialize( serializedResult );
             actual.ShouldBe( expected );
         }
+    }
 
-        [ProtoContract]
-        public class ProtobufData : IEquatable<ProtobufData>
+    [ProtoContract]
+    public class ProtobufData : IEquatable<ProtobufData>
+    {
+        [ProtoMember( 1 )]
+        public int Age { get; set; }
+
+        [ProtoMember( 2 )]
+        public Guid Id { get; }
+
+        [ProtoMember( 3 )]
+        public string Name { get; set; }
+
+        public ProtobufData( Guid id )
         {
-            [ProtoMember( 1 )]
-            public int Age { get; set; }
+            Id = id;
+        }
 
-            [ProtoMember( 2 )]
-            public Guid Id { get; }
+        private ProtobufData( )
+        {
+        }
 
-            [ProtoMember( 3 )]
-            public string Name { get; set; }
+        public static bool operator !=( ProtobufData a, ProtobufData b )
+        {
+            return !( a == b );
+        }
 
-            public ProtobufData( Guid id )
-            {
-                Id = id;
-            }
+        public static bool operator ==( ProtobufData a, ProtobufData b )
+        {
+            return Equals( a, b );
+        }
 
-            private ProtobufData( )
-            {
-            }
+        public bool Equals( ProtobufData other )
+        {
+            if ( ReferenceEquals( null, other ) ) return false;
+            if ( ReferenceEquals( this, other ) ) return true;
+            return Id.Equals( other.Id )
+                   && Name.Equals( other.Name )
+                   && Age.Equals( other.Age );
+        }
 
-            public static bool operator !=( ProtobufData a, ProtobufData b )
-            {
-                return !( a == b );
-            }
+        public override bool Equals( object obj )
+        {
+            if ( ReferenceEquals( null, obj ) ) return false;
+            if ( ReferenceEquals( this, obj ) ) return true;
+            return obj.GetType( ) == GetType( )
+                   && Equals( ( ProtobufData ) obj );
+        }
 
-            public static bool operator ==( ProtobufData a, ProtobufData b )
-            {
-                return Equals( a, b );
-            }
-
-            public bool Equals( ProtobufData other )
-            {
-                if ( ReferenceEquals( null, other ) ) return false;
-                if ( ReferenceEquals( this, other ) ) return true;
-                return Id.Equals( other.Id )
-                    && Name.Equals( other.Name )
-                    && Age.Equals( other.Age );
-            }
-
-            public override bool Equals( object obj )
-            {
-                if ( ReferenceEquals( null, obj ) ) return false;
-                if ( ReferenceEquals( this, obj ) ) return true;
-                return obj.GetType( ) == GetType( )
-                    && Equals( ( ProtobufData ) obj );
-            }
-
-            public override int GetHashCode( )
-            {
-                return Id.GetHashCode( );
-            }
+        public override int GetHashCode( )
+        {
+            return Id.GetHashCode( );
         }
     }
 }
