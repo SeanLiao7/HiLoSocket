@@ -22,64 +22,50 @@ namespace HiLoSocketTests.SocketApp
         public const int Timeout = 10;
 
         [Test]
-        public void TimeoutCheckerLoggerTest( )
+        public void LoggerTest( )
         {
-            const string expected = "Message logged";
-            var actual = "";
             var logger = Substitute.For<ILogger>( );
-            logger.When(
-                x => x.Log( Arg.Any<LogModel>( ) ) )
-                .Do( info =>
-                {
-                    actual = "Message logged";
-                } );
-
             var target = new FakeTarget( );
-            var checker = new TimeoutChecker<FakeTarget>(
-                new TimeoutCheckerModel<FakeTarget>
-                {
-                    Logger = logger,
-                    OnTimeoutAction = null,
-                    Target = target,
-                    TimeoutTime = Timeout
-                } );
+            CreateTimeroutChecker( target, logger );
             Thread.Sleep( DelayTime );
-            actual.ShouldBe( expected );
+            logger.Received( ).Log( Arg.Any<LogModel>( ) );
         }
 
         [Test]
-        public void TimeoutCheckerNullInputTest( )
+        public void NullInputTest( )
         {
             Should.Throw<ArgumentNullException>(
                 ( ) => new TimeoutChecker<FakeTarget>( null ) );
         }
 
         [Test]
-        public void TimeoutCheckerStopCheckingTest( )
+        public void OnTimeoutTest( )
         {
             var target = new FakeTarget( );
-            var checker = CreateTimeroutChecker( target );
-            checker.StopChecking( );
-            Thread.Sleep( DelayTime );
-            target.Result.ShouldBe( "Operating" );
-        }
-
-        [Test]
-        public void TimeoutCheckerTimeoutTest( )
-        {
-            var target = new FakeTarget( );
-            var checker = CreateTimeroutChecker( target );
+            var checker = CreateTimeroutChecker( target, null );
             Thread.Sleep( DelayTime );
             checker.StopChecking( );
             target.Result.ShouldBe( "Time out!" );
         }
 
-        private static TimeoutChecker<FakeTarget> CreateTimeroutChecker( FakeTarget fakeTarget )
+        [Test]
+        public void StopCheckingTest( )
+        {
+            var target = new FakeTarget( );
+            var checker = CreateTimeroutChecker( target, null );
+            checker.StopChecking( );
+            Thread.Sleep( DelayTime );
+            target.Result.ShouldBe( "Operating" );
+        }
+
+        private static TimeoutChecker<FakeTarget> CreateTimeroutChecker(
+            FakeTarget fakeTarget,
+            ILogger logger )
         {
             return new TimeoutChecker<FakeTarget>(
                 new TimeoutCheckerModel<FakeTarget>
                 {
-                    Logger = null,
+                    Logger = logger,
                     OnTimeoutAction = x => x.Result = "Time out!",
                     Target = fakeTarget,
                     TimeoutTime = Timeout
