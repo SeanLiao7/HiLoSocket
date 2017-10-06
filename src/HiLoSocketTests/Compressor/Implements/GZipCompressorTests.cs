@@ -9,8 +9,8 @@ namespace HiLoSocketTests.Compressor.Implements
     [TestFixture]
     public class GZipCompressorTests
     {
-        private readonly ICompressor _compressor
-            = CompressorFactory.CreateCompressor( CompressType.GZip );
+        private readonly ICompressor _compressor =
+            CompressorFactory.CreateCompressor( CompressType.GZip );
 
         [Test]
         [TestCase( new byte[ ] { 255, 0, 147, 99, 88, 123, 200, 17, 189, 201 } )]
