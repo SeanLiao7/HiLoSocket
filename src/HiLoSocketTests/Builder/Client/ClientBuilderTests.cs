@@ -27,7 +27,7 @@ namespace HiLoSocketTests.Builder.Client
         }
 
         [Test]
-        public void BuildNullLoaclIpEndPointTest( )
+        public void BuildNullLocalIpEndPointTest( )
         {
             Should.Throw<ValidationException>(
                 ( ) => ClientBuilder<string>.CreateNew( )

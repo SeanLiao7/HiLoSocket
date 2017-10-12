@@ -9,7 +9,7 @@ namespace HiLoSocketTests.Builder.Server
     public class ServerBuilderTests
     {
         [Test]
-        public void BuildNullLoaclIpEndPointTest( )
+        public void BuildNullLocalIpEndPointTest( )
         {
             Should.Throw<ValidationException>(
                 ( ) => ServerBuilder<string>.CreateNew( )
