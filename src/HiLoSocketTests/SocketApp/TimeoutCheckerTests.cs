@@ -26,7 +26,7 @@ namespace HiLoSocketTests.SocketApp
         {
             var logger = Substitute.For<ILogger>( );
             var target = new FakeTarget( );
-            CreateTimeroutChecker( target, logger );
+            CreateTimeoutChecker( target, logger );
             Thread.Sleep( DelayTime );
             logger.Received( ).Log( Arg.Any<LogModel>( ) );
         }
@@ -42,7 +42,7 @@ namespace HiLoSocketTests.SocketApp
         public void OnTimeoutTest( )
         {
             var target = new FakeTarget( );
-            var checker = CreateTimeroutChecker( target, null );
+            var checker = CreateTimeoutChecker( target, null );
             Thread.Sleep( DelayTime );
             checker.StopChecking( );
             target.Result.ShouldBe( "Time out!" );
@@ -52,13 +52,13 @@ namespace HiLoSocketTests.SocketApp
         public void StopCheckingTest( )
         {
             var target = new FakeTarget( );
-            var checker = CreateTimeroutChecker( target, null );
+            var checker = CreateTimeoutChecker( target, null );
             checker.StopChecking( );
             Thread.Sleep( DelayTime );
             target.Result.ShouldBe( "Operating" );
         }
 
-        private static TimeoutChecker<FakeTarget> CreateTimeroutChecker(
+        private static TimeoutChecker<FakeTarget> CreateTimeoutChecker(
             FakeTarget fakeTarget,
             ILogger logger )
         {
