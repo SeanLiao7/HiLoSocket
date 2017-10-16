@@ -160,10 +160,12 @@
   <ItemGroup>
     <Compile Include="Builder\Client\ClientBuilderTests.cs" />
     <Compile Include="Builder\Server\ServerBuilderTests.cs" />
+    <Compile Include="CommandFormatter\FormatterFactoryTests.cs" />
     <Compile Include="CommandFormatter\Implements\BinaryCommandFormatterTests.cs" />
     <Compile Include="CommandFormatter\Implements\JsonCommandFormatterTests.cs" />
     <Compile Include="CommandFormatter\Implements\MessagePackCommandFormatterTests.cs" />
     <Compile Include="CommandFormatter\Implements\ProtobufCommandFormatterTests.cs" />
+    <Compile Include="Compressor\CompressorFactoryTests.cs" />
     <Compile Include="Compressor\Implements\DefaultCompressorTests.cs" />
     <Compile Include="Compressor\Implements\GZipCompressorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
