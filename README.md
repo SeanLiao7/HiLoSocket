@@ -83,7 +83,7 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
 
         server.StopListening( );
 
-    2-3. 伺服器連結事件 ( 當接收到用戶端傳送的資料物件後 )。
+    2-3. 伺服器連結事件 ( 當接收到用戶端傳送的資料物件後觸發 )。
 
         server.OnCommandModelReceived += Server_OnSocketCommandRecevied;
         
