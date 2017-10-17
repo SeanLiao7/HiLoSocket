@@ -21,21 +21,38 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
 使用方式：
 1. 利用 ClientBuilder 建立客戶端。
 
-var logger = new ConsoleLogger( );
-_client = ClientBuilder<SocketCommandModel>.CreateNew( )
-    .SetLocalIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8001 ) )
-    .SetRemoteIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ) )
-    .SetFormatterType( FormatterType.BinaryFormatter )
-    .SetCompressType( FormatterType.Default )
-    .SetTimeoutTime( 2000 )
-    .SetLogger( logger )
-    .Build( );
+        var logger = new ConsoleLogger( );
+        _client = ClientBuilder<SocketCommandModel>.CreateNew( )
+            .SetLocalIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8001 ) )
+            .SetRemoteIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ) )
+            .SetFormatterType( FormatterType.BinaryFormatter )
+            .SetCompressType( FormatterType.Default )
+            .SetTimeoutTime( 2000 )
+            .SetLogger( logger )
+            .Build( );
 
-ClientBuilder<SocketCommandModel>.CreateNew( ) → 以 SocketCommandModel 為傳輸資料模型建立客戶端
-SetLocalIpEndPoint → 設定本地 IP 位置
-SetRemoteIpEndPoint → 設定伺服器端 IP 位置
-SetFormatterType → 設定格式化方式
-SetCompressType → 設定資料壓縮方式
-SetTimeoutTime → 設定傳輸逾時時間
-SetLogger → 設定 logger
-Build → 依照設定建立客戶端物件
+        ClientBuilder<SocketCommandModel>.CreateNew( ) → 以 SocketCommandModel 為傳輸資料模型建立客戶端
+        SetLocalIpEndPoint → 設定本地 IP 位置
+        SetRemoteIpEndPoint → 設定伺服器端 IP 位置
+        SetFormatterType → 設定格式化方式
+        SetCompressType → 設定資料壓縮方式
+        SetTimeoutTime → 設定傳輸逾時時間
+        SetLogger → 設定 logger
+        Build → 依照設定建立客戶端物件
+        
+2. 利用 ServerBuilder 建立伺服器端。
+
+        var logger = new ConsoleLogger( );
+        _server = ServerBuilder<SocketCommandModel>.CreateNew( )
+            .SetLocalIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ) )
+            .SetFormatterType( FormatterType.BinaryFormatter )
+            .SetCompressType( FormatterType.Default )
+            .SetLogger( logger )
+            .Build( );
+        
+        ServerBuilder<SocketCommandModel>.CreateNew( ) → 以 SocketCommandModel 為傳輸資料模型建立伺服器端
+        SetLocalIpEndPoint → 設定本地 IP 位置
+        SetFormatterType → 設定格式化方式
+        SetCompressType → 設定資料壓縮方式
+        SetLogger → 設定 logger
+        Build → 依照設定建立客戶端物件
