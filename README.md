@@ -26,7 +26,7 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
 1. 利用 ClientBuilder 建立客戶端。
 
         var logger = new ConsoleLogger( );
-        _client = ClientBuilder<SocketCommandModel>.CreateNew( )
+        var client = ClientBuilder<SocketCommandModel>.CreateNew( )
             .SetLocalIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8001 ) )
             .SetRemoteIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ) )
             .SetFormatterType( FormatterType.BinaryFormatter )
@@ -47,7 +47,7 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
 2. 利用 ServerBuilder 建立伺服器端。
 
         var logger = new ConsoleLogger( );
-        _server = ServerBuilder<SocketCommandModel>.CreateNew( )
+        var server = ServerBuilder<SocketCommandModel>.CreateNew( )
             .SetLocalIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ) )
             .SetFormatterType( FormatterType.BinaryFormatter )
             .SetCompressType( FormatterType.Default )
