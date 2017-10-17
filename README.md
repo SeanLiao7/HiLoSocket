@@ -23,7 +23,7 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
 
 -------------------------------------------------------------------------------------------------------------
 使用方式：
-1. 利用 ClientBuilder 建立客戶端。
+1. 利用 ClientBuilder 建立客戶端
 
         var logger = new ConsoleLogger( );
         var client = ClientBuilder<SocketCommandModel>.CreateNew( )
@@ -44,7 +44,7 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
         SetLogger → 設定 logger
         Build → 依照設定建立客戶端物件
 
-    1-1. 客戶端傳送資料模型。
+    1-1. 客戶端傳送資料模型
 
         client.Send( new SocketCommandModel
         {
@@ -54,11 +54,11 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
             Time = DateTime.Now
         } );
 
-    1-2. 客戶端連結事件（當伺服器回傳資料模型時觸發）。
+    1-2. 客戶端連結事件（當伺服器回傳資料模型時觸發）
 
         client.OnCommandModelReceived += Client_OnAckCommandReceived;
         
-2. 利用 ServerBuilder 建立伺服器端。
+2. 利用 ServerBuilder 建立伺服器端
 
         var logger = new ConsoleLogger( );
         var server = ServerBuilder<SocketCommandModel>.CreateNew( )
@@ -75,11 +75,11 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
         SetLogger → 設定 logger
         Build → 依照設定建立伺服器端物件
 
-    2-1. 伺服器端開始監聽。
+    2-1. 伺服器端開始監聽
 
         server.StartListening( );
 
-    2-2. 伺服器端停止監聽。
+    2-2. 伺服器端停止監聽
 
         server.StopListening( );
 
@@ -87,15 +87,18 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
 
         server.OnCommandModelReceived += Server_OnSocketCommandRecevied;
         
-3. 序列化支援種類。
+3. 序列化支援種類
         
         BinaryFormatter
         JsonFormatter
         MessagePackFormatter
         ProtobufFormatter
         
-4. 壓縮資料種類。
+4. 壓縮資料種類
 
         Default ( 不壓縮 )
         GZip
 
+5. 逾時處理
+
+        當客戶端傳送資料至伺服器端後，超過設定的逾時時間且未收到伺服器端回傳結果時；Send 方法將拋出例外。
