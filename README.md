@@ -14,11 +14,11 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
 -------------------------------------------------------------------------------------------------------------
 主要功能：
 1. 支援依照需求個別初始化用戶端與伺服器端。
-2. 支援一發一收的交握機制（利用事件）。
+2. 內建一發一收的交握機制（利用事件通知）。
 3. 支援用戶端傳送逾時機制（當未收到伺服器端回傳時）。
 3. 支援自定義 logger 寫入日誌。
 5. 支援傳遞自定義物件模型。
-6. 支援多種物件模型格式化方式。
+6. 支援多種物件模型序列化方式。
 7. 支援資料壓縮。
 
 -------------------------------------------------------------------------------------------------------------
@@ -38,11 +38,25 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
         ClientBuilder<SocketCommandModel>.CreateNew( ) → 以 SocketCommandModel 為傳輸資料模型建立客戶端
         SetLocalIpEndPoint → 設定本地 IP 位置
         SetRemoteIpEndPoint → 設定伺服器端 IP 位置
-        SetFormatterType → 設定格式化方式
+        SetFormatterType → 設定序列化方式
         SetCompressType → 設定資料壓縮方式
         SetTimeoutTime → 設定傳輸逾時時間
         SetLogger → 設定 logger
         Build → 依照設定建立客戶端物件
+
+    1-1. 客戶端傳送資料模型。
+
+        client.Send( new SocketCommandModel
+        {
+            CommandName = "SomeCommand",
+            Id = Guid.NewGuid( ),
+            Results = "true,true,true,true,false,true,true,true,true,true,true,true,false,true,true,true",
+            Time = DateTime.Now
+        } );
+
+    1-2. 客戶端連結事件（當伺服器回傳資料模型時觸發）。
+
+        client.OnCommandModelReceived += Client_OnAckCommandReceived;
         
 2. 利用 ServerBuilder 建立伺服器端。
 
@@ -56,7 +70,32 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
 
         ServerBuilder<SocketCommandModel>.CreateNew( ) → 以 SocketCommandModel 為傳輸資料模型建立伺服器端
         SetLocalIpEndPoint → 設定本地 IP 位置
-        SetFormatterType → 設定格式化方式
+        SetFormatterType → 設定序列化方式
         SetCompressType → 設定資料壓縮方式
         SetLogger → 設定 logger
         Build → 依照設定建立伺服器端物件
+
+    2-1. 伺服器端開始監聽。
+
+        server.StartListening( );
+
+    2-2. 伺服器端停止監聽。
+
+        server.StopListening( );
+
+    2-3. 伺服器連結事件 ( 當收到用戶端訊息時 )。
+
+        server.OnCommandModelReceived += Server_OnSocketCommandRecevied;
+        
+3. 序列化支援種類。
+        
+        BinaryFormatter
+        JsonFormatter
+        MessagePackFormatter
+        ProtobufFormatter
+        
+4. 壓縮資料種類。
+
+        Default ( 不壓縮 )
+        GZip
+
