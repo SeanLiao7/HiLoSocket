@@ -46,13 +46,13 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
         _server = ServerBuilder<SocketCommandModel>.CreateNew( )
             .SetLocalIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ) )
             .SetFormatterType( FormatterType.BinaryFormatter )
-            .SetCompressType( FormatterType.Default )
+            .SetCompressType( FormatterType.Default )
             .SetLogger( logger )
             .Build( );
-        
-        ServerBuilder<SocketCommandModel>.CreateNew( ) → 以 SocketCommandModel 為傳輸資料模型建立伺服器端
+
+        ServerBuilder<SocketCommandModel>.CreateNew( ) → 以 SocketCommandModel 為傳輸資料模型建立伺服器端
         SetLocalIpEndPoint → 設定本地 IP 位置
         SetFormatterType → 設定格式化方式
         SetCompressType → 設定資料壓縮方式
         SetLogger → 設定 logger
-        Build → 依照設定建立客戶端物件
+        Build → 依照設定建立客戶端物件
