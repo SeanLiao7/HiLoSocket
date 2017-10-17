@@ -54,7 +54,7 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
             Time = DateTime.Now
         } );
 
-    1-2. 客戶端連結事件（當伺服器回傳資料模型時觸發）
+    1-2. 客戶端連結事件（當接收到伺服器回傳資料模型後觸發）
 
         client.OnCommandModelReceived += Client_OnAckCommandReceived;
         
@@ -83,7 +83,7 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
 
         server.StopListening( );
 
-    2-3. 伺服器連結事件 ( 當收到用戶端訊息時 )。
+    2-3. 伺服器連結事件 ( 當接收到用戶端傳送的資料物件後 )。
 
         server.OnCommandModelReceived += Server_OnSocketCommandRecevied;
         
