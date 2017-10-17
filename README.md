@@ -38,7 +38,7 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
         SetCompressType → 設定資料壓縮方式
         SetTimeoutTime → 設定傳輸逾時時間
         SetLogger → 設定 logger
-        Build → 依照設定建立客戶端物件
+        Build → 依照設定建立客戶端物件
         
 2. 利用 ServerBuilder 建立伺服器端。
 
