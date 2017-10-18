@@ -9,7 +9,6 @@ namespace HiLoSocketTests.Builder.Client
     [TestFixture]
     public class ClientBuilderTests
     {
-        [Test]
         [TestCase( -2000 )]
         [TestCase( 0 )]
         [TestCase( 300000 )]

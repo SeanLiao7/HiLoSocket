@@ -6,7 +6,6 @@ namespace HiLoSocketTests.CommandFormatter
     [TestFixture]
     public class FormatterFactoryTests
     {
-        [Test]
         [TestCase( FormatterType.BinaryFormatter )]
         [TestCase( FormatterType.JSonFormatter )]
         [TestCase( FormatterType.MessagePackFormatter )]
