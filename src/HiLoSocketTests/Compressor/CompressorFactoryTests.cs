@@ -6,7 +6,6 @@ namespace HiLoSocketTests.Compressor
     [TestFixture]
     public class CompressorFactoryTests
     {
-        [Test]
         [TestCase( CompressType.Default )]
         [TestCase( CompressType.GZip )]
         public void CreateCompressorTest( CompressType compressType )

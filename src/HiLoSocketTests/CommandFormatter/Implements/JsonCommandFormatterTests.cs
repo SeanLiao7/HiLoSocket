@@ -47,7 +47,6 @@ namespace HiLoSocketTests.CommandFormatter.Implements
             actual.ShouldBe( expected );
         }
 
-        [Test]
         [TestCase( "*測試 Test#_$% ?" )]
         [TestCase( "*測試 0    ZZp $% ? ●" )]
         [TestCase( "* 測 → 】試 0 『 Y Z　＠ ●" )]
