@@ -167,6 +167,7 @@
     <Compile Include="CommandFormatter\Implements\ProtobufCommandFormatterTests.cs" />
     <Compile Include="Compressor\CompressorFactoryTests.cs" />
     <Compile Include="Compressor\Implements\DefaultCompressorTests.cs" />
+    <Compile Include="Compressor\Implements\DeflateCompressorTests.cs" />
     <Compile Include="Compressor\Implements\GZipCompressorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SocketApp\TimeoutCheckerTests.cs" />

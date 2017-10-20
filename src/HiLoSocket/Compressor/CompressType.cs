@@ -18,5 +18,11 @@ namespace HiLoSocket.Compressor
         /// </summary>
         [Description( "GZipCompressor" )]
         GZip = 1,
+
+        /// <summary>
+        /// Deflate Compressor
+        /// </summary>
+        [Description( "DeflateCompressor" )]
+        Deflate = 2,
     }
 }
