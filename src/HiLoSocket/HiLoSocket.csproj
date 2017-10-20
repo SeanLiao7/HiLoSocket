@@ -93,6 +93,7 @@
     <Compile Include="Compressor\CompressType.cs" />
     <Compile Include="Compressor\ICompressor.cs" />
     <Compile Include="Compressor\Implements\DefaultCompressor.cs" />
+    <Compile Include="Compressor\Implements\DeflateCompressor.cs" />
     <Compile Include="Compressor\Implements\GZipCompressor.cs" />
     <Compile Include="Extension\Extensions.cs" />
     <Compile Include="Logger\ConsoleLogger.cs" />
