@@ -98,6 +98,7 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
 
         Default ( 不壓縮 )
         GZip
+        Deflate
 
 5. 逾時處理
 
