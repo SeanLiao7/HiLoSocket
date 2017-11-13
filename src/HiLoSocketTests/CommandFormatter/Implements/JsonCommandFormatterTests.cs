@@ -6,6 +6,7 @@ using Shouldly;
 namespace HiLoSocketTests.CommandFormatter.Implements
 {
     [TestFixture]
+    [Category( "JsonCommandFormatterTests" )]
     public class JsonCommandFormatterTests
     {
         [Test]

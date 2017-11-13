@@ -4,6 +4,7 @@ using NUnit.Framework;
 namespace HiLoSocketTests.CommandFormatter
 {
     [TestFixture]
+    [Category( "FormatterFactoryTests" )]
     public class FormatterFactoryTests
     {
         [TestCase( FormatterType.BinaryFormatter )]

@@ -6,6 +6,7 @@ using Shouldly;
 namespace HiLoSocketTests.Builder.Server
 {
     [TestFixture]
+    [Category( "ServerBuilderTests" )]
     public class ServerBuilderTests
     {
         [Test]

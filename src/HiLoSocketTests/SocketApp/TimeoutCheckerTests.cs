@@ -16,6 +16,7 @@ namespace HiLoSocketTests.SocketApp
     }
 
     [TestFixture]
+    [Category( "TimeoutCheckerTests" )]
     public class TimeoutCheckerTests
     {
         public const int DelayTime = 50;
