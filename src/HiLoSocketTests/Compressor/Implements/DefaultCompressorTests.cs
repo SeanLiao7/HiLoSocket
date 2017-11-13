@@ -7,6 +7,7 @@ using Shouldly;
 namespace HiLoSocketTests.Compressor.Implements
 {
     [TestFixture]
+    [Category( "DefaultCompressorTests" )]
     public class DefaultCompressorTests
     {
         private readonly ICompressor _compressor =
