@@ -7,6 +7,7 @@ using Shouldly;
 namespace HiLoSocketTests.Builder.Client
 {
     [TestFixture]
+    [Category( "ClientBuilderTests" )]
     public class ClientBuilderTests
     {
         [TestCase( -2000 )]

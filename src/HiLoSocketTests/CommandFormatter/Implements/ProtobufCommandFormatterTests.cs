@@ -7,6 +7,7 @@ using Shouldly;
 namespace HiLoSocketTests.CommandFormatter.Implements
 {
     [TestFixture]
+    [Category( "ProtobufCommandFormatterTests" )]
     public class ProtobufCommandFormatterTests
     {
         [Test]
