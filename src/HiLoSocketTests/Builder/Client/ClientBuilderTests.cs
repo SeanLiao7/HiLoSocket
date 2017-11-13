@@ -13,7 +13,7 @@ namespace HiLoSocketTests.Builder.Client
         [TestCase( -2000 )]
         [TestCase( 0 )]
         [TestCase( 300000 )]
-        public void BuildInvalidTimeoutTimeTest( int timeoutTime )
+        public void Build_InvalidTimeoutTime_ThrowsValidationException( int timeoutTime )
         {
             Should.Throw<ValidationException>(
                 ( ) => ClientBuilder<string>.CreateNew( )
@@ -27,7 +27,7 @@ namespace HiLoSocketTests.Builder.Client
         }
 
         [Test]
-        public void BuildNullLocalIpEndPointTest( )
+        public void Build_NullLocalIpEndPoint_ThrowsValidationException( )
         {
             Should.Throw<ValidationException>(
                 ( ) => ClientBuilder<string>.CreateNew( )
@@ -41,7 +41,7 @@ namespace HiLoSocketTests.Builder.Client
         }
 
         [Test]
-        public void BuildNullRemoteIpEndPointTest( )
+        public void Build_NullRemoteIpEndPoint_ThrowsValidationException( )
         {
             Should.Throw<ValidationException>(
                 ( ) => ClientBuilder<string>.CreateNew( )

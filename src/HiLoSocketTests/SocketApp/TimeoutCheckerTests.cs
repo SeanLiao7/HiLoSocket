@@ -10,11 +10,6 @@ using Shouldly;
 
 namespace HiLoSocketTests.SocketApp
 {
-    public class FakeTarget
-    {
-        public string Result { get; set; } = "Operating";
-    }
-
     [TestFixture]
     [Category( "TimeoutCheckerTests" )]
     public class TimeoutCheckerTests
@@ -23,54 +18,59 @@ namespace HiLoSocketTests.SocketApp
         public const int Timeout = 10;
 
         [Test]
-        public void LoggerTest( )
+        public void InstantiateTimeoutChecker_NullInput_ThrowsArgumentNullException( )
+        {
+            Should.Throw<ArgumentNullException>(
+                ( ) => new TimeoutChecker<MockObject>( null ) );
+        }
+
+        [Test]
+        public void OnTimeout_Logger_LogShouldBeCalledOnce( )
         {
             var logger = Substitute.For<ILogger>( );
-            var target = new FakeTarget( );
-            CreateTimeoutChecker( target, logger );
+            var mockObj = new MockObject( );
+            CreateTimeoutChecker( mockObj, logger );
             Thread.Sleep( DelayTime );
             logger.Received( ).Log( Arg.Any<LogModel>( ) );
         }
 
         [Test]
-        public void NullInputTest( )
+        public void StopCheckingCalledAfterTimeout_MockObject_ShoulBeModified( )
         {
-            Should.Throw<ArgumentNullException>(
-                ( ) => new TimeoutChecker<FakeTarget>( null ) );
+            var mockObj = new MockObject( );
+            var checker = CreateTimeoutChecker( mockObj, null );
+            Thread.Sleep( DelayTime );
+            checker.StopChecking( );
+            mockObj.Result.ShouldBe( "Time out!" );
         }
 
         [Test]
-        public void OnTimeoutTest( )
+        public void StopCheckingCalledBeforeTimeout_MockObject_ShouldNotBeModified( )
         {
-            var target = new FakeTarget( );
-            var checker = CreateTimeoutChecker( target, null );
-            Thread.Sleep( DelayTime );
-            checker.StopChecking( );
-            target.Result.ShouldBe( "Time out!" );
-        }
-
-        [Test]
-        public void StopCheckingTest( )
-        {
-            var target = new FakeTarget( );
-            var checker = CreateTimeoutChecker( target, null );
+            var mockObj = new MockObject( );
+            var checker = CreateTimeoutChecker( mockObj, null );
             checker.StopChecking( );
             Thread.Sleep( DelayTime );
-            target.Result.ShouldBe( "Operating" );
+            mockObj.Result.ShouldBe( "Operating" );
         }
 
-        private static TimeoutChecker<FakeTarget> CreateTimeoutChecker(
-            FakeTarget fakeTarget,
+        private static TimeoutChecker<MockObject> CreateTimeoutChecker(
+            MockObject mockObject,
             ILogger logger )
         {
-            return new TimeoutChecker<FakeTarget>(
-                new TimeoutCheckerModel<FakeTarget>
+            return new TimeoutChecker<MockObject>(
+                new TimeoutCheckerModel<MockObject>
                 {
                     Logger = logger,
                     OnTimeoutAction = x => x.Result = "Time out!",
-                    Target = fakeTarget,
+                    Target = mockObject,
                     TimeoutTime = Timeout
                 } );
+        }
+
+        private class MockObject
+        {
+            public string Result { get; set; } = "Operating";
         }
     }
 }

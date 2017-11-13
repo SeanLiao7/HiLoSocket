@@ -13,37 +13,38 @@ namespace HiLoSocketTests.Compressor.Implements
         private readonly ICompressor _compressor =
             CompressorFactory.CreateCompressor( CompressType.Default );
 
-        [TestCase( new byte[ ] { 255, 0, 147, 99, 88, 123, 200, 17, 189, 201 } )]
-        public void CompressByteArrayTest( byte[ ] expected )
-        {
-            var compressed = _compressor.Compress( expected );
-            var decompressed = _compressor.Decompress( compressed );
-            Assert.IsTrue( decompressed.SequenceEqual( expected ) );
-        }
-
         [TestCase( null )]
-        public void CompressNullInputTest( byte[ ] input )
+        public void Compress_NullInput_ThrowsArgumentNullException( byte[ ] input )
         {
             Should.Throw<ArgumentNullException>(
                 ( ) => _compressor.Compress( input ) );
         }
 
         [TestCase( new byte[ 0 ] )]
-        public void CompressZeroLengthInputTest( byte[ ] input )
+        public void Compress_ZeroLengthInput_ThrowsArgumentException( byte[ ] input )
         {
             Should.Throw<ArgumentException>(
                 ( ) => _compressor.Compress( input ) );
         }
 
+        [TestCase( new byte[ ] { 255, 0, 147, 99, 88, 123, 200, 17, 189, 201 } )]
+        public void CompressAndDecompress_ByteArray_ShouldBeSequenceEqual( byte[ ] expected )
+        {
+            var compressed = _compressor.Compress( expected );
+            var decompressed = _compressor.Decompress( compressed );
+            var isSequentialEqual = decompressed.SequenceEqual( expected );
+            isSequentialEqual.ShouldBe( true );
+        }
+
         [TestCase( null )]
-        public void DecompressNullInputTest( byte[ ] input )
+        public void Decompress_NullInput_ThrowsArgumentNullException( byte[ ] input )
         {
             Should.Throw<ArgumentNullException>(
                 ( ) => _compressor.Decompress( input ) );
         }
 
         [TestCase( new byte[ 0 ] )]
-        public void DecompressZeroLengthInputTest( byte[ ] input )
+        public void Decompress_ZeroLengthInput_ThrowsArgumentException( byte[ ] input )
         {
             Should.Throw<ArgumentException>(
                 ( ) => _compressor.Decompress( input ) );

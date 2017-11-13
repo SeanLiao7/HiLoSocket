@@ -11,35 +11,35 @@ namespace HiLoSocketTests.CommandFormatter.Implements
     public class ProtobufCommandFormatterTests
     {
         [Test]
-        public void DeserializeNullInputTest( )
+        public void Deserialize_NullInput_ThrowsArgumentNullException( )
         {
-            var formatter = FormatterFactory<ProtobufData>.CreateFormatter( FormatterType.ProtobufFormatter );
+            var formatter = FormatterFactory<ProtobufDataObject>.CreateFormatter( FormatterType.ProtobufFormatter );
             Should.Throw<ArgumentNullException>(
                 ( ) => formatter.Deserialize( null ) );
         }
 
         [Test]
-        public void DeserializeZeroLengthTest( )
+        public void Deserialize_ZeroLengthInput_ThrowsArgumentException( )
         {
-            var formatter = FormatterFactory<ProtobufData>.CreateFormatter( FormatterType.ProtobufFormatter );
+            var formatter = FormatterFactory<ProtobufDataObject>.CreateFormatter( FormatterType.ProtobufFormatter );
             var input = new byte[ 0 ];
             Should.Throw<ArgumentException>(
                 ( ) => formatter.Deserialize( input ) );
         }
 
         [Test]
-        public void SerializeNullInputTest( )
+        public void Serialize_NullInput_ThrowsArgumentNullException( )
         {
-            var formatter = FormatterFactory<ProtobufData>.CreateFormatter( FormatterType.ProtobufFormatter );
+            var formatter = FormatterFactory<ProtobufDataObject>.CreateFormatter( FormatterType.ProtobufFormatter );
             Should.Throw<ArgumentNullException>(
                 ( ) => formatter.Serialize( null ) );
         }
 
         [Test]
-        public void SerializeObjectTest( )
+        public void SerializeAndDeserialize_ProtobufDataObject_ShouldBeEqual( )
         {
-            var formatter = FormatterFactory<ProtobufData>.CreateFormatter( FormatterType.ProtobufFormatter );
-            var expected = new ProtobufData( Guid.NewGuid( ) )
+            var formatter = FormatterFactory<ProtobufDataObject>.CreateFormatter( FormatterType.ProtobufFormatter );
+            var expected = new ProtobufDataObject( Guid.NewGuid( ) )
             {
                 Name = "Penny",
                 Age = 20
@@ -52,66 +52,66 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         [TestCase( "*測試 Test#_$% ?" )]
         [TestCase( "*測試 0    ZZp $% ? ●" )]
         [TestCase( "* 測 → 】試 0 『 Y Z　＠ ●" )]
-        public void SerializeStringTest( string expected )
+        public void SerializeAndDeserialize_String_ShouldBeEqual( string expected )
         {
             var formatter = FormatterFactory<string>.CreateFormatter( FormatterType.ProtobufFormatter );
             var serializedResult = formatter.Serialize( expected );
             var actual = formatter.Deserialize( serializedResult );
             actual.ShouldBe( expected );
         }
-    }
 
-    [ProtoContract]
-    public class ProtobufData : IEquatable<ProtobufData>
-    {
-        [ProtoMember( 1 )]
-        public int Age { get; set; }
-
-        [ProtoMember( 2 )]
-        public Guid Id { get; }
-
-        [ProtoMember( 3 )]
-        public string Name { get; set; }
-
-        public ProtobufData( Guid id )
+        [ProtoContract]
+        private class ProtobufDataObject : IEquatable<ProtobufDataObject>
         {
-            Id = id;
-        }
+            [ProtoMember( 1 )]
+            public int Age { get; set; }
 
-        private ProtobufData( )
-        {
-        }
+            [ProtoMember( 2 )]
+            public Guid Id { get; }
 
-        public static bool operator !=( ProtobufData a, ProtobufData b )
-        {
-            return !( a == b );
-        }
+            [ProtoMember( 3 )]
+            public string Name { get; set; }
 
-        public static bool operator ==( ProtobufData a, ProtobufData b )
-        {
-            return Equals( a, b );
-        }
+            public ProtobufDataObject( Guid id )
+            {
+                Id = id;
+            }
 
-        public bool Equals( ProtobufData other )
-        {
-            if ( ReferenceEquals( null, other ) ) return false;
-            if ( ReferenceEquals( this, other ) ) return true;
-            return Id.Equals( other.Id )
-                   && Name.Equals( other.Name )
-                   && Age.Equals( other.Age );
-        }
+            private ProtobufDataObject( )
+            {
+            }
 
-        public override bool Equals( object obj )
-        {
-            if ( ReferenceEquals( null, obj ) ) return false;
-            if ( ReferenceEquals( this, obj ) ) return true;
-            return obj.GetType( ) == GetType( )
-                   && Equals( ( ProtobufData ) obj );
-        }
+            public static bool operator !=( ProtobufDataObject a, ProtobufDataObject b )
+            {
+                return !( a == b );
+            }
 
-        public override int GetHashCode( )
-        {
-            return Id.GetHashCode( );
+            public static bool operator ==( ProtobufDataObject a, ProtobufDataObject b )
+            {
+                return Equals( a, b );
+            }
+
+            public bool Equals( ProtobufDataObject other )
+            {
+                if ( ReferenceEquals( null, other ) ) return false;
+                if ( ReferenceEquals( this, other ) ) return true;
+                return Id.Equals( other.Id )
+                       && Name.Equals( other.Name )
+                       && Age.Equals( other.Age );
+            }
+
+            public override bool Equals( object obj )
+            {
+                if ( ReferenceEquals( null, obj ) ) return false;
+                if ( ReferenceEquals( this, obj ) ) return true;
+                return obj.GetType( ) == GetType( )
+                       && Equals( ( ProtobufDataObject ) obj );
+            }
+
+            public override int GetHashCode( )
+            {
+                return Id.GetHashCode( );
+            }
         }
     }
 }
