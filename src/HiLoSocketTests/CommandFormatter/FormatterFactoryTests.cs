@@ -11,7 +11,7 @@ namespace HiLoSocketTests.CommandFormatter
         [TestCase( FormatterType.JSonFormatter )]
         [TestCase( FormatterType.MessagePackFormatter )]
         [TestCase( FormatterType.ProtobufFormatter )]
-        public void CreateFormatterTest( FormatterType formatterType )
+        public void CreateFormatter_FormatterType_ShouldNotThrowException( FormatterType formatterType )
         {
             Shouldly.Should.NotThrow(
                 ( ) => FormatterFactory<string>.CreateFormatter( formatterType ) );

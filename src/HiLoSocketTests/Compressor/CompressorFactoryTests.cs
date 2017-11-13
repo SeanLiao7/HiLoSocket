@@ -10,7 +10,7 @@ namespace HiLoSocketTests.Compressor
         [TestCase( CompressType.Default )]
         [TestCase( CompressType.GZip )]
         [TestCase( CompressType.Deflate )]
-        public void CreateCompressorTest( CompressType compressType )
+        public void CreateCompressor_CompressType_ShouldNotThrowException( CompressType compressType )
         {
             Shouldly.Should.NotThrow(
                 ( ) => CompressorFactory.CreateCompressor( compressType ) );
