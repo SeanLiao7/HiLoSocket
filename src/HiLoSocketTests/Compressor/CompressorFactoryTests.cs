@@ -1,4 +1,7 @@
-﻿using HiLoSocket.Compressor;
+﻿using System.Collections;
+using System.Collections.Generic;
+using HiLoSocket.CommandFormatter;
+using HiLoSocket.Compressor;
 using NUnit.Framework;
 
 namespace HiLoSocketTests.Compressor
@@ -7,13 +10,26 @@ namespace HiLoSocketTests.Compressor
     [Category( "CompressorFactoryTests" )]
     public class CompressorFactoryTests
     {
-        [TestCase( CompressType.Default )]
-        [TestCase( CompressType.GZip )]
-        [TestCase( CompressType.Deflate )]
+        [TestCaseSource( typeof( CompressTypeSource ) )]
         public void CreateCompressor_CompressType_ShouldNotThrowException( CompressType compressType )
         {
             Shouldly.Should.NotThrow(
                 ( ) => CompressorFactory.CreateCompressor( compressType ) );
+        }
+
+        private class CompressTypeSource : IEnumerable<CompressType>
+        {
+            public IEnumerator<CompressType> GetEnumerator( )
+            {
+                yield return CompressType.Default;
+                yield return CompressType.GZip;
+                yield return CompressType.Default;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator( )
+            {
+                return GetEnumerator( );
+            }
         }
     }
 }
