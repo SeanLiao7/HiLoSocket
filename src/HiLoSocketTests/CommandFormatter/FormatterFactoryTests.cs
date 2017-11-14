@@ -1,4 +1,6 @@
-﻿using HiLoSocket.CommandFormatter;
+﻿using System.Collections;
+using System.Collections.Generic;
+using HiLoSocket.CommandFormatter;
 using NUnit.Framework;
 
 namespace HiLoSocketTests.CommandFormatter
@@ -7,14 +9,27 @@ namespace HiLoSocketTests.CommandFormatter
     [Category( "FormatterFactoryTests" )]
     public class FormatterFactoryTests
     {
-        [TestCase( FormatterType.BinaryFormatter )]
-        [TestCase( FormatterType.JSonFormatter )]
-        [TestCase( FormatterType.MessagePackFormatter )]
-        [TestCase( FormatterType.ProtobufFormatter )]
+        [TestCaseSource( typeof( FormatterTypeSource ) )]
         public void CreateFormatter_FormatterType_ShouldNotThrowException( FormatterType formatterType )
         {
             Shouldly.Should.NotThrow(
                 ( ) => FormatterFactory<string>.CreateFormatter( formatterType ) );
+        }
+
+        private class FormatterTypeSource : IEnumerable<FormatterType>
+        {
+            public IEnumerator<FormatterType> GetEnumerator( )
+            {
+                yield return FormatterType.BinaryFormatter;
+                yield return FormatterType.JSonFormatter;
+                yield return FormatterType.MessagePackFormatter;
+                yield return FormatterType.ProtobufFormatter;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator( )
+            {
+                return GetEnumerator( );
+            }
         }
     }
 }

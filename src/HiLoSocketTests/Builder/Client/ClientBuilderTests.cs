@@ -1,6 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using HiLoSocket.Builder.Client;
+using HiLoSocket.Compressor;
 using NUnit.Framework;
 using Shouldly;
 
@@ -10,9 +13,7 @@ namespace HiLoSocketTests.Builder.Client
     [Category( "ClientBuilderTests" )]
     public class ClientBuilderTests
     {
-        [TestCase( -2000 )]
-        [TestCase( 0 )]
-        [TestCase( 300000 )]
+        [TestCaseSource( typeof( TimeoutTimeSource ) )]
         public void Build_InvalidTimeoutTime_ThrowsValidationException( int timeoutTime )
         {
             Should.Throw<ValidationException>(
@@ -52,6 +53,21 @@ namespace HiLoSocketTests.Builder.Client
                     .SetTimeoutTime( 5000 )
                     .SetLogger( null )
                     .Build( ) );
+        }
+
+        private class TimeoutTimeSource : IEnumerable<int>
+        {
+            public IEnumerator<int> GetEnumerator( )
+            {
+                yield return -2000;
+                yield return 0;
+                yield return 300000;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator( )
+            {
+                return GetEnumerator( );
+            }
         }
     }
 }

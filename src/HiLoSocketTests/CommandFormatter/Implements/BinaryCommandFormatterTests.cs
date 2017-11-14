@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using HiLoSocket.CommandFormatter;
 using NUnit.Framework;
@@ -79,9 +81,7 @@ namespace HiLoSocketTests.CommandFormatter.Implements
             actual.ShouldBe( expected );
         }
 
-        [TestCase( "*測試 Test#_$% ?" )]
-        [TestCase( "*測試 0    ZZp $% ? ●" )]
-        [TestCase( "* 測 → 】試 0 『 Y Z　＠ ●" )]
+        [TestCaseSource( typeof( StringSource ) )]
         public void SerializeAndDeserialize_String_ShouldBeEqual( string expected )
         {
             var formatter = FormatterFactory<string>.CreateFormatter( FormatterType.BinaryFormatter );
@@ -132,6 +132,21 @@ namespace HiLoSocketTests.CommandFormatter.Implements
             public override int GetHashCode( )
             {
                 return Id.GetHashCode( );
+            }
+        }
+
+        private class StringSource : IEnumerable<string>
+        {
+            public IEnumerator<string> GetEnumerator( )
+            {
+                yield return "*測試 Test#_$% ?";
+                yield return "*測試 0    ZZp $% ? ●";
+                yield return "* 測 → 】試 0 『 Y Z　＠ ●";
+            }
+
+            IEnumerator IEnumerable.GetEnumerator( )
+            {
+                return GetEnumerator( );
             }
         }
     }
