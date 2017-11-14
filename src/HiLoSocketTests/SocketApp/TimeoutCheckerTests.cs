@@ -15,7 +15,9 @@ namespace HiLoSocketTests.SocketApp
     public class TimeoutCheckerTests
     {
         public const int DelayTime = 50;
+        public const string OperatingString = "Operating";
         public const int Timeout = 10;
+        public const string TimeOutString = "Time out!";
 
         [Test]
         public void InstantiateTimeoutChecker_NullInput_ThrowsArgumentNullException( )
@@ -25,7 +27,7 @@ namespace HiLoSocketTests.SocketApp
         }
 
         [Test]
-        public void OnTimeout_Logger_LogShouldBeCalledOnce( )
+        public void Logger_OnTimeoutOccured_LogShouldBeCalledOnce( )
         {
             var logger = Substitute.For<ILogger>( );
             var mockObj = new MockObject( );
@@ -35,23 +37,23 @@ namespace HiLoSocketTests.SocketApp
         }
 
         [Test]
-        public void StopCheckingCalledAfterTimeout_MockObject_ShoulBeModified( )
+        public void MockObject_StopCheckingCalledAfterTimeout_ShoulBeModified( )
         {
             var mockObj = new MockObject( );
             var checker = CreateTimeoutChecker( mockObj, null );
             Thread.Sleep( DelayTime );
             checker.StopChecking( );
-            mockObj.Result.ShouldBe( "Time out!" );
+            mockObj.Result.ShouldBe( TimeOutString );
         }
 
         [Test]
-        public void StopCheckingCalledBeforeTimeout_MockObject_ShouldNotBeModified( )
+        public void MockObject_StopCheckingCalledBeforeTimeout_ShouldNotBeModified( )
         {
             var mockObj = new MockObject( );
             var checker = CreateTimeoutChecker( mockObj, null );
             checker.StopChecking( );
             Thread.Sleep( DelayTime );
-            mockObj.Result.ShouldBe( "Operating" );
+            mockObj.Result.ShouldBe( OperatingString );
         }
 
         private static TimeoutChecker<MockObject> CreateTimeoutChecker(
@@ -62,7 +64,7 @@ namespace HiLoSocketTests.SocketApp
                 new TimeoutCheckerModel<MockObject>
                 {
                     Logger = logger,
-                    OnTimeoutAction = x => x.Result = "Time out!",
+                    OnTimeoutAction = x => x.Result = TimeOutString,
                     Target = mockObject,
                     TimeoutTime = Timeout
                 } );
@@ -70,7 +72,7 @@ namespace HiLoSocketTests.SocketApp
 
         private class MockObject
         {
-            public string Result { get; set; } = "Operating";
+            public string Result { get; set; } = OperatingString;
         }
     }
 }

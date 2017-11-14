@@ -32,8 +32,7 @@ namespace HiLoSocketTests.Compressor.Implements
         {
             var compressed = _compressor.Compress( expected );
             var decompressed = _compressor.Decompress( compressed );
-            var isSequentialEqual = decompressed.SequenceEqual( expected );
-            isSequentialEqual.ShouldBe( true );
+            Assert.That( decompressed, Is.EquivalentTo( expected ) );
         }
 
         [TestCase( null )]
