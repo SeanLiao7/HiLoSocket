@@ -6,6 +6,7 @@ using HiLoSocket.Model.InternalOnly;
 using HiLoSocket.SocketApp;
 using NSubstitute;
 using NUnit.Framework;
+using Ploeh.AutoFixture;
 using Shouldly;
 
 namespace HiLoSocketTests.SocketApp
@@ -22,8 +23,11 @@ namespace HiLoSocketTests.SocketApp
         [Test]
         public void InstantiateTimeoutChecker_NullInput_ThrowsArgumentNullException( )
         {
+            var fixture = new Fixture( );
+            fixture.Register<TimeoutCheckerModel<MockObject>>( ( ) => null );
+            var input = fixture.Create<TimeoutCheckerModel<MockObject>>( );
             Should.Throw<ArgumentNullException>(
-                ( ) => new TimeoutChecker<MockObject>( null ) );
+                ( ) => new TimeoutChecker<MockObject>( input ) );
         }
 
         [Test]

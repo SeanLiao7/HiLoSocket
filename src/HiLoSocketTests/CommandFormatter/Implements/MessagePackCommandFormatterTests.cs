@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+using FluentAssertions;
 using HiLoSocket.CommandFormatter;
 using NUnit.Framework;
+using Ploeh.AutoFixture;
 using Shouldly;
 
 namespace HiLoSocketTests.CommandFormatter.Implements
@@ -15,15 +15,22 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         public void Deserialize_NullInput_ThrowsArgumentNullException( )
         {
             var formatter = FormatterFactory<MessagePackDataObject>.CreateFormatter( FormatterType.MessagePackFormatter );
+            var fixture = new Fixture( );
+            fixture.Register<byte[ ]>( ( ) => null );
+            var input = fixture.Create<byte[ ]>( );
             Should.Throw<ArgumentNullException>(
-                ( ) => formatter.Deserialize( null ) );
+                ( ) => formatter.Deserialize( input ) );
         }
 
         [Test]
         public void Deserialize_ZeroLengthInput_ThrowsArgumentException( )
         {
             var formatter = FormatterFactory<MessagePackDataObject>.CreateFormatter( FormatterType.MessagePackFormatter );
-            var input = new byte[ 0 ];
+            var fixture = new Fixture
+            {
+                RepeatCount = 0
+            };
+            var input = fixture.Create<byte[ ]>( );
             Should.Throw<ArgumentException>(
                 ( ) => formatter.Deserialize( input ) );
         }
@@ -32,34 +39,36 @@ namespace HiLoSocketTests.CommandFormatter.Implements
         public void Serialize_NullInput_ThrowsArgumentNullException( )
         {
             var formatter = FormatterFactory<MessagePackDataObject>.CreateFormatter( FormatterType.MessagePackFormatter );
+            var fixture = new Fixture( );
+            fixture.Register<MessagePackDataObject>( ( ) => null );
+            var input = fixture.Create<MessagePackDataObject>( );
             Should.Throw<ArgumentNullException>(
-                ( ) => formatter.Serialize( null ) );
+                ( ) => formatter.Serialize( input ) );
         }
 
         [Test]
         public void SerializeAndDeserialize_MessagePackDataObject_ShouldBeEqual( )
         {
             var formatter = FormatterFactory<MessagePackDataObject>.CreateFormatter( FormatterType.MessagePackFormatter );
-            var expected = new MessagePackDataObject( Guid.NewGuid( ) )
-            {
-                Name = "Penny",
-                Age = 20
-            };
+            var fixture = new Fixture( );
+            var expected = fixture.Create<MessagePackDataObject>( );
             var serializedResult = formatter.Serialize( expected );
             var actual = formatter.Deserialize( serializedResult );
-            actual.ShouldBe( expected );
+            actual.ShouldBeEquivalentTo( expected );
         }
 
-        [TestCaseSource( typeof( StringSource ) )]
-        public void SerializeAndDeserialize_String_ShouldBeEqual( string expected )
+        [Test]
+        public void SerializeAndDeserialize_String_ShouldBeEqual( )
         {
             var formatter = FormatterFactory<string>.CreateFormatter( FormatterType.MessagePackFormatter );
+            var fixture = new Fixture( );
+            var expected = fixture.Create<string>( );
             var serializedResult = formatter.Serialize( expected );
             var actual = formatter.Deserialize( serializedResult );
-            actual.ShouldBe( expected );
+            actual.ShouldBeEquivalentTo( expected );
         }
 
-        public class MessagePackDataObject : IEquatable<MessagePackDataObject>
+        public class MessagePackDataObject
         {
             public int Age { get; set; }
             public Guid Id { get; }
@@ -68,53 +77,6 @@ namespace HiLoSocketTests.CommandFormatter.Implements
             public MessagePackDataObject( Guid id )
             {
                 Id = id;
-            }
-
-            public static bool operator !=( MessagePackDataObject a, MessagePackDataObject b )
-            {
-                return !( a == b );
-            }
-
-            public static bool operator ==( MessagePackDataObject a, MessagePackDataObject b )
-            {
-                return Equals( a, b );
-            }
-
-            public bool Equals( MessagePackDataObject other )
-            {
-                if ( ReferenceEquals( null, other ) ) return false;
-                if ( ReferenceEquals( this, other ) ) return true;
-                return Id.Equals( other.Id )
-                       && Name.Equals( other.Name )
-                       && Age.Equals( other.Age );
-            }
-
-            public override bool Equals( object obj )
-            {
-                if ( ReferenceEquals( null, obj ) ) return false;
-                if ( ReferenceEquals( this, obj ) ) return true;
-                return obj.GetType( ) == GetType( )
-                       && Equals( ( MessagePackDataObject ) obj );
-            }
-
-            public override int GetHashCode( )
-            {
-                return Id.GetHashCode( );
-            }
-        }
-
-        private class StringSource : IEnumerable<string>
-        {
-            public IEnumerator<string> GetEnumerator( )
-            {
-                yield return "*測試 Test#_$% ?";
-                yield return "*測試 0    ZZp $% ? ●";
-                yield return "* 測 → 】試 0 『 Y Z　＠ ●";
-            }
-
-            IEnumerator IEnumerable.GetEnumerator( )
-            {
-                return GetEnumerator( );
             }
         }
     }
