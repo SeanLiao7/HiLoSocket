@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using HiLoSocket.Builder.Client;
-using HiLoSocket.Compressor;
 using NUnit.Framework;
 using Shouldly;
 
