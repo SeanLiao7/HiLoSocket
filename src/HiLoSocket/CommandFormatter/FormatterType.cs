@@ -29,6 +29,6 @@ namespace HiLoSocket.CommandFormatter
         /// Protobuf Formatter.
         /// </summary>
         [Description( "ProtobufCommandFormatter" )]
-        ProtobufFormatter = 3
+        ProtobufFormatter = 3,
     }
 }

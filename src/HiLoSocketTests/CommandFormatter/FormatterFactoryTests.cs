@@ -1,5 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Linq;
 using HiLoSocket.CommandFormatter;
 using NUnit.Framework;
 
@@ -16,19 +17,11 @@ namespace HiLoSocketTests.CommandFormatter
                 ( ) => FormatterFactory<string>.CreateFormatter( formatterType ) );
         }
 
-        private class FormatterTypeSource : IEnumerable<FormatterType>
+        private class FormatterTypeSource : IEnumerable
         {
-            public IEnumerator<FormatterType> GetEnumerator( )
+            public IEnumerator GetEnumerator( )
             {
-                yield return FormatterType.BinaryFormatter;
-                yield return FormatterType.JSonFormatter;
-                yield return FormatterType.MessagePackFormatter;
-                yield return FormatterType.ProtobufFormatter;
-            }
-
-            IEnumerator IEnumerable.GetEnumerator( )
-            {
-                return GetEnumerator( );
+                return Enum.GetValues( typeof( FormatterType ) ).Cast<FormatterType>( ).GetEnumerator( );
             }
         }
     }
