@@ -1,5 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Linq;
 using HiLoSocket.Compressor;
 using NUnit.Framework;
 
@@ -16,18 +17,11 @@ namespace HiLoSocketTests.Compressor
                 ( ) => CompressorFactory.CreateCompressor( compressType ) );
         }
 
-        private class CompressTypeSource : IEnumerable<CompressType>
+        private class CompressTypeSource : IEnumerable
         {
-            public IEnumerator<CompressType> GetEnumerator( )
+            public IEnumerator GetEnumerator( )
             {
-                yield return CompressType.Default;
-                yield return CompressType.GZip;
-                yield return CompressType.Default;
-            }
-
-            IEnumerator IEnumerable.GetEnumerator( )
-            {
-                return GetEnumerator( );
+                return Enum.GetValues( typeof( CompressType ) ).Cast<CompressType>( ).GetEnumerator( );
             }
         }
     }
