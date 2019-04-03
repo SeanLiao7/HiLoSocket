@@ -30,7 +30,7 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
             .SetLocalIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8001 ) )
             .SetRemoteIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ) )
             .SetFormatterType( FormatterType.BinaryFormatter )
-            .SetCompressType( FormatterType.Default )
+            .SetCompressType( CompressType.Default )
             .SetTimeoutTime( 2000 )
             .SetLogger( logger )
             .Build( );
@@ -64,7 +64,7 @@ https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
         var server = ServerBuilder<SocketCommandModel>.CreateNew( )
             .SetLocalIpEndPoint( new IPEndPoint( IPAddress.Parse( "127.0.0.1" ), 8000 ) )
             .SetFormatterType( FormatterType.BinaryFormatter )
-            .SetCompressType( FormatterType.Default )
+            .SetCompressType( CompressType.Default )
             .SetLogger( logger )
             .Build( );
 
