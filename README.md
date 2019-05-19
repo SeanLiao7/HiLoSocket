@@ -11,7 +11,6 @@ https://msdn.microsoft.com/zh-tw/library/bew39x2a(v=vs.110).aspx
 
 https://msdn.microsoft.com/zh-tw/library/fx6588te(v=vs.110).aspx
 
-CI
 [![Build Status](https://dev.azure.com/seanliao/HiLoSocket/_apis/build/status/SeanLiao7.HiLoSocket?branchName=master)](https://dev.azure.com/seanliao/HiLoSocket/_build/latest?definitionId=6&branchName=master)
 
 -------------------------------------------------------------------------------------------------------------
