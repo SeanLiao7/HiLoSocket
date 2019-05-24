@@ -13,6 +13,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  CODECOV_TOKEN: '321778f3-bcc8-4af9-8ce8-e115288ad03b'
 
 steps:
 - task: NuGetToolInstaller@0
